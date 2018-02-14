@@ -2,6 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt 
 
 
+def main():
+	PA = "F:/Devin/Grasp/LWA Sandbox/40mLWA/Job_26/"
+	freq, s11 = process_par(PA + "Sparameters.par")
+	dmax = process_cut(PA + "FieldData.cut", freq)
+	plot_pair_efficiencies(freq, s11, dmax, "Efficiencies.png")
+
+
 def process_par(f_name):
 	f = open(f_name)
 	f.readline() #ignore header
@@ -55,30 +62,29 @@ def calc_app_eff(freq, dmax):
 	dmax_lin = 10**(dmax/10)
 	return dmax_lin*wave_len**2 /(4*np.pi*aphy)*100
 
-freq, s11 = process_par("Sparameters.par")
-dmax = process_cut("FieldData.cut", freq)
 
+def plot_pair_efficiencies(freq, s11, dmax, title):
+	fig, ax1 = plt.subplots()
+	ax2 = ax1.twinx()
+	ms = ax1.plot(freq,calc_mismatch(s11), 'b', label= "Mismatch Efficiency")
+	ax1.set_title("Mismatch and Aperture Efficiencies vs Frequency")
+	ax1.set_xlabel("Frequency [MHz]")
+	ax1.set_ylabel("Mismatch Efficiency[%]")
 
-fig, ax1 = plt.subplots()
-ax2 = ax1.twinx()
-ms = ax1.plot(freq,calc_mismatch(s11), 'b', label= "Mismatch Efficiency")
-ax1.set_title("Mismatch and Aperture Efficiencies vs Frequency")
-ax1.set_xlabel("Frequency [MHz]")
-ax1.set_ylabel("Mismatch Efficiency[%]")
+	ap = ax2.plot(freq,calc_app_eff(freq, dmax), 'r', label = "Aperture Efficiency")
+	ax2.set_ylabel("Aperture Efficiency [%]")
 
-ap = ax2.plot(freq,calc_app_eff(freq, dmax), 'r', label = "Aperture Efficiency")
-ax2.set_ylabel("Aperture Efficiency [%]")
+	lns = ms+ap
+	labs = [x.get_label() for x in lns]
+	ax1.legend(lns, labs)
 
-lns = ms+ap
-labs = [x.get_label() for x in lns]
-ax1.legend(lns, labs)
-
-# ax1.legend()
-plt.savefig("Efficiencies.png")
-
+	# ax1.legend()
+	plt.savefig("../plots/" + title)
 
 
 
+if __name__ == '__main__':
+	main()
 
 
 
