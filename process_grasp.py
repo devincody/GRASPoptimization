@@ -3,10 +3,10 @@ import matplotlib.pyplot as plt
 
 
 def main():
-	PA = "F:/Devin/Grasp/LWA Sandbox/40mLWA/Job_26/"
+	PA = "F:/Devin/Grasp/LWASandbox/40mLWA/Job_26/"
 	freq, s11 = process_par(PA + "Sparameters.par")
 	dmax = process_cut(PA + "FieldData.cut", freq)
-	plot_pair_efficiencies(freq, s11, dmax, "Efficiencies.png")
+	plot_pair_efficiencies(freq, s11, dmax, "Efficiencies.png", 16)
 
 
 def process_par(f_name):
@@ -31,12 +31,12 @@ def process_cut(f_name, freq):
 		line = f.readline()
 		line = line.split()
 		line = [float(x) for x in line]
-		print ("Headder = ", line)
+		# print ("Headder = ", line)
 		for ii in range(int(line[2])):
 			angle=line[0] + ii*line[1]
 			fields = [float(x) for x in f.readline().split()]
-			co = 10*np.log10(fields[0]**2+fields[1]**2)
-			cx = 10*np.log10(fields[2]**2+fields[3]**2)
+			co = 10*np.log10(fields[0]**2 + fields[1]**2)
+			cx = 10*np.log10(fields[2]**2 + fields[3]**2)
 			if ii == 100:
 				dmax.append(np.max([co, cx]))
 		line = f.readline() #should be Field data... if more data
@@ -55,7 +55,7 @@ def calc_mismatch(s11):
 def calc_app_eff(freq, dmax): 
 	#freq in MHz, dmax in dB
 	#returns %
-	c = 3E8#meters/sec
+	c = 2.997E8#meters/sec
 	r = 20.0#meters
 	wave_len = c/(freq*1E6)
 	aphy = np.pi*r**2
@@ -63,23 +63,33 @@ def calc_app_eff(freq, dmax):
 	return dmax_lin*wave_len**2 /(4*np.pi*aphy)*100
 
 
-def plot_pair_efficiencies(freq, s11, dmax, title):
-	fig, ax1 = plt.subplots()
-	ax2 = ax1.twinx()
-	ms = ax1.plot(freq,calc_mismatch(s11), 'b', label= "Mismatch Efficiency")
-	ax1.set_title("Mismatch and Aperture Efficiencies vs Frequency")
-	ax1.set_xlabel("Frequency [MHz]")
-	ax1.set_ylabel("Mismatch Efficiency[%]")
+def plot_pair_efficiencies(freq, s11, dmax, title, z):
+	plt.figure()
+	plt.plot(freq,calc_mismatch(s11), 'b', label= "Mismatch Efficiency")
+	plt.title("Mismatch and Aperture Efficiencies z = %3.1f" % z)
+	plt.xlabel("Frequency [MHz]")
+	plt.ylabel("Efficiency [%]")
+	plt.ylim([0, 90])
 
-	ap = ax2.plot(freq,calc_app_eff(freq, dmax), 'r', label = "Aperture Efficiency")
-	ax2.set_ylabel("Aperture Efficiency [%]")
+	plt.plot(freq,calc_app_eff(freq, dmax), 'r', label = "Aperture Efficiency")
+	# plt.set_ylabel("Aperture Efficiency [%]")
 
-	lns = ms+ap
-	labs = [x.get_label() for x in lns]
-	ax1.legend(lns, labs)
+	# lns = ms+ap
+	# labs = [x.get_label() for x in lns]
+	# plt.legend(lns, labs)
 
-	# ax1.legend()
+	plt.legend()
 	plt.savefig("../plots/" + title)
+
+def Tsys(freq):
+	return 300*(150/freq)**2.5 + 300
+
+
+def SEFD(freq, dmax):
+	k = 1.38E3 #jy m^2 s k^-1
+	r = 20#m
+	return 2*k*Tsys(freq)*(np.pi*r**2)/calc_app_eff(freq,dmax)
+
 
 
 
