@@ -274,7 +274,7 @@ Ant_dish_struts  scatterer_cluster
  
 freq_20_80_df_5_MHz_01  frequency_range  
 (
-  frequency_range  : struct(start_frequency: 20.0 MHz, end_frequency: 80.0 MHz, number_of_frequencies: 30)
+  frequency_range  : struct(start_frequency: 9.0 MHz, end_frequency: 80.0 MHz, number_of_frequencies: 30)
 )
  
 voltage_generator2  voltage_generator  
