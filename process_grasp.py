@@ -39,8 +39,8 @@ def process_cut(f_name, freq):
 		if (phi == 0):
 			i += 1
 		frequency = freq[i]
-		series_name_co = "f%d:p%d" %(frequency, phi)
-		series_name_cx = "f%d:p%d" %(frequency, phi)
+		series_name_co = "f%4.2f:p%4.2f:co" %(frequency, phi)
+		series_name_cx = "f%4.2f:p%4.2f:cx" %(frequency, phi)
 
 		angles = []
 		dbi_co = []
@@ -50,8 +50,8 @@ def process_cut(f_name, freq):
 			angle=line[0] + ii*line[1]
 			angles.append(angle)
 			fields = [float(x) for x in f.readline().split()]
-			co = 10*np.log10(fields[0]**2 + fields[1]**2)
-			cx = 10*np.log10(fields[2]**2 + fields[3]**2)
+			cx = 10*np.log10(fields[0]**2 + fields[1]**2)
+			co = 10*np.log10(fields[2]**2 + fields[3]**2)
 
 			dbi_co.append(co)
 			dbi_cx.append(cx)
@@ -61,6 +61,7 @@ def process_cut(f_name, freq):
 		cut[series_name_co] = dbi_co
 		cut[series_name_cx] = dbi_cx
 		line = f.readline() #should be Field data... if more data
+	cut["angles"] = angles
 
 	dmax_f = np.zeros(len(freq))
 	for i in range(len(freq)):
@@ -84,25 +85,24 @@ def calc_app_eff(freq, dmax):
 	return dmax_lin*wave_len**2 /(4*np.pi*aphy)
 
 
-def plot_pair_efficiencies(freq, s11, dmax, title, z):
+def plot_pair_efficiencies(freq, s11, dmax, location, z):
 	plt.figure()
 	plt.plot(freq,calc_mismatch(s11), 'b', label= "Mismatch Efficiency")
 	plt.title("Mismatch and Aperture Efficiencies z = %4.2f" % z)
 	plt.xlabel("Frequency [MHz]")
 	plt.ylabel("Efficiency")
 	plt.ylim([0, 1])
+	plt.yticks(np.arange(0, 1.01,.1))
 
 	plt.plot(freq,calc_app_eff(freq, dmax), 'r', label = "Aperture Efficiency")
 	# plt.set_ylabel("Aperture Efficiency [%]")
-
 	# lns = ms+ap
 	# labs = [x.get_label() for x in lns]
 	# plt.legend(lns, labs)
-
 	plt.legend()
-	plt.savefig("../plots/Efficiency/" + title)
+	plt.savefig(location)
 
-def plot_SEFD(freq, dmax, title, z):
+def plot_SEFD(freq, dmax, location, z):
 	plt.figure()
 	plt.plot(freq,SEFD(freq, dmax), 'b', label= "SEFD")
 	plt.title("SEFD at z = %4.2f" % z)
@@ -111,25 +111,49 @@ def plot_SEFD(freq, dmax, title, z):
 	plt.ylim([0, 5E6])
 
 	plt.legend()
-	plt.savefig("../plots/SEFD/" + title)
+	plt.savefig(location)
 
 
-def plot_cut(freq, cut):
+def plot_cut(frequency, cut, z, title):
 	#freq is which frequency to use
 	#
-	plt.figure()
-	plt.subplot(3,1,1) #each of the phis
-	plt.plot(cut["angles"],SEFD(freq, dmax), 'b', label= "SEFD")
-	
+	plt.rc('axes', linewidth=2)
+	fig, ax = plt.subplots(1,3, figsize=(30,10)) #each of the phis
+	for i, phi in enumerate([0, 45, 90]):
+		axi = ax[i]
+		series_name_co = "f%4.2f:p%4.2f:co" %(frequency, phi)
+		series_name_cx = "f%4.2f:p%4.2f:cx" %(frequency, phi)
+		axi.plot(cut["angles"]-180,cut[series_name_co], 'b', label= "co")
+		# axi.plot(cut["angles"]-180,cut[series_name_cx], 'r', label= "cx")
+		axi.set_title("$\phi$ = %4.2f" %phi, fontsize = 20)
+		axi.legend()
+		axi.set_ylim([-25,25])
+		axi.set_xlim([-180,180])
+		axi.set_xticks(range(-180, 181, 30))
+		axi.grid(linewidth = 2, linestyle = '--')
+		axi.set_yticks(range(-25,26,5))
 
+		fontsize = 14
+		for tick in axi.xaxis.get_major_ticks():
+		    tick.label1.set_fontsize(fontsize)
+		    # tick.label1.set_fontweight('bold')
+		for tick in axi.yaxis.get_major_ticks():
+		    tick.label1.set_fontsize(fontsize)
+		    # tick.label1.set_fontweight('bold')
+		if i == 0:
+			axi.set_ylabel("Amplitude [dBi]", fontsize = 16)
 
-	plt.title("Radiation Pattern at z = %4.2f" % z)
-	plt.xlabel("Angle [Degrees]")
-	plt.ylabel("Amplitude")
-	# plt.ylim([0, 5E6])
+		if i == 1:
+			axi.set_xlabel("Angle [Degrees]", fontsize = 16)
+			#axi.set_title()
+			fig.suptitle(r"Radiation Pattern at z = %4.2f, $\nu$ = %4.2f" % (z,frequency), fontsize=25)
 
-	plt.legend()
-	plt.savefig("../plots/SEFD/" + title)
+	# 
+
+	fig.savefig(title)
+	plt.close('all')
+	plt.rc('axes', linewidth=1)
+
 
 def Tsys(freq):
 	return 300*(150/freq)**2.5 + 300

@@ -7,6 +7,7 @@ from datetime import datetime
 import pandas as pd
 import os
 
+plt.rc('axes', linewidth=1)
 GRASP_working_file = "F:/Devin/Grasp/LWASandbox/40mLWA/working/"
 model_file = "model_tor.txt"
 out_file = GRASP_working_file + "40mLWA.tor"
@@ -46,40 +47,48 @@ results_path = "../Results/"
 results_path += create_file_w_timestamp(results_path)
 print(results_path)
 
-for direct in ["/plots/", "/plots/Efficiency/", "/plots/SEFD/", "/plots/patterns/"]:
+for direct in ["/plots/", "/plots/Efficiency/", "/plots/SEFD/", "/plots/Patterns/", "/data/"]:
 	if not os.path.exists(results_path + direct):
 		os.mkdir(results_path + direct)
 
-for z in [16]:#np.linspace(11,17.5, 50):
-	direct = results_path + "/plots/patterns/z-%4.2f/"%z
-	if not os.path.exists(direct):
-		os.mkdir(direct)
+
+
+for z in np.linspace(13,17.5, 50):
+	plots_directory = results_path + "/plots/"
+	data_directory = results_path + "/data/"
+	pattern_directory = plots_directory + "Patterns/z=%4.2f/"%z
+
+	if not os.path.exists(pattern_directory):
+		os.mkdir(pattern_directory)
 
 	edit_tor(model_file, out_file, z)
 
 	command = "grasp-analysis batch.gxp out.out out.log"
 	process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, cwd = GRASP_working_file)
 	output, error = process.communicate()
-	print("Done executing grasp, Output:\n")
+	print("Done executing grasp")
 	#print(output, error)
 
-
 	#########  Process data files  ###########
-	print("\npreparing to Plot")
+	print("preparing to Plot")
 	freq, s11 = process_grasp.process_par(GRASP_working_file + "S_parameters.par")
 	dmax, cut = process_grasp.process_cut(GRASP_working_file + "Field_Data.cut", freq)
 	mis = process_grasp.calc_mismatch(s11)
 	aperture = process_grasp.calc_app_eff(freq, dmax)
 	tsys = process_grasp.Tsys(freq)
 	SEFD = process_grasp.SEFD(freq, dmax)
-	print("Dmax = ", dmax)
-	process_grasp.plot_pair_efficiencies(freq, s11, dmax, "Efficiencies Antenna Position = %4.2f.png" % z, z)
-	process_grasp.plot_SEFD(freq, dmax, "SEFD Antenna Position = %4.2f.png" % z, z)
 
-	x = open("../data/Results z=%4.2f.csv" %z, 'w+')
+
+	process_grasp.plot_pair_efficiencies(freq, s11, dmax, plots_directory + "Efficiency/Efficiencies Antenna Position = %4.2f.png" % z, z)
+	process_grasp.plot_SEFD(freq, dmax, plots_directory + "SEFD/SEFD Antenna Position = %4.2f.png" % z, z)
+	for frequency in freq:
+		process_grasp.plot_cut(frequency, cut, z, pattern_directory +"Radiation Pattern Position = %4.2f Freq = %4.2f.png" %(z,frequency))
+
+
+	x = open(data_directory+"Results z=%4.2f.csv" %z, 'w+')
 	x.write(time.strftime("%c"))
 	x.write("\n")
-	x.write("Frequency [MHz], S11 [dB], Dmax [dBi], Mismatch Efficiency, Aperture Efficiency, Tsys [1E3K], SEFD [1E6Jy]\n")
+	x.write("Frequency [MHz], S11 [dB], Dmax [dBi], Mismatch Efficiency, Aperture Efficiency, Tsys [1E3 K], SEFD [1E6 Jy]\n")
 	for ii in range(len(freq)):
 		x.write("%6.2f, %6.2f, %6.2f, %6.2f, %6.2f, %6.2f, %6.2f\n" % (freq[ii], s11[ii], dmax[ii], mis[ii], aperture[ii], tsys[ii]/1E3, SEFD[ii]/1E6))
 	x.close()

@@ -1,12 +1,12 @@
-plus_x_leaf  tabulated_mesh  
+plus_y_leaf_px  tabulated_mesh  
 (
-  coor_sys         : ref(base),
+  coor_sys         : ref(plus_x_minus_y),
   file_name        : patch_leaf_inverted_V.msh
 )
  
 base  coor_sys  
 (
-  origin           : struct(x: 0.0 m, y: 0.0 m, z: 16.0 m),
+  origin           : struct(x: 0.0 m, y: 0.0 m, z: "ref(z_dist)" m),
   y_axis           : struct(x: 0.0, y: -1.0, z: 0.0),
   base             : ref(single_global_coor)
 )
@@ -18,36 +18,25 @@ minus_X  coor_sys
   base             : ref(base)
 )
  
-minus_x_leaf  tabulated_mesh  
+minus_y_leaf_mx  tabulated_mesh  
 (
-  coor_sys         : ref(minus_X),
+  coor_sys         : ref(minus_x_minus_y),
   file_name        : patch_leaf_inverted_V.msh
-)
- 
-plus_x_terminal  piecewise_straight_wire  
-(
-  coor_sys         : ref(base),
-  nodes            : sequence
-    (    struct(x: 0.45E-01 m, y: 0.0 m, z: 1.5 m),
-    struct(x: 0.45E-01 m, y: 0.0 m, z: 1.49 m)
-    ),
-  radius           : 0.8E-02 m
 )
  
 minus_x_terminal  piecewise_straight_wire  
 (
-  coor_sys         : ref(minus_X),
+  coor_sys         : ref(plus_y_minus_x),
   nodes            : sequence
-    (    struct(x: 0.45E-01 m, y: 0.0 m, z: 1.5 m),
-    struct(x: 0.45E-01 m, y: 0.0 m, z: 1.49 m)
+    (    struct(x: -0.45E-01 m, y: 0.0 m, z: 1.5 m),
+    struct(x: 0.0 m, y: 0.0 m, z: 1.5 m)
     ),
-  radius           : 0.8E-02 m
+  radius           : 0.1E-01 m
 )
  
-first_ant_scatterer_cluster  scatterer_cluster  
+Antenna  scatterer_cluster  
 (
-  scatterers       : sequence(ref(minus_x_leaf),ref(minus_x_terminal),ref(plus_x_leaf),ref(plus_x_terminal),
-ref(minus_y_leaf),ref(plus_y_leaf),ref(plus_y_terminal),ref(minus_y_terminal))
+  scatterers       : sequence(ref(minus_y_dipole),ref(minus_x_dipole),ref(plus_x_dipole),ref(plus_y_dipole))
 )
  
 frequency  frequency  
@@ -93,26 +82,16 @@ minus_Y  coor_sys_grasp_angles
   base             : ref(base)
 )
  
-plus_y_leaf  tabulated_mesh  
+minus_x_leaf_py  tabulated_mesh  
 (
-  coor_sys         : ref(plus_Y),
+  coor_sys         : ref(plus_y_minus_x),
   file_name        : patch_leaf_inverted_V.msh
 )
  
-minus_y_leaf  tabulated_mesh  
+plus_x_leaf_my  tabulated_mesh  
 (
-  coor_sys         : ref(minus_Y),
+  coor_sys         : ref(minus_y_minus_x),
   file_name        : patch_leaf_inverted_V.msh
-)
- 
-plus_y_terminal  piecewise_straight_wire  
-(
-  coor_sys         : ref(base),
-  nodes            : sequence
-    (    struct(x: 0.0 m, y: 0.0 m, z: 1.5 m),
-    struct(x: 0.0 m, y: 0.45E-01 m, z: 1.5 m)
-    ),
-  radius           : 0.1E-01 m
 )
  
 freq_50MHz  frequency  
@@ -199,7 +178,7 @@ single_cut  spherical_cut
  
 Antenna_plus_dish  scatterer_cluster  
 (
-  scatterers       : sequence(ref(first_ant_scatterer_cluster),ref(single_reflector))
+  scatterers       : sequence(ref(Antenna),ref(single_reflector))
 )
  
 polygonal_struts_01  polygonal_struts  
@@ -252,33 +231,24 @@ strut4  coor_sys
  
 Ant_dish_struts  scatterer_cluster  
 (
-  scatterers       : sequence(ref(Antenna_plus_dish),ref(polygonal_struts_01))
+  scatterers       : sequence(ref(Antenna_plus_dish),ref(polygonal_struts_01),ref(rectangular_plate))
 )
  
 freq_20_80_df_5_MHz_01  frequency_range  
 (
-  frequency_range  : struct(start_frequency: 9.0 MHz, end_frequency: 80.0 MHz, number_of_frequencies: 30)
+  frequency_range  : struct(start_frequency: "ref(start_f)" MHz, end_frequency: "ref(end_f)" MHz, 
+number_of_frequencies: "ref(n_f)")
 )
  
 voltage_generator2  voltage_generator  
 (
   generators       : sequence
-    (    struct(x: 0.0 m, y: 0.0 m, z: 1.5 m, amplitude: 1.0 V, phase: 90.0)
+    (    struct(x: "ref(separation)" m, y: 0.0 m, z: 1.5 m, amplitude: 1.0 V, phase: 90.0)
     ),
   parameter_selection : s_parameters,
   parameter_file   : S_parameters.par,
-  composite_beam   : no,
+  composite_beam   : yes,
   coor_sys         : ref(base)
-)
- 
-minus_y_terminal  piecewise_straight_wire  
-(
-  coor_sys         : ref(base),
-  nodes            : sequence
-    (    struct(x: 0.0 m, y: -0.45E-01 m, z: 1.5 m),
-    struct(x: 0.0 m, y: 0.0 m, z: 1.5 m)
-    ),
-  radius           : 0.1E-01 m
 )
  
 NewStrut2  coor_sys  
@@ -296,7 +266,6 @@ NewStrut1  coor_sys
 NewStrut3  coor_sys  
 (
   x_axis           : struct(x: 0.998897326518368, y: 0.0, z: -0.469481743463633E-01),
-  y_axis           : struct(x: 0.0, y: 1.0, z: 0.0),
   base             : ref(strut3)
 )
  
@@ -329,6 +298,207 @@ rectangular_plate  rectangular_plate
  
 PerfCond  perfect_conductivity  
 (
+)
+ 
+plus_y_leaf_mx  tabulated_mesh  
+(
+  coor_sys         : ref(minus_x_plus_y),
+  file_name        : patch_leaf_inverted_V.msh
+)
+ 
+minus_x_leaf_my  tabulated_mesh  
+(
+  coor_sys         : ref(minus_y_plus_x),
+  file_name        : patch_leaf_inverted_V.msh
+)
+ 
+minus_y_leaf_px  tabulated_mesh  
+(
+  coor_sys         : ref(plus_x_plus_y),
+  file_name        : patch_leaf_inverted_V.msh
+)
+ 
+plus_x_leaf_py  tabulated_mesh  
+(
+  coor_sys         : ref(plus_y_plus_x),
+  file_name        : patch_leaf_inverted_V.msh
+)
+ 
+minus_x_plus_y  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: "ref(separation)" m, z: 0.0 m),
+  base             : ref(minus_X)
+)
+ 
+separation  real_variable  
+(
+  value            : 1.75
+)
+ 
+minus_x_minus_y  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: "-ref(separation)" m, z: 0.0 m),
+  base             : ref(minus_X)
+)
+ 
+minus_y_plus_x  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: "ref(separation)" m, z: 0.0 m),
+  base             : ref(minus_Y)
+)
+ 
+minus_y_minus_x  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: "-ref(separation)" m, z: 0.0 m),
+  base             : ref(minus_Y)
+)
+ 
+plus_y_plus_x  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: "ref(separation)" m, z: 0.0 m),
+  base             : ref(plus_Y)
+)
+ 
+plus_y_minus_x  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: "-ref(separation)" m, z: 0.0 m),
+  base             : ref(plus_Y)
+)
+ 
+plus_x_plus_y  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: "ref(separation)" m, z: 0.0 m),
+  base             : ref(base)
+)
+ 
+plus_x_minus_y  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: "-ref(separation)" m, z: 0.0 m),
+  base             : ref(base)
+)
+ 
+plus_x_dipole  scatterer_cluster  
+(
+  scatterers       : sequence(ref(plus_x_leaf_my),ref(plus_x_terminal),ref(plus_x_terminal2),
+ref(plus_x_leaf_py))
+)
+ 
+minus_x_dipole  scatterer_cluster  
+(
+  scatterers       : sequence(ref(minus_x_leaf_my),ref(minus_x_leaf_py),ref(minus_x_terminal),
+ref(minus_x_terminal2))
+)
+ 
+plus_y_dipole  scatterer_cluster  
+(
+  scatterers       : sequence(ref(plus_y_leaf_px),ref(plus_y_leaf_mx),ref(plus_y_terminal),
+ref(plus_y_terminal2))
+)
+ 
+minus_y_dipole  scatterer_cluster  
+(
+  scatterers       : sequence(ref(minus_y_leaf_mx),ref(minus_y_leaf_px),ref(minus_y_terminal),
+ref(minus_y_terminal2))
+)
+ 
+minus_x_terminal2  piecewise_straight_wire  
+(
+  coor_sys         : ref(plus_y_minus_x),
+  nodes            : sequence
+    (    struct(x: 0.0 m, y: 0.0 m, z: 1.5 m),
+    struct(x: 0.45E-01 m, y: 0.0 m, z: 1.5 m)
+    ),
+  radius           : 0.1E-01 m
+)
+ 
+plus_x_terminal  piecewise_straight_wire  
+(
+  coor_sys         : ref(minus_y_minus_x),
+  nodes            : sequence
+    (    struct(x: -0.45E-01 m, y: 0.0 m, z: 1.5 m),
+    struct(x: 0.0 m, y: 0.0 m, z: 1.5 m)
+    ),
+  radius           : 0.1E-01 m
+)
+ 
+plus_x_terminal2  piecewise_straight_wire  
+(
+  coor_sys         : ref(minus_y_minus_x),
+  nodes            : sequence
+    (    struct(x: 0.0 m, y: 0.0 m, z: 1.5 m),
+    struct(x: 0.45E-01 m, y: 0.0 m, z: 1.5 m)
+    ),
+  radius           : 0.1E-01 m
+)
+ 
+plus_y_terminal  piecewise_straight_wire  
+(
+  coor_sys         : ref(plus_x_minus_y),
+  nodes            : sequence
+    (    struct(x: -0.45E-01 m, y: 0.0 m, z: 1.5 m),
+    struct(x: 0.0 m, y: 0.0 m, z: 1.5 m)
+    ),
+  radius           : 0.1E-01 m
+)
+ 
+plus_y_terminal2  piecewise_straight_wire  
+(
+  coor_sys         : ref(plus_x_minus_y),
+  nodes            : sequence
+    (    struct(x: 0.0 m, y: 0.0 m, z: 1.5 m),
+    struct(x: 0.45E-01 m, y: 0.0 m, z: 1.5 m)
+    ),
+  radius           : 0.1E-01 m
+)
+ 
+minus_y_terminal  piecewise_straight_wire  
+(
+  coor_sys         : ref(minus_x_minus_y),
+  nodes            : sequence
+    (    struct(x: -0.45E-01 m, y: 0.0 m, z: 1.5 m),
+    struct(x: 0.0 m, y: 0.0 m, z: 1.5 m)
+    ),
+  radius           : 0.1E-01 m
+)
+ 
+minus_y_terminal2  piecewise_straight_wire  
+(
+  coor_sys         : ref(minus_x_minus_y),
+  nodes            : sequence
+    (    struct(x: 0.0 m, y: 0.0 m, z: 1.5 m),
+    struct(x: 0.45E-01 m, y: 0.0 m, z: 1.5 m)
+    ),
+  radius           : 0.1E-01 m
+)
+ 
+voltage_generator1  voltage_generator  
+(
+  generators       : sequence
+    (    struct(x: "-ref(separation)" m, y: 0.0 m, z: 1.5 m, amplitude: 1.0 V, phase: 90.0)
+    ),
+  parameter_selection : s_parameters,
+  parameter_file   : S_parameters.par,
+  coor_sys         : ref(base)
+)
+ 
+start_f  real_variable  
+(
+  value            : 9.0
+)
+ 
+end_f  real_variable  
+(
+  value            : 80.0
+)
+ 
+n_f  real_variable  
+(
+  value            : 30.0
+)
+ 
+z_dist  real_variable  
+(
+  value            : 15.0
 )
  
 //DO NOT MODIFY OBJECTS BELOW THIS LINE.
@@ -386,5 +556,5 @@ view_1_polygonal_struts_plot  polygonal_struts_plot
 (
 )
  
- //$$ Saved at 21:05:14 on 14.02.2018 by GRASP ver. 10.3.1 SN=005505
+ //$$ Saved at 13:31:29 on 26.02.2018 by GRASP ver. 10.3.1 SN=005505
   
