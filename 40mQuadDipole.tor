@@ -53,8 +53,8 @@ mom  mom
  
 spherical_cut  spherical_cut  
 (
-  coor_sys         : ref(base),
-  theta_range      : struct(start: 0.0, end: 360.0, np: 201),
+  coor_sys         : ref(single_global_coor),
+  theta_range      : struct(start: -180.0, end: 180.0, np: 201),
   phi_range        : struct(start: 0.0, end: 90.0, np: 3),
   file_name        : Field_Data.cut,
   comment          : "Field data in cuts",
@@ -243,11 +243,11 @@ number_of_frequencies: "ref(n_f)")
 voltage_generator2  voltage_generator  
 (
   generators       : sequence
-    (    struct(x: "ref(separation)" m, y: 0.0 m, z: 1.5 m, amplitude: 1.0 V, phase: 90.0)
+    (    struct(x: "ref(separation)" m, y: 0.0 m, z: 1.5 m, amplitude: 1.0 V, phase: 90.0),
+    struct(x: "-ref(separation)" m, y: 0.0 m, z: 1.5 m, amplitude: 1.0 V, phase: 90.0)
     ),
   parameter_selection : s_parameters,
   parameter_file   : S_parameters.par,
-  composite_beam   : yes,
   coor_sys         : ref(base)
 )
  
@@ -290,10 +290,9 @@ Mounting_Plate  coor_sys
 rectangular_plate  rectangular_plate  
 (
   coor_sys         : ref(Mounting_Plate),
-  corner_1         : struct(x: 1.0 m, y: 1.0 m, z: 0.0 m),
-  corner_2         : struct(x: -1.0 m, y: 1.0 m, z: 0.0 m),
-  opp_point        : struct(x: 0.0 m, y: -1.0 m, z: 0.0 m),
-  el_prop          : sequence(ref(PerfCond))
+  corner_1         : struct(x: 1.3 m, y: 1.3 m, z: 0.0 m),
+  corner_2         : struct(x: -1.3 m, y: 1.3 m, z: 0.0 m),
+  opp_point        : struct(x: 0.0 m, y: -1.3 m, z: 0.0 m)
 )
  
 PerfCond  perfect_conductivity  
@@ -471,16 +470,6 @@ minus_y_terminal2  piecewise_straight_wire
   radius           : 0.1E-01 m
 )
  
-voltage_generator1  voltage_generator  
-(
-  generators       : sequence
-    (    struct(x: "-ref(separation)" m, y: 0.0 m, z: 1.5 m, amplitude: 1.0 V, phase: 90.0)
-    ),
-  parameter_selection : s_parameters,
-  parameter_file   : S_parameters.par,
-  coor_sys         : ref(base)
-)
- 
 start_f  real_variable  
 (
   value            : 9.0
@@ -498,7 +487,22 @@ n_f  real_variable
  
 z_dist  real_variable  
 (
-  value            : 15.0
+  value            : 15.5
+)
+ 
+director_distance  real_variable  
+(
+  value            : 1.7
+)
+ 
+director_length  real_variable  
+(
+  value            : 0.75
+)
+ 
+director_width  real_variable  
+(
+  value            : 0.25
 )
  
 //DO NOT MODIFY OBJECTS BELOW THIS LINE.
@@ -556,5 +560,5 @@ view_1_polygonal_struts_plot  polygonal_struts_plot
 (
 )
  
- //$$ Saved at 13:31:29 on 26.02.2018 by GRASP ver. 10.3.1 SN=005505
+ //$$ Saved at 19:11:15 on 01.03.2018 by GRASP ver. 10.3.1 SN=005505
   

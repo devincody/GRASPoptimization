@@ -123,7 +123,7 @@ def plot_cut(frequency, cut, z, title):
 		axi = ax[i]
 		series_name_co = "f%4.2f:p%4.2f:co" %(frequency, phi)
 		series_name_cx = "f%4.2f:p%4.2f:cx" %(frequency, phi)
-		axi.plot(cut["angles"]-180,cut[series_name_co], 'b', label= "co")
+		axi.plot(cut["angles"],cut[series_name_co], 'b', label= "co")
 		# axi.plot(cut["angles"]-180,cut[series_name_cx], 'r', label= "cx")
 		axi.set_title("$\phi$ = %4.2f" %phi, fontsize = 20)
 		axi.legend()

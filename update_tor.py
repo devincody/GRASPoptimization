@@ -8,19 +8,19 @@ import pandas as pd
 import os
 
 plt.rc('axes', linewidth=1)
-GRASP_working_file = "F:/Devin/Grasp/LWASandbox/40mLWA/working/"
-model_file = "model_tor.txt"
-out_file = GRASP_working_file + "40mLWA.tor"
+GRASP_working_file = "F:/Devin/Grasp/LWASandbox/40mQuadDipole/working/"
+model_file = "40mQuadDipole.tor"
+out_file = GRASP_working_file + "40mQuadDipole.tor"
 
 def edit_tor(model, out, z):
 	print("Opening Files")
 	f = open(model,'r')
 	g = open(out,'w+')
 
-	for i in range(8):
+	for i in range(489): #0-indexed line number
 		g.write(f.readline())
 
-	g.write("  origin           : struct(x: 0.0 m, y: 0.0 m, z: %4.2f m),\n" % z)
+	g.write("  value            : %4.2f\n" % z)
 	f.readline()
 
 	for i in f:
@@ -50,8 +50,6 @@ print(results_path)
 for direct in ["/plots/", "/plots/Efficiency/", "/plots/SEFD/", "/plots/Patterns/", "/data/"]:
 	if not os.path.exists(results_path + direct):
 		os.mkdir(results_path + direct)
-
-
 
 for z in np.linspace(13,17.5, 50):
 	plots_directory = results_path + "/plots/"
@@ -92,3 +90,6 @@ for z in np.linspace(13,17.5, 50):
 	for ii in range(len(freq)):
 		x.write("%6.2f, %6.2f, %6.2f, %6.2f, %6.2f, %6.2f, %6.2f\n" % (freq[ii], s11[ii], dmax[ii], mis[ii], aperture[ii], tsys[ii]/1E3, SEFD[ii]/1E6))
 	x.close()
+
+
+	#calculate the loss funciton
