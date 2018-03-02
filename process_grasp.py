@@ -10,7 +10,7 @@ def main():
 	plot_pair_efficiencies(freq, s11, dmax, "Efficiencies.png", 16)
 
 
-def process_par(f_name):
+def process_par(f_name): #Process S parameters document return  1D numpy arrays of frequencies and s11s
 	f = open(f_name)
 	f.readline() #ignore header
 	freq = []
