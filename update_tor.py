@@ -6,11 +6,15 @@ import time
 from datetime import datetime
 import pandas as pd
 import os
+import scipy.optimize as op
 
 def main():
 	results_path = gen_results_folder()
-	print (run_GRASP([1,2,3], results_path))
-	print(run_GRASP([4.1,2,3], results_path))
+	path = tuple([results_path])
+	# print (run_GRASP([1.2, .7, .4, -1.0], path))
+	print(op.minimize(run_GRASP, x0=[1.2, .7, .4, -1.0], args=(results_path), method='Nelder-Mead', bounds=((0, 1.5), (0, 1.5), (0, .75), (-1.2, 0)) ))
+	
+
 
 def edit_tor(template, out_file, change_list, modified_line): #template 
 	print("Opening Files")
@@ -26,6 +30,43 @@ def edit_tor(template, out_file, change_list, modified_line): #template
 	g.close()
 	f.close()
 	print("Done writing TOR")
+
+def edit_msh(x, y, z, GRASP_working_file):
+	msh_template = "patch_leaf_inverted_V.msh"
+	msh_out = GRASP_working_file + msh_template
+
+	modified_line = []
+	change_list = range(28,39,2)
+	origin = np.array([[.08,-.012, 1.5],[.08,    0, 1.5],[.08, .012, 1.5]])
+	point_data = [[2,  1],	#10
+				  [0,  1],  #11
+				  [2, .5], 	#12
+				  [1,  1],  #13
+				  [0, .5],	#14
+				  [1, .5]]	#15
+
+	for pt in point_data:
+		diff = np.array([x, y, z])
+		if pt[0] == 0:
+			diff[1] *= -1
+		elif pt[0] == 1:
+			diff[1] = 0
+		diff *= pt[1]
+		modified_line.append("%6.3f  %6.3f  %6.3f\n" % tuple(diff+origin[pt[0]]))
+
+	f = open(msh_template,'r')
+	g = open(msh_out,'w+')
+
+	for i, line in enumerate(f): #0-indexed line number
+		if i in change_list:
+			g.write(modified_line[change_list.index(i)])
+		else:
+			g.write(line)
+
+	g.close()
+	f.close()
+	print("Done writing MSH")
+
 
 def create_file_w_timestamp(location = os.getcwd()):
 	file_name = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -46,21 +87,24 @@ def gen_results_folder():
 	return results_path
 	
 def run_GRASP(parameters, results_path):
-
+	# results_path = results_path[0]
+	print(results_path)
 	plt.rc('axes', linewidth=1)
 	GRASP_working_file = "F:/Devin/Grasp/LWASandbox/40mQuadDipole/working/"
 	model_file = "40mQuadDipole.tor"
 	out_file = GRASP_working_file + "40mQuadDipole.tor"
 
 
-	x 	= parameters[0]
-	y 	= parameters[1]
-	z 	= parameters[2]
-	#	= parameters[3]
+	separation 	= parameters[0]
+	x 	= parameters[1]
+	y 	= parameters[2]
+	z	= parameters[3]
+
+	edit_msh(x, y, z, GRASP_working_file)
 
 	#########  Generate folders  ###########
-
-	results_path += "/x=%4.2f_y=%4.2f_z=%4.2f" % tuple(parameters)
+	results_path += "/separation=%4.2f_x=%4.2f_y=%4.2f_z=%4.2f" % tuple(parameters)
+	# results_path += "/separation=%4.2f" % tuple(parameters)
 	if not os.path.exists(results_path):
 		os.mkdir(results_path)
 	print(results_path)
@@ -70,21 +114,21 @@ def run_GRASP(parameters, results_path):
 			os.mkdir(results_path + direct)
 
 	losses = []
-	for AntPos in np.linspace(13,17.5, 2):
+	for AntPos in np.linspace(13,17.5, 15):
 
-		change_list = [489]
-		mod_line 	= ["  value            : %4.2f\n" % AntPos]
+		change_list = [489, 333]
+		mod_line 	= ["  value            : %4.2f\n" % AntPos, "  value            : %4.2f\n" % separation]
 		edit_tor(model_file, out_file, change_list, mod_line) # <====== edit all tor files here
 
 
 		command = "grasp-analysis batch.gxp out.out out.log"
 		process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, cwd = GRASP_working_file)
 		output, error = process.communicate()
-		print("Done executing grasp")
+		# print("Done executing grasp")
 		#print(output, error)
 
 		#########  Process data files  ###########
-		print("preparing to Plot")
+		# print("preparing to Plot")
 		freq, s11 = process_grasp.process_par(GRASP_working_file + "S_parameters.par")
 		dmax, cut = process_grasp.process_cut(GRASP_working_file + "Field_Data.cut", freq)
 		mis = process_grasp.calc_mismatch(s11)
@@ -116,7 +160,10 @@ def run_GRASP(parameters, results_path):
 		x.close()
 
 	minLoss = np.min(losses)
-	os.rename(results_path, results_path + "_minLoss = %4.2f" % minLoss)
+	try:
+		os.rename(results_path, results_path + "_minLoss = %4.3f" % minLoss)
+	except:
+		print("Error: Cannot rename file %f" %results_path)
 	return minLoss
 
 def loss(freq, effic):
@@ -124,7 +171,7 @@ def loss(freq, effic):
 	ans = 0
 	n = 0
 	for i, f in enumerate(freq):
-		if (f > 30 and f < 90):
+		if (f >= 60 and f <= 80):
 			ans -= effic[i]
 			n+= 1
 	return ans/n
