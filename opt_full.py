@@ -13,13 +13,13 @@ def main():
 	path = tuple([results_path])
 	# print (run_GRASP([1.2, .7, .4, -1.0], path))
 
-	x_init = [1.4, 1.12, .26, -1.34, 1.23, .482, .232]
+	x_init = [1.06, .8, .19, -1.34, 1.23, .482, .232]
 			 #sep,    x,   y,     z, dirL, dirW, dirS
 	method = 'Nelder-Mead'
-	bnd = ((0, 1.5), (0, 1.5), (0, .75), (-1.5, 0), (0,3.5), (0, 2), (0,1.5))
+	#bnd = ((0, 1.5), (0, 1.5), (0, .75), (-1.5, 0), (0,3.5), (0, 2), (0,1.5))
 		   #sep,      x,        y,        z,         dirL,    dirW,   dirS
-	constr = ({'type':'ineq', 'fun': lambda x: x[0] - x[1] - x[2] - 0.08 - 0.012}) # 
-	print(op.minimize(run_GRASP, x0=x_init, args=(results_path), method=method, bounds= bnd, constraints = constr))
+	#constr = ({'type':'ineq', 'fun': lambda x: x[0] - x[1] - x[2] - 0.08 - 0.012}) # 
+	print(op.minimize(run_GRASP, x0=x_init, args=(results_path), method=method))#, bounds= bnd, constraints = constr))
 	
 
 
@@ -93,6 +93,10 @@ def gen_results_folder():
 	results_path += create_file_w_timestamp(results_path)
 	return results_path
 	
+
+def check_ant_intersection(parameters):
+	return parameters[0] - parameters[1] - parameters[2] - 0.08 - 0.012
+
 def run_GRASP(parameters, results_path):
 	# results_path = results_path[0]
 	print(results_path)
@@ -110,22 +114,45 @@ def run_GRASP(parameters, results_path):
 	dir_wid = parameters[5]
 	dir_sep = parameters[6]
 
-
-	edit_msh(x, y, z, GRASP_working_file)
+	
 
 	#########  Generate folders  ###########
 	results_path += "/sp=%4.2f_x=%4.2f_y=%4.2f_z=%4.2f_dl=%4.2f_dw=%4.2f_ds=%4.2f" % tuple(parameters)
-	# results_path += "/separation=%4.2f" % tuple(parameters)
 	if not os.path.exists(results_path):
 		os.mkdir(results_path)
 	print(results_path)
 
+	# Check out of Bounds
+	bnd = [[.75, 2.0], [0, 1.5], [0, .75], [-2.5, 0], [0,3.5], [0, 2], [0,1.5]]
+	error = 0.0
+	for i, par in enumerate(parameters):
+		if par < bnd[i][0]:
+			print("Out of bounds, parameter: %d", i)
+			error += (par-bnd[i][0])**2
+		if par > bnd[i][1]:
+			print("Out of bounds, parameter: %d", i)
+			error += (par-bnd[i][1])**2
+	if 0 < check_ant_intersection(parameters):
+		print("Antenna Intersection")
+		error += check_ant_intersection(parameters)**2
+	if error > 0.000000001:
+		try:
+			os.rename(results_path, results_path + "_minLoss = %4.3f" % error)
+		except:
+			print("Error: Cannot rename file %f" %results_path)
+		return error
+
+	# Generate Sub Folders
 	for direct in ["/plots/", "/plots/Efficiency/", "/plots/SEFD/", "/plots/Patterns/", "/data/"]:
 		if not os.path.exists(results_path + direct):
 			os.mkdir(results_path + direct)
 
+	#Edit the Antenna Mesh File
+	edit_msh(x, y, z, GRASP_working_file)
+
+	# Optimize over phase center
 	losses = []
-	for AntPos in np.linspace(13,17.5, 15):
+	for AntPos in np.linspace(14, 16.7, 10):
 
 		change_list = [489, 333, 502, 507, 512]
 		       #dipole_sep, sep, dirL,dirW,dirS
