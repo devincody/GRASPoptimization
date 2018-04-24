@@ -246,14 +246,14 @@ class antenna(object):
 		print("EXECUTING GRASP")
 		if (self.grasp_version == 10.6):
 			command = ["C:/Program Files/TICRA/GRASP-10.6.0/bin/grasp-analysis", "batch.gxp", "out.out", "out.log"]
-			print("using version 10.6.0")
+			print("Using Version 10.6.0")
 		elif (self.grasp_version == 10.3):
 			command = ["C:/Program Files/TICRA/GRASP-10.3.1/bin/grasp-analysis", "batch.gxp", "out.out", "out.log"]
-			print("using version 10.3.1")
+			print("Using Version 10.3.1")
 		else:
 			command = ["grasp-analysis", "batch.gxp", "out.out", "out.log"]
-			print("using version from PATH")
-		print ("command: ", command)
+			print("Using Version from PATH")
+		# print ("command: ", command)
 		sys.stdout.flush()
 
 		process = subprocess.Popen(command, stdout=subprocess.PIPE, cwd = self.GRASP_working_file)
