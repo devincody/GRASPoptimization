@@ -4,10 +4,11 @@ plus_y_leaf_px  tabulated_mesh
   file_name        : patch_leaf_inverted_V.msh
 )
  
-base  coor_sys  
+base  coor_sys_grasp_angles  
 (
   origin           : struct(x: 0.0 m, y: 0.0 m, z: "ref(z_dist)" m),
-  y_axis           : struct(x: 0.0, y: -1.0, z: 0.0),
+  theta            : 180.0,
+  psi              : "180-ref(alpha)",
   base             : ref(single_global_coor)
 )
  
@@ -331,7 +332,7 @@ minus_x_plus_y  coor_sys
  
 separation  real_variable  
 (
-  value            : 1.75
+  value            : 1.2
 )
  
 minus_x_minus_y  coor_sys  
@@ -487,7 +488,7 @@ n_f  real_variable
  
 z_dist  real_variable  
 (
-  value            : 15.5
+  value            : 13.0
 )
  
 director_distance  real_variable  
@@ -503,6 +504,11 @@ director_length  real_variable
 director_width  real_variable  
 (
   value            : 0.25
+)
+ 
+alpha  real_variable  
+(
+  value            : 45.0
 )
  
 //DO NOT MODIFY OBJECTS BELOW THIS LINE.
@@ -560,5 +566,5 @@ view_1_polygonal_struts_plot  polygonal_struts_plot
 (
 )
  
- //$$ Saved at 19:11:15 on 01.03.2018 by GRASP ver. 10.3.1 SN=005505
+ //$$ Saved at 23:32:06 on 23.04.2018 by GRASP ver. 10.3.1 SN=006343
   

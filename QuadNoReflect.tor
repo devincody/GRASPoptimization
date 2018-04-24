@@ -4,11 +4,10 @@ plus_y_leaf_px  tabulated_mesh
   file_name        : patch_leaf_inverted_V.msh
 )
  
-base  coor_sys_grasp_angles  
+base  coor_sys  
 (
   origin           : struct(x: 0.0 m, y: 0.0 m, z: "ref(z_dist)" m),
-  theta            : 180.0,
-  psi              : "180-ref(alpha)",
+  y_axis           : struct(x: 0.0, y: -1.0, z: 0.0),
   base             : ref(single_global_coor)
 )
  
@@ -332,7 +331,7 @@ minus_x_plus_y  coor_sys
  
 separation  real_variable  
 (
-  value            : 1.31192
+  value            :  1.052
 )
  
 minus_x_minus_y  coor_sys  
@@ -473,7 +472,7 @@ minus_y_terminal2  piecewise_straight_wire
  
 start_f  real_variable  
 (
-  value            : 60.0
+  value            : 9.0
 )
  
 end_f  real_variable  
@@ -483,12 +482,12 @@ end_f  real_variable
  
 n_f  real_variable  
 (
-  value            : 5.0
+  value            : 30.0
 )
  
 z_dist  real_variable  
 (
-  value            : 15.1
+  value            : 15.800
 )
  
 Dir_minusx_minusy  rectangular_plate  
@@ -501,17 +500,17 @@ Dir_minusx_minusy  rectangular_plate
  
 dir_len  real_variable  
 (
-  value            : 2.04563
+  value            :  1.063
 )
  
 dir_wid  real_variable  
 (
-  value            : 0.29609
+  value            :  0.601
 )
  
 dir_sep  real_variable  
 (
-  value            : 1.07623
+  value            :  0.300
 )
  
 ant_apex  real_variable  
@@ -541,11 +540,6 @@ Dir_minusx_plusy  rectangular_plate
   corner_1         : struct(x: "ref(dir_len)/2" m, y: "ref(dir_wid)/2" m, z: "ref(dir_sep)+ref(ant_apex)" m),
   corner_2         : struct(x: "ref(dir_len)/2" m, y: "-ref(dir_wid)/2" m, z: "ref(dir_sep)+ref(ant_apex)" m),
   opp_point        : struct(x: "-ref(dir_len)/2" m, y: "-ref(dir_wid)/2" m, z: "ref(dir_sep)+ref(ant_apex)" m)
-)
- 
-alpha  real_variable  
-(
-  value            : 45.0
 )
  
 //DO NOT MODIFY OBJECTS BELOW THIS LINE.
@@ -603,5 +597,5 @@ view_1_polygonal_struts_plot  polygonal_struts_plot
 (
 )
  
- //$$ Saved at 23:33:26 on 23.04.2018 by GRASP ver. 10.3.1 SN=006343
+ //$$ Saved at 21:43:19 on 05.03.2018 by GRASP ver. 10.3.1 SN=005505
   

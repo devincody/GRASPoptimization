@@ -28,16 +28,27 @@ def process_cut(f_name, freq):
 	f = open(f_name)
 	line = f.readline()
 	dmax = []
-	i = -1
+	i = -1 # Frequency Index
 	cut = pd.DataFrame()
 	while ("Field data" in line):
 		line = f.readline()
 		line = line.split()
 		line = [float(x) for x in line]
+
+		'''
+		line: Headder defined as per the grasp manual:
+		0: starting angle
+		1: angle delta
+		2: number of angles
+		3: phi cut
+		4-6: Various parameters related to polarization and radiation pattern data representation
+		'''
+
 		# print ("Headder = ", line)
-		phi = line[3]
+		phi = line[3] #should be 3 possible values: 0, 45, 90
 		if (phi == 0):
 			i += 1
+
 		frequency = freq[i]
 		series_name_co = "f%4.2f:p%4.2f:co" %(frequency, phi)
 		series_name_cx = "f%4.2f:p%4.2f:cx" %(frequency, phi)
@@ -47,7 +58,7 @@ def process_cut(f_name, freq):
 		dbi_cx = []
 
 		for ii in range(int(line[2])):
-			angle=line[0] + ii*line[1]
+			angle=line[0] + ii*line[1] - 180. #180 used because antenna is technically upside down
 			angles.append(angle)
 			fields = [float(x) for x in f.readline().split()]
 			cx = 10*np.log10(fields[0]**2 + fields[1]**2)
@@ -104,11 +115,11 @@ def plot_pair_efficiencies(freq, s11, dmax, location, z):
 
 def plot_SEFD(freq, dmax, location, z):
 	plt.figure()
-	plt.plot(freq,SEFD(freq, dmax), 'b', label= "SEFD")
+	plt.semilogy(freq,SEFD(freq, dmax), 'b', label= "SEFD")
 	plt.title("SEFD at z = %4.2f" % z)
 	plt.xlabel("Frequency [MHz]")
 	plt.ylabel("SEFD")
-	plt.ylim([0, 5E5])
+	plt.ylim([1, 5E5])
 
 	plt.legend()
 	plt.savefig(location)
@@ -119,11 +130,27 @@ def plot_cut(frequency, cut, z, title):
 	#
 	plt.rc('axes', linewidth=2)
 	fig, ax = plt.subplots(1,3, figsize=(30,10)) #each of the phis
+
 	for i, phi in enumerate([0, 45, 90]):
 		axi = ax[i]
 		series_name_co = "f%4.2f:p%4.2f:co" %(frequency, phi)
 		series_name_cx = "f%4.2f:p%4.2f:cx" %(frequency, phi)
-		axi.plot(cut["angles"],cut[series_name_co], 'b', label= "co")
+
+
+		data = np.copy(cut[series_name_co])
+
+
+
+		#For Feed Patterns
+		# half = int(len(data)/2)
+		# temp = np.copy(data[half:])
+		# temp1 = np.copy(data[:half])
+		# data[len(temp):] = temp1
+		# data[:len(temp)] = temp
+
+		axi.plot(cut["angles"] ,data, 'b', label= "co")
+
+
 		# axi.plot(cut["angles"]-180,cut[series_name_cx], 'r', label= "cx")
 		axi.set_title("$\phi$ = %4.2f" %phi, fontsize = 20)
 		axi.legend()
@@ -156,7 +183,7 @@ def plot_cut(frequency, cut, z, title):
 
 
 def Tsys(freq):
-	return 300*(150/freq)**2.5 + 300
+	return 300*(150/freq)**2.5 + 600
 
 
 def SEFD(freq, dmax):

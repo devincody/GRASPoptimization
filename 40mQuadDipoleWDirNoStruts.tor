@@ -4,11 +4,10 @@ plus_y_leaf_px  tabulated_mesh
   file_name        : patch_leaf_inverted_V.msh
 )
  
-base  coor_sys_grasp_angles  
+base  coor_sys  
 (
   origin           : struct(x: 0.0 m, y: 0.0 m, z: "ref(z_dist)" m),
-  theta            : 180.0,
-  psi              : "180-ref(alpha)",
+  y_axis           : struct(x: 0.0, y: -1.0, z: 0.0),
   base             : ref(single_global_coor)
 )
  
@@ -182,22 +181,6 @@ Antenna_plus_dish  scatterer_cluster
   scatterers       : sequence(ref(Antenna),ref(single_reflector))
 )
  
-polygonal_struts_01  polygonal_struts  
-(
-  position         : sequence
-    (    struct(coor_sys: ref(NewStrut1), z1: 0.0 m, z2: 20.91 m),
-    struct(coor_sys: ref(NewStrut2), z1: 0.0 m, z2: 20.91 m),
-    struct(coor_sys: ref(NewStrut3), z1: 0.0 m, z2: 20.91 m),
-    struct(coor_sys: ref(NewStrut4), z1: 0.0 m, z2: 20.91 m)
-    ),
-  cross_section    : sequence
-    (    struct(x: -13.0 in, y: -13.0 in),
-    struct(x: -13.0 in, y: 13.0 in),
-    struct(x: 13.0 in, y: 13.0 in),
-    struct(x: 13.0 in, y: -13.0 in)
-    )
-)
- 
 strut1  coor_sys  
 (
   origin           : struct(x: 6.57 m, y: 6.57 m, z: 1.3 m),
@@ -232,13 +215,13 @@ strut4  coor_sys
  
 Ant_dish_struts  scatterer_cluster  
 (
-  scatterers       : sequence(ref(Antenna_plus_dish),ref(polygonal_struts_01),ref(rectangular_plate))
+  scatterers       : sequence(ref(Antenna_plus_dish),ref(rectangular_plate))
 )
  
 freq_20_80_df_5_MHz_01  frequency_range  
 (
   frequency_range  : struct(start_frequency: "ref(start_f)" MHz, end_frequency: "ref(end_f)" MHz, 
-number_of_frequencies: "ref(n_f)")
+number_of_frequencies: 20)
 )
  
 voltage_generator2  voltage_generator  
@@ -332,7 +315,7 @@ minus_x_plus_y  coor_sys
  
 separation  real_variable  
 (
-  value            : 1.31192
+  value            : 1.05
 )
  
 minus_x_minus_y  coor_sys  
@@ -473,22 +456,22 @@ minus_y_terminal2  piecewise_straight_wire
  
 start_f  real_variable  
 (
-  value            : 60.0
+  value            : 40.0
 )
  
 end_f  real_variable  
 (
-  value            : 80.0
+  value            : 90.0
 )
  
 n_f  real_variable  
 (
-  value            : 5.0
+  value            : 50.0
 )
  
 z_dist  real_variable  
 (
-  value            : 15.1
+  value            : 16.55556
 )
  
 Dir_minusx_minusy  rectangular_plate  
@@ -501,17 +484,17 @@ Dir_minusx_minusy  rectangular_plate
  
 dir_len  real_variable  
 (
-  value            : 2.04563
+  value            : 1.06
 )
  
 dir_wid  real_variable  
 (
-  value            : 0.29609
+  value            : 0.6
 )
  
 dir_sep  real_variable  
 (
-  value            : 1.07623
+  value            : 0.3
 )
  
 ant_apex  real_variable  
@@ -541,11 +524,6 @@ Dir_minusx_plusy  rectangular_plate
   corner_1         : struct(x: "ref(dir_len)/2" m, y: "ref(dir_wid)/2" m, z: "ref(dir_sep)+ref(ant_apex)" m),
   corner_2         : struct(x: "ref(dir_len)/2" m, y: "-ref(dir_wid)/2" m, z: "ref(dir_sep)+ref(ant_apex)" m),
   opp_point        : struct(x: "-ref(dir_len)/2" m, y: "-ref(dir_wid)/2" m, z: "ref(dir_sep)+ref(ant_apex)" m)
-)
- 
-alpha  real_variable  
-(
-  value            : 45.0
 )
  
 //DO NOT MODIFY OBJECTS BELOW THIS LINE.
@@ -603,5 +581,5 @@ view_1_polygonal_struts_plot  polygonal_struts_plot
 (
 )
  
- //$$ Saved at 23:33:26 on 23.04.2018 by GRASP ver. 10.3.1 SN=006343
+ //$$ Saved at 10:54:39 on 13.03.2018 by GRASP ver. 10.3.1 SN=005505
   
