@@ -56,7 +56,7 @@ def main():
 	method = 'Nelder-Mead'
 	# method = 'Powell'
 	# x = [1.05, .77, .16, -.01, 1.06, .6, .3]
-	x = [1.307, .087, -.15]
+	x = [1.307, .087, -.01]
 	# 	   #sep,      x,        y,        z,         dirL,    dirW,   dirS
 	print(op.minimize(a.simulate_single_configuration, x0=x, args=(names), method=method))#, bounds= bnd, constraints = constr))
 
