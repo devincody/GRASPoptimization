@@ -7,7 +7,7 @@ from AntennaClasses import ELfeedDir, LWA_like
 
 
 def main():
-	a = LWA_like(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.6)
+	a = ELfeedDir(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.6)
 	a.set_number_of_focal_lengths(5)
 
 	names = a.get_parameter_names()

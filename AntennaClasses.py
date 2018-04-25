@@ -256,6 +256,7 @@ class antenna(object):
 
 		process = subprocess.Popen(command, stdout=subprocess.PIPE, cwd = self.GRASP_working_file)
 		output, error = process.communicate()
+		print ("GRASP commuique: ", output, error)
 		print("Done EXECUTING GRASP")
 		sys.stdout.flush()
 
@@ -457,10 +458,10 @@ class LWA_like(antenna):
 		print("Done writing MSH")
 
 class ELfeed(LWA_like):
-	def __init__(self, sp = 1.2,
+	def __init__(self, sp = 1.2, start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
 				bnd_sp = [0, 1.5], grasp_version = 10.3): #seperation is half the distance between dipoles
 		
-		LWA_like.__init__(self, grasp_version = grasp_version)
+		LWA_like.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = 0, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipole"
 		self.gen_file_names()
 
@@ -490,10 +491,11 @@ class ELfeed(LWA_like):
 
 class ELfeedDir(ELfeed):
 	def __init__(self, dl = 1.2, dw = .482, dsep = .25,
+				start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
 				bnd_dl = [0, 2.5], bnd_dw = [0, .75], bnd_dsep = [0, 1.5], #  positive dir_sep vals are directors
 				grasp_version = 10.3): 						   #  Negative dir_sep vals are reflectors
 		
-		ELfeed.__init__(self, grasp_version = grasp_version)
+		ELfeed.__init__(self,start_f = start_f, end_f = end_f, n_f = n_f, alpha = 0, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipoleWDir"
 		self.gen_file_names()
 
@@ -524,9 +526,9 @@ class ELfeedDir(ELfeed):
 
 class ELfeedRef(ELfeedDir):
 	def __init__( dsep = -1.5, bnd_dsep = [-3.05, 0], #  positive dir_sep vals are directors
-				grasp_version = 10.3): 	  #  Negative dir_sep vals are reflectors
+				start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.3): 	  #  Negative dir_sep vals are reflectors
 
-		ELfeedDir.__init__(self, grasp_version = grasp_version)
+		ELfeedDir.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = 0, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipoleWDir"
 		self.gen_file_names()
 

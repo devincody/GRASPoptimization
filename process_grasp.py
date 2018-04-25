@@ -48,6 +48,7 @@ def process_cut(f_name, freq):
 		phi = line[3] #should be 3 possible values: 0, 45, 90
 		if (phi == 0):
 			i += 1
+		print(line, i, freq)
 
 		frequency = freq[i]
 		series_name_co = "f%4.2f:p%4.2f:co" %(frequency, phi)
