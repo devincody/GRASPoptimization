@@ -8,7 +8,7 @@ from AntennaClasses import ELfeedDir, LWA_like
 
 
 def main():
-	a = LWA_like(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.6)
+	a = LWA_like(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 103)
 	a.set_number_of_focal_lengths(5)
 	a.init_global_file_log()
 
@@ -26,7 +26,7 @@ def main():
 	else:
 		print("Executing on Moore")
 		a.set_global_directory_name()
-		a.set_ticra_directory_name()
+		a.set_ticra_directory_name()#"/cygdrive/c/Program Files/TICRA/")
 		a.set_grasp_analysis_extension()
 	
 	a.gen_file_names()
@@ -59,7 +59,7 @@ def nelder_mead(a, names):
 	# method = 'Powell'
 	# x = [1.05, .77, .16, -.01, 1.06, .6, .3]
 
-	x = [.807, .087, -.01]
+	x = [1.494, .4, -.1]
 	# 	   #sep,      x,        y,        z,         dirL,    dirW,   dirS
 	print(op.minimize(a.simulate_single_configuration, x0=x, args=(names), method=method))#, bounds= bnd, constraints = constr))
 

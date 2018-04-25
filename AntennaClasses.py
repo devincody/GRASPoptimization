@@ -161,6 +161,7 @@ class antenna(object):
 		self.log_name = self.get_results_path() +"/log.csv"
 		self.log = open(self.log_name, 'w+')
 		self.log.write(self.__str__() + "\n") #write name of antenna here
+		self.log.write("GRASP Version: " + str(self.grasp_version) + "\n")
 		self.log.close()
 		self._gen_global_log_headers()
 		
@@ -173,7 +174,7 @@ class antenna(object):
 	def _gen_global_log_headers(self):
 		self.log = open(self.log_name, 'a')
 		names = self.get_optimizable_parameter_names()
-		print("gen log head", names)
+		# print("gen log head", names)
 		for x in names:
 			self.log.write(x +",")
 		self.log.write("Efficiency, Loss\n")
@@ -235,7 +236,7 @@ class antenna(object):
 		else:
 			command = ["grasp-analysis", "batch.gxp", "out.out", "out.log"]
 			print("Using Version from PATH")
-		# print ("command: ", command)
+		print ("command: ", command)
 		sys.stdout.flush()
 
 		process = subprocess.Popen(command, stdout=subprocess.PIPE, cwd = self.GRASP_working_file)
