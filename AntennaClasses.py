@@ -87,7 +87,7 @@ class antenna(object):
 		for x in ["z_dist", "start_f", "end_f", "n_f"]:
 			if x in names:
 				names.remove(x)
-		print("OPT NAMES: ", names)
+		# print("OPT NAMES: ", names)
 		return names
 
 	def get_datapoint_string(self, format_str = "%4.3f"):
@@ -330,9 +330,13 @@ class antenna(object):
 		param.append(ef)
 		param.append(minloss) # because intersection, no efficiency to report
 		template = "%7.4f, "*len(param) + '\n' # plus 2 for loss, eff; minus 1 for z_dist
-		self.log = open(self.log_name, 'a')
-		self.log.write(template % tuple(param))
-		self.log.close()
+		try:
+			self.log = open(self.log_name, 'a')
+			self.log.write(template % tuple(param))
+			self.log.close()
+		except:
+			print("could not write to log.csv: ", template%tuple(param))
+
 
 	def simulate_single_configuration(self, parameters, parameter_names):
 		'''
