@@ -61,7 +61,7 @@ class antenna(object):
 		self.specific_result_folder_path = self.get_results_path() + "/" + self.get_datapoint_string()
 		if not os.path.exists(self.specific_result_folder_path):
 			os.mkdir(self.specific_result_folder_path)
-		print ("Generated: " + self.get_datapoint_string(format_str = "%6.4f"))
+			print ("Generated: " + self.get_datapoint_string(format_str = "%6.4f"))
 
 	def get_specific_results_path(self):
 		return self.get_results_path() + "/" + self.get_datapoint_string()
@@ -97,7 +97,7 @@ class antenna(object):
 
 		# Dont want any of these names in the descriptor
 		names = deepcopy(self.parameter_names)
-		for x in ["z_dist", "start_f", "end_f", "n_f", "alpha"]:
+		for x in ["z_dist", "start_f", "end_f", "n_f"]:
 			names.remove(x)
 
 		# Assemble "local" datapoint descriptor
