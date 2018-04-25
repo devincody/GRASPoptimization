@@ -24,7 +24,6 @@ x Release log after writing so it can be read during simulations
 class antenna(object):
 	def __init__(self,
 				 model_name = "",			 
-				 tor_line_numbers = [], 
 				 parameter_names = ["z_dist"],
 				 parameters = {"z_dist":16.6},
 				 bounds = {"z_dist":[14.5,17.5]},
@@ -32,7 +31,6 @@ class antenna(object):
 				 ):
 		self.model_name = model_name
 		
-		self.tor_line_numbers = tor_line_numbers
 		self.parameter_names = parameter_names
 		self.parameters = parameters
 		self.bounds = bounds
@@ -56,7 +54,7 @@ class antenna(object):
 
 	def gen_file_names(self):
 		self.GRASP_working_file = self.global_directory_name + self.model_name + "/working/"
-		self.in_tor_file = self.model_name + ".tor"
+		self.in_tor_file = "bin/" + self.model_name + ".tor"
 		self.out_tor_file = self.GRASP_working_file + self.model_name + ".tor"		
 
 	def gen_specific_result_folder(self): #specific as in for a particular antenna configuration
@@ -453,7 +451,7 @@ class LWA_like(antenna):
 			diff *= pt[1]
 			modified_line.append("%6.3f  %6.3f  %6.3f\n" % tuple(diff+origin[pt[0]]))
 
-		f = open(msh_template,'r')
+		f = open("bin/" + msh_template,'r')
 		g = open(msh_out,'w+')
 
 		for i, line in enumerate(f): #0-indexed line number
