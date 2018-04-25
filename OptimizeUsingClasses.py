@@ -8,7 +8,7 @@ from AntennaClasses import ELfeedDir, LWA_like
 
 
 def main():
-	a = LWA_like(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 45, grasp_version = 10.6)
+	a = LWA_like(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.6)
 
 	if platform.node() == "Helios":
 		print("Executing on Helios")
@@ -56,7 +56,7 @@ def main():
 	method = 'Nelder-Mead'
 	# method = 'Powell'
 	# x = [1.05, .77, .16, -.01, 1.06, .6, .3]
-	x = [1.307, .087, -.15]
+	x = [1.484, .08, -0.139]
 	# 	   #sep,      x,        y,        z,         dirL,    dirW,   dirS
 	print(op.minimize(a.simulate_single_configuration, x0=x, args=(names), method=method))#, bounds= bnd, constraints = constr))
 
