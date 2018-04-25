@@ -9,6 +9,9 @@ from AntennaClasses import ELfeedDir, LWA_like
 
 def main():
 	a = LWA_like(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.6)
+	a.set_number_of_focal_lengths(5)
+	a.init_global_file_log()
+
 
 	if platform.node() == "Helios":
 		print("Executing on Helios")
@@ -27,18 +30,17 @@ def main():
 		a.set_grasp_analysis_extension()
 	
 	a.gen_file_names()
-	a.set_number_of_focal_lengths(5)
-
-
-	names = a.get_parameter_names()
 	
+
 	# remove parameters which are altered multiple times (e.g. z_dist)
 	# or parameters that are altered once per execution (e.g. n_f)
-	for x in ["z_dist", "start_f", "end_f", "n_f", "alpha"]:
-		names.remove(x)
+	names = a.get_optimizable_parameter_names()
+	names.remove("alpha")
+	
+	nelder_mead(a, names)
 
 
-	bounds = a.get_bounds()
+	# bounds = a.get_bounds()
 	# print (bounds["x"])
 
 
@@ -52,12 +54,12 @@ def main():
 	# 		x_new.append(np.random.uniform(bounds[k][0], bounds[k][1]))
 	# 	print ("loss = ", a.simulate_single_configuration(x_new, names))
 
-
+def nelder_mead(a, names):
 	method = 'Nelder-Mead'
 	# method = 'Powell'
 	# x = [1.05, .77, .16, -.01, 1.06, .6, .3]
 
-	x = [1.307, .087, -.01]
+	x = [.807, .087, -.01]
 	# 	   #sep,      x,        y,        z,         dirL,    dirW,   dirS
 	print(op.minimize(a.simulate_single_configuration, x0=x, args=(names), method=method))#, bounds= bnd, constraints = constr))
 
