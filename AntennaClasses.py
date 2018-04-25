@@ -37,7 +37,6 @@ class antenna(object):
 		self.grasp_version = grasp_version
 
 		self.bool_gen_results_path_yet = False
-		self.init_global_file_log()
 
 
 	def __str__(self):
@@ -83,22 +82,24 @@ class antenna(object):
 	# 	# print(self.tor_line_numbers)
 	# 	return deepcopy(self.tor_line_numbers)
 
-
+	def get_optimizable_parameter_names(self):
+		names = self.get_parameter_names()
+		for x in ["z_dist", "start_f", "end_f", "n_f"]:
+			if x in names:
+				names.remove(x)
+		print("OPT NAMES: ", names)
+		return names
 
 	def get_datapoint_string(self, format_str = "%4.3f"):
 		'''
-		Function which returns a string that describes the current
-		antenna configuration. Often used for file generation or
-		for printing to the terminal 
+		Function which returns a string that describes the current antenna configuration.
+		Often used for file generation or for printing to the terminal 
 		'''
-
 		#does NOT include / before string
 		ans = ""
 
 		# Dont want any of these names in the descriptor
-		names = deepcopy(self.parameter_names)
-		for x in ["z_dist", "start_f", "end_f", "n_f"]:
-			names.remove(x)
+		names = self.get_optimizable_parameter_names()
 
 		# Assemble "local" datapoint descriptor
 		for name in names:
@@ -164,48 +165,22 @@ class antenna(object):
 		self._gen_global_log_headers()
 		
 
+	# def _gen_global_log_headers(self):
+	# 	self.log = open(self.log_name, 'a')
+	# 	self.log.write("Efficiency, Loss\n")
+	# 	self.log.close()
+
 	def _gen_global_log_headers(self):
 		self.log = open(self.log_name, 'a')
+		names = self.get_optimizable_parameter_names()
+		print("gen log head", names)
+		for x in names:
+			self.log.write(x +",")
 		self.log.write("Efficiency, Loss\n")
 		self.log.close()
 
 	def edit_msh(self):
 		return 0
-
-	# def get_tor_line_replacement(self):
-	# 	ans =[]
-	# 	for name in self.tor_line_numbers:
-	# 		ans.append("  value            : %7.5f\n" % self.parameters[name])
-
-	# 	# print ("repacements", ans)
-	# 	return ans
-
-	# def edit_tor_old(self): #template 
-	# 	'''
-	# 	Edits the GRASP TOR file
-	# 	(i.e. everything but the antenna msh file)
-	# 	'''
-	# 	print("Opening Files")
-	# 	# print(self.in_tor_file, self.out_tor_file)
-	# 	f = open(self.in_tor_file,'r')
-	# 	g = open(self.out_tor_file,'w+')
-
-	# 	change_list = self.get_tor_line_numbers()
-	# 	# modified_line = self.get_tor_line_replacement()
-
-	# 	for i, line in enumerate(f): #0-indexed line number
-	# 		if i in change_list.values():
-	# 			for key in change_list:
-	# 				if change_list[key] == i:
-	# 					write_string = "  value            : %7.5f\n" % self.parameters[key]
-	# 			g.write(write_string)
-	# 			# print(write_string)
-	# 		else:
-	# 			g.write(line)
-
-	# 	g.close()
-	# 	f.close()
-	# 	print("Done writing TOR")
 
 	def edit_tor(self): #template 
 		'''
@@ -222,7 +197,7 @@ class antenna(object):
 
 		# Generate list of things that 
 		change_list = self.get_parameter_names()
-		msh_items = ["x", "y","z"]
+		msh_items = ["x", "y", "z"]
 		for x in msh_items:
 			change_list.remove(x)
 		# print(change_list)
@@ -345,13 +320,16 @@ class antenna(object):
 			os.rename(self.specific_result_folder_path, self.specific_result_folder_path + "_EF = %4.3f_minLoss = %4.3f" % (ef, minloss))
 		except:
 			print("Error: Cannot rename file %s" %self.specific_result_folder_path)
-		template = "%7.4f, "*(len(self.parameter_names)+1) + '\n' # plus 2 for loss, eff; minus 1 for z_dist
+		
 		param = []
-		for name in self.parameter_names:
-			if name != "z_dist":
-				param.append(self.parameters[name])
+
+		names = self.get_optimizable_parameter_names()
+
+		for name in names:
+			param.append(self.parameters[name])
 		param.append(ef)
 		param.append(minloss) # because intersection, no efficiency to report
+		template = "%7.4f, "*len(param) + '\n' # plus 2 for loss, eff; minus 1 for z_dist
 		self.log = open(self.log_name, 'a')
 		self.log.write(template % tuple(param))
 		self.log.close()
@@ -423,10 +401,7 @@ class LWA_like(antenna):
 	def __str__(self):
 		return "LWA like feed no Directors"
 
-	def _gen_global_log_headers(self):
-		self.log = open(self.log_name, 'a')
-		self.log.write("antenna x,  antenna y,  antenna z, Efficiency, Loss\n")
-		self.log.close()
+
 
 	def edit_msh(self):
 		msh_template = "patch_leaf_inverted_V.msh"
@@ -491,10 +466,10 @@ class ELfeed(LWA_like):
 	def get_error_intersection(self):
 		return LWA_like.get_error_intersection(self) + self.get_error_ant_intersection()
 
-	def _gen_global_log_headers(self):
-		self.log = open(self.log_name, 'a')
-		self.log.write("antenna separation,antenna x,antenna y,antenna z,Efficiency,Loss\n")
-		self.log.close()
+	# def _gen_global_log_headers(self):
+	# 	self.log = open(self.log_name, 'a')
+	# 	self.log.write("antenna separation,antenna x,antenna y,antenna z,Efficiency,Loss\n")
+	# 	self.log.close()
 
 class ELfeedDir(ELfeed):
 	def __init__(self, dl = 1.2, dw = .482, dsep = .25,
