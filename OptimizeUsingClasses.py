@@ -1,5 +1,6 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
+import platform
 
 import scipy.optimize as op
 
@@ -7,8 +8,27 @@ from AntennaClasses import ELfeedDir, LWA_like
 
 
 def main():
-	a = LWA_like(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.6)
+	a = LWA_like(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 45, grasp_version = 10.6)
+
+	if platform.node() == "Helios":
+		print("Executing on Helios")
+		a.set_global_directory_name("/mnt/f/Documents/Caltech/LWA/GRASP/")
+		a.set_ticra_directory_name("/mnt/f/Program Files/TICRA/")
+		a.set_grasp_analysis_extension(".exe")
+	elif platform.node() == 'DESKTOP-3UVMJQF':
+		print("Executing on G1 Office")
+		a.set_global_directory_name("/mnt/c/Users/dcody/Documents/GRASP/")
+		a.set_ticra_directory_name("/mnt/c/Program Files/TICRA/")
+		a.set_grasp_analysis_extension(".exe")
+	else:
+		print("Executing on Moore")
+		a.set_global_directory_name()
+		a.set_ticra_directory_name()
+		a.set_grasp_analysis_extension()
+	
+	a.gen_file_names()
 	a.set_number_of_focal_lengths(5)
+
 
 	names = a.get_parameter_names()
 	

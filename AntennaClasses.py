@@ -45,8 +45,17 @@ class antenna(object):
 	def __str__(self):
 		return "Antenna"
 
+	def set_global_directory_name(self, name =  "F:/Devin/Grasp/LWASandbox/"):
+		self.global_directory_name = name
+
+	def set_ticra_directory_name(self, name = "C:/Program Files/TICRA/"):
+		self.ticra_directory_name = name
+
+	def set_grasp_analysis_extension(self, name = ""):
+		self.grasp_analysis_extension = name
+
 	def gen_file_names(self):
-		self.GRASP_working_file = "F:/Devin/Grasp/LWASandbox/" + self.model_name + "/working/"
+		self.GRASP_working_file = self.global_directory_name + self.model_name + "/working/"
 		self.in_tor_file = self.model_name + ".tor"
 		self.out_tor_file = self.GRASP_working_file + self.model_name + ".tor"		
 
@@ -245,10 +254,10 @@ class antenna(object):
 		'''
 		print("EXECUTING GRASP")
 		if (self.grasp_version == 10.6):
-			command = ["C:/Program Files/TICRA/GRASP-10.6.0/bin/grasp-analysis", "batch.gxp", "out.out", "out.log"]
+			command = [self.ticra_directory_name + "GRASP-10.6.0/bin/grasp-analysis" +self.grasp_analysis_extension, "batch.gxp", "out.out", "out.log"]
 			print("Using Version 10.6.0")
 		elif (self.grasp_version == 10.3):
-			command = ["C:/Program Files/TICRA/GRASP-10.3.1/bin/grasp-analysis", "batch.gxp", "out.out", "out.log"]
+			command = [self.ticra_directory_name + "GRASP-10.3.1/bin/grasp-analysis"+self.grasp_analysis_extension, "batch.gxp", "out.out", "out.log"]
 			print("Using Version 10.3.1")
 		else:
 			command = ["grasp-analysis", "batch.gxp", "out.out", "out.log"]
@@ -407,7 +416,6 @@ class LWA_like(antenna):
 		
 		antenna.__init__(self, grasp_version = grasp_version)
 		self.model_name = "40mLWA"
-		self.gen_file_names()
 
 		self.parameter_names += ["x", "y", "z", "start_f", "end_f", "n_f", "alpha"]
 		self.parameters.update({"x":x, "y":y, "z":z, "start_f":start_f, "end_f":end_f, "n_f":n_f, "alpha":alpha })
