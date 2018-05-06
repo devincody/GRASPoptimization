@@ -37,14 +37,22 @@ class antenna(object):
 		self.grasp_version = grasp_version
 
 		self.bool_gen_results_path_yet = False
-		self.init_global_file_log()
 
 
 	def __str__(self):
 		return "Antenna"
 
+	def set_global_directory_name(self, name =  "F:/Devin/Grasp/LWASandbox/"):
+		self.global_directory_name = name
+
+	def set_ticra_directory_name(self, name = "C:/Program Files/TICRA/"):
+		self.ticra_directory_name = name
+
+	def set_grasp_analysis_extension(self, name = ""):
+		self.grasp_analysis_extension = name
+
 	def gen_file_names(self):
-		self.GRASP_working_file = "F:/Devin/Grasp/LWASandbox/" + self.model_name + "/working/"
+		self.GRASP_working_file = self.global_directory_name + self.model_name + "/working/"
 		self.in_tor_file = "bin/" + self.model_name + ".tor"
 		self.out_tor_file = self.GRASP_working_file + self.model_name + ".tor"		
 
@@ -52,7 +60,7 @@ class antenna(object):
 		self.specific_result_folder_path = self.get_results_path() + "/" + self.get_datapoint_string()
 		if not os.path.exists(self.specific_result_folder_path):
 			os.mkdir(self.specific_result_folder_path)
-		print ("Generated: " + self.get_datapoint_string(format_str = "%6.4f"))
+			print ("Generated: " + self.get_datapoint_string(format_str = "%6.4f"))
 
 	def get_specific_results_path(self):
 		return self.get_results_path() + "/" + self.get_datapoint_string()
@@ -74,22 +82,24 @@ class antenna(object):
 	# 	# print(self.tor_line_numbers)
 	# 	return deepcopy(self.tor_line_numbers)
 
-
+	def get_optimizable_parameter_names(self):
+		names = self.get_parameter_names()
+		for x in ["z_dist", "start_f", "end_f", "n_f"]:
+			if x in names:
+				names.remove(x)
+		# print("OPT NAMES: ", names)
+		return names
 
 	def get_datapoint_string(self, format_str = "%4.3f"):
 		'''
-		Function which returns a string that describes the current
-		antenna configuration. Often used for file generation or
-		for printing to the terminal 
+		Function which returns a string that describes the current antenna configuration.
+		Often used for file generation or for printing to the terminal 
 		'''
-
 		#does NOT include / before string
 		ans = ""
 
 		# Dont want any of these names in the descriptor
-		names = deepcopy(self.parameter_names)
-		for x in ["z_dist", "start_f", "end_f", "n_f", "alpha"]:
-			names.remove(x)
+		names = self.get_optimizable_parameter_names()
 
 		# Assemble "local" datapoint descriptor
 		for name in names:
@@ -116,7 +126,7 @@ class antenna(object):
 		error = 0
 		for name in self.bounds:
 			if self.parameters[name] < self.bounds[name][0]:
-				error += (self.self.parameters[name] - self.bounds[name][0])**2
+				error += (self.parameters[name] - self.bounds[name][0])**2
 			elif self.parameters[name] > self.bounds[name][1]:
 				error += (self.parameters[name] - self.bounds[name][1])**2
 		# print("error bounds: ", error)
@@ -151,52 +161,27 @@ class antenna(object):
 		self.log_name = self.get_results_path() +"/log.csv"
 		self.log = open(self.log_name, 'w+')
 		self.log.write(self.__str__() + "\n") #write name of antenna here
+		self.log.write("GRASP Version: " + str(self.grasp_version) + "\n")
 		self.log.close()
 		self._gen_global_log_headers()
 		
 
+	# def _gen_global_log_headers(self):
+	# 	self.log = open(self.log_name, 'a')
+	# 	self.log.write("Efficiency, Loss\n")
+	# 	self.log.close()
+
 	def _gen_global_log_headers(self):
 		self.log = open(self.log_name, 'a')
+		names = self.get_optimizable_parameter_names()
+		# print("gen log head", names)
+		for x in names:
+			self.log.write(x +",")
 		self.log.write("Efficiency, Loss\n")
 		self.log.close()
 
 	def edit_msh(self):
 		return 0
-
-	# def get_tor_line_replacement(self):
-	# 	ans =[]
-	# 	for name in self.tor_line_numbers:
-	# 		ans.append("  value            : %7.5f\n" % self.parameters[name])
-
-	# 	# print ("repacements", ans)
-	# 	return ans
-
-	# def edit_tor_old(self): #template 
-	# 	'''
-	# 	Edits the GRASP TOR file
-	# 	(i.e. everything but the antenna msh file)
-	# 	'''
-	# 	print("Opening Files")
-	# 	# print(self.in_tor_file, self.out_tor_file)
-	# 	f = open(self.in_tor_file,'r')
-	# 	g = open(self.out_tor_file,'w+')
-
-	# 	change_list = self.get_tor_line_numbers()
-	# 	# modified_line = self.get_tor_line_replacement()
-
-	# 	for i, line in enumerate(f): #0-indexed line number
-	# 		if i in change_list.values():
-	# 			for key in change_list:
-	# 				if change_list[key] == i:
-	# 					write_string = "  value            : %7.5f\n" % self.parameters[key]
-	# 			g.write(write_string)
-	# 			# print(write_string)
-	# 		else:
-	# 			g.write(line)
-
-	# 	g.close()
-	# 	f.close()
-	# 	print("Done writing TOR")
 
 	def edit_tor(self): #template 
 		'''
@@ -213,7 +198,7 @@ class antenna(object):
 
 		# Generate list of things that 
 		change_list = self.get_parameter_names()
-		msh_items = ["x", "y","z"]
+		msh_items = ["x", "y", "z"]
 		for x in msh_items:
 			change_list.remove(x)
 		# print(change_list)
@@ -243,20 +228,20 @@ class antenna(object):
 		'''
 		print("EXECUTING GRASP")
 		if (self.grasp_version == 10.6):
-			command = ["C:/Program Files/TICRA/GRASP-10.6.0/bin/grasp-analysis", "batch.gxp", "out.out", "out.log"]
+			command = [self.ticra_directory_name + "GRASP-10.6.0/bin/grasp-analysis" +self.grasp_analysis_extension, "batch.gxp", "out.out", "out.log"]
 			print("Using Version 10.6.0")
 		elif (self.grasp_version == 10.3):
-			command = ["C:/Program Files/TICRA/GRASP-10.3.1/bin/grasp-analysis", "batch.gxp", "out.out", "out.log"]
+			command = [self.ticra_directory_name + "GRASP-10.3.1/bin/grasp-analysis"+self.grasp_analysis_extension, "batch.gxp", "out.out", "out.log"]
 			print("Using Version 10.3.1")
 		else:
 			command = ["grasp-analysis", "batch.gxp", "out.out", "out.log"]
 			print("Using Version from PATH")
-		# print ("command: ", command)
+		print ("command: ", command)
 		sys.stdout.flush()
 
 		process = subprocess.Popen(command, stdout=subprocess.PIPE, cwd = self.GRASP_working_file)
 		output, error = process.communicate()
-		print ("GRASP commuique: ", output, error)
+		# print ("GRASP commuique: ", output, error)
 		print("Done EXECUTING GRASP")
 		sys.stdout.flush()
 
@@ -301,7 +286,8 @@ class antenna(object):
 		process_grasp.plot_pair_efficiencies(freq, s11, dmax, plots_directory + "Efficiency/Efficiencies Antenna Position = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, efficiency, loss_val), AntPos)
 		process_grasp.plot_SEFD(freq, dmax, plots_directory + "SEFD/SEFD Antenna Position = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, efficiency, loss_val), AntPos)
 		for frequency in freq:
-			process_grasp.plot_cut(frequency, cut, AntPos, pattern_directory +"Radiation Pattern Position = %4.2f Freq = %4.2f Ef = %4.2f Loss = %4.2f.png" %(AntPos, frequency, efficiency, loss_val))
+			process_grasp.plot_cut(frequency, cut, AntPos, pattern_directory +"Radiation_Pattern_Position=%4.2f_Freq=%4.2f_Ef=%4.2f_Loss=%4.2f.png" %(AntPos, frequency, efficiency, loss_val))
+			# process_grasp.plot_cut(frequency, cut, AntPos, pattern_directory +"Radiation Pattern Position = %4.2f Freq = %4.2f Ef = %4.2f Loss = %4.2f.png" %(AntPos, frequency, efficiency, loss_val))
 
 		## WRITE DATA TO FILES
 		local_log = open(data_directory+"Results AntPos=%4.2f Ef = %4.2f Loss=%4.3f.csv" %(AntPos, efficiency, loss_val), 'w+')
@@ -337,16 +323,23 @@ class antenna(object):
 			os.rename(self.specific_result_folder_path, self.specific_result_folder_path + "_EF = %4.3f_minLoss = %4.3f" % (ef, minloss))
 		except:
 			print("Error: Cannot rename file %s" %self.specific_result_folder_path)
-		template = "%7.4f, "*(len(self.parameter_names)+1) + '\n' # plus 2 for loss, eff; minus 1 for z_dist
+		
 		param = []
-		for name in self.parameter_names:
-			if name != "z_dist":
-				param.append(self.parameters[name])
+
+		names = self.get_optimizable_parameter_names()
+
+		for name in names:
+			param.append(self.parameters[name])
 		param.append(ef)
 		param.append(minloss) # because intersection, no efficiency to report
-		self.log = open(self.log_name, 'a')
-		self.log.write(template % tuple(param))
-		self.log.close()
+		template = "%7.4f, "*len(param) + '\n' # plus 2 for loss, eff; minus 1 for z_dist
+		try:
+			self.log = open(self.log_name, 'a')
+			self.log.write(template % tuple(param))
+			self.log.close()
+		except:
+			print("could not write to log.csv: ", template%tuple(param))
+
 
 	def simulate_single_configuration(self, parameters, parameter_names):
 		'''
@@ -405,8 +398,7 @@ class LWA_like(antenna):
 				grasp_version = 10.3):
 		
 		antenna.__init__(self, grasp_version = grasp_version)
-		self.model_name = "40mLWA"
-		self.gen_file_names()
+		self.model_name = "40mLWA104"
 
 		self.parameter_names += ["x", "y", "z", "start_f", "end_f", "n_f", "alpha"]
 		self.parameters.update({"x":x, "y":y, "z":z, "start_f":start_f, "end_f":end_f, "n_f":n_f, "alpha":alpha })
@@ -416,10 +408,7 @@ class LWA_like(antenna):
 	def __str__(self):
 		return "LWA like feed no Directors"
 
-	def _gen_global_log_headers(self):
-		self.log = open(self.log_name, 'a')
-		self.log.write("antenna x,  antenna y,  antenna z, Efficiency, Loss\n")
-		self.log.close()
+
 
 	def edit_msh(self):
 		msh_template = "patch_leaf_inverted_V.msh"
@@ -463,7 +452,6 @@ class ELfeed(LWA_like):
 		
 		LWA_like.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = 0, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipole"
-		self.gen_file_names()
 
 		self.parameter_names += ["sp"]
 		self.parameters.update({"sp":sp})
@@ -477,6 +465,7 @@ class ELfeed(LWA_like):
 	def get_error_ant_intersection(self):
 		ans =  self.parameters["sp"] - self.parameters["x"] - self.parameters["y"] - 0.08 - 0.012
 		if ans < 0:
+			print("antenna antenna Instersection: ", ans)
 			return ans**2
 		else:
 			return 0
@@ -484,10 +473,10 @@ class ELfeed(LWA_like):
 	def get_error_intersection(self):
 		return LWA_like.get_error_intersection(self) + self.get_error_ant_intersection()
 
-	def _gen_global_log_headers(self):
-		self.log = open(self.log_name, 'a')
-		self.log.write("antenna separation,antenna x,antenna y,antenna z,Efficiency,Loss\n")
-		self.log.close()
+	# def _gen_global_log_headers(self):
+	# 	self.log = open(self.log_name, 'a')
+	# 	self.log.write("antenna separation,antenna x,antenna y,antenna z,Efficiency,Loss\n")
+	# 	self.log.close()
 
 class ELfeedDir(ELfeed):
 	def __init__(self, dl = 1.2, dw = .482, dsep = .25,
@@ -497,7 +486,6 @@ class ELfeedDir(ELfeed):
 		
 		ELfeed.__init__(self,start_f = start_f, end_f = end_f, n_f = n_f, alpha = 0, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipoleWDir"
-		self.gen_file_names()
 
 		self.parameter_names += ["dl", "dw", "dsep"]
 		self.parameters.update({"dl":dl, "dw":dw, "dsep":dsep})
@@ -530,7 +518,6 @@ class ELfeedRef(ELfeedDir):
 
 		ELfeedDir.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = 0, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipoleWDir"
-		self.gen_file_names()
 
 		self.parameters.update({"dsep":dsep})
 		self.bounds.update({"dsep":bnd_dsep})
