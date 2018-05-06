@@ -66,7 +66,7 @@ def get_bounds():
 
 
 def edit_tor(template, out_file, change_list, modified_line): #template 
-	print("Opening Files")
+	print("Opening Files: ", template, out_file	)
 	f = open(template,'r')
 	g = open(out_file,'w+')
 

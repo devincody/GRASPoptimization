@@ -191,7 +191,7 @@ class antenna(object):
 		Updated version which does not rely on manually entering line numbers
 		'''
 		print("Opening TOR Files")
-		# print(self.in_tor_file, self.out_tor_file)
+		print(self.in_tor_file, self.out_tor_file)
 		f = open(self.in_tor_file,'r')
 		g = open(self.out_tor_file,'w+')
 
@@ -241,6 +241,7 @@ class antenna(object):
 
 		process = subprocess.Popen(command, stdout=subprocess.PIPE, cwd = self.GRASP_working_file)
 		output, error = process.communicate()
+		print("GRASP OUT: ", output)
 		print("Done EXECUTING GRASP")
 		sys.stdout.flush()
 
@@ -396,7 +397,7 @@ class LWA_like(antenna):
 				grasp_version = 10.3):
 		
 		antenna.__init__(self, grasp_version = grasp_version)
-		self.model_name = "40mLWA"
+		self.model_name = "40mLWA104"
 
 		self.parameter_names += ["x", "y", "z", "start_f", "end_f", "n_f", "alpha"]
 		self.parameters.update({"x":x, "y":y, "z":z, "start_f":start_f, "end_f":end_f, "n_f":n_f, "alpha":alpha })
