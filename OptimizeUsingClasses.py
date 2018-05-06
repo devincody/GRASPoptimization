@@ -34,10 +34,9 @@ def main():
 
 	# remove parameters which are altered multiple times (e.g. z_dist)
 	# or parameters that are altered once per execution (e.g. n_f)
-	names = a.get_optimizable_parameter_names()
-	names.remove("alpha")
 	
-	nelder_mead(a, names)
+	
+	nelder_mead(a)
 
 
 	# bounds = a.get_bounds()
@@ -54,12 +53,18 @@ def main():
 	# 		x_new.append(np.random.uniform(bounds[k][0], bounds[k][1]))
 	# 	print ("loss = ", a.simulate_single_configuration(x_new, names))
 
-def nelder_mead(a, names):
+def nelder_mead(a):
 	method = 'Nelder-Mead'
+	names = a.get_optimizable_parameter_names()
+	names.remove("alpha")
 	# method = 'Powell'
-	# x = [1.05, .77, .16, -.01, 1.06, .6, .3]
 
-	x = [1.494, .4, -.1]
+	# x = [1.494, .4, -.1]  							#LWA_LIKE
+	x = [1.05, .25, -.16, 1.5, 1.06, .6, .3]			#11 DIR
+	for name, val in zip(names, x):
+		print (name,":=  ", val)
+
+	
 	# 	   #sep,      x,        y,        z,         dirL,    dirW,   dirS
 	print(op.minimize(a.simulate_single_configuration, x0=x, args=(names), method=method))#, bounds= bnd, constraints = constr))
 

@@ -1,7 +1,7 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
 import pandas as pd
-
+import time
 
 def main():
 	PA = "F:/Devin/Grasp/LWASandbox/40mLWA/Job_26/"
@@ -48,6 +48,7 @@ def process_cut(f_name, freq):
 		phi = line[3] #should be 3 possible values: 0, 45, 90
 		if (phi == 0):
 			i += 1
+		# print(line, i, freq, f_name)
 
 		frequency = freq[i]
 		series_name_co = "f%4.2f:p%4.2f:co" %(frequency, phi)
@@ -58,7 +59,7 @@ def process_cut(f_name, freq):
 		dbi_cx = []
 
 		for ii in range(int(line[2])):
-			angle=line[0] + ii*line[1] - 180. #180 used because antenna is technically upside down
+			angle= -180. + ii*line[1] ####- 180. #180 used because antenna is technically upside down
 			angles.append(angle)
 			fields = [float(x) for x in f.readline().split()]
 			cx = 10*np.log10(fields[0]**2 + fields[1]**2)
@@ -122,6 +123,7 @@ def plot_SEFD(freq, dmax, location, z):
 	plt.ylim([1, 5E5])
 
 	plt.legend()
+	# print(location)
 	plt.savefig(location)
 
 
@@ -148,6 +150,7 @@ def plot_cut(frequency, cut, z, title):
 		# data[len(temp):] = temp1
 		# data[:len(temp)] = temp
 
+		# print(cut["angles"])
 		axi.plot(cut["angles"] ,data, 'b', label= "co")
 
 
@@ -176,7 +179,9 @@ def plot_cut(frequency, cut, z, title):
 			fig.suptitle(r"Radiation Pattern at z = %4.2f, $\nu$ = %4.2f" % (z,frequency), fontsize=25)
 
 	# 
-
+	# fig.show()
+	# time.sleep(1)
+	# print(title)
 	fig.savefig(title)
 	plt.close('all')
 	plt.rc('axes', linewidth=1)

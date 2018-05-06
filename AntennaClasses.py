@@ -126,7 +126,7 @@ class antenna(object):
 		error = 0
 		for name in self.bounds:
 			if self.parameters[name] < self.bounds[name][0]:
-				error += (self.self.parameters[name] - self.bounds[name][0])**2
+				error += (self.parameters[name] - self.bounds[name][0])**2
 			elif self.parameters[name] > self.bounds[name][1]:
 				error += (self.parameters[name] - self.bounds[name][1])**2
 		# print("error bounds: ", error)
@@ -241,7 +241,11 @@ class antenna(object):
 
 		process = subprocess.Popen(command, stdout=subprocess.PIPE, cwd = self.GRASP_working_file)
 		output, error = process.communicate()
+<<<<<<< HEAD
 		print("GRASP OUT: ", output)
+=======
+		# print ("GRASP commuique: ", output, error)
+>>>>>>> 2bb6e9199c9073df41028b14e011c5ede248aed1
 		print("Done EXECUTING GRASP")
 		sys.stdout.flush()
 
@@ -286,7 +290,8 @@ class antenna(object):
 		process_grasp.plot_pair_efficiencies(freq, s11, dmax, plots_directory + "Efficiency/Efficiencies Antenna Position = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, efficiency, loss_val), AntPos)
 		process_grasp.plot_SEFD(freq, dmax, plots_directory + "SEFD/SEFD Antenna Position = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, efficiency, loss_val), AntPos)
 		for frequency in freq:
-			process_grasp.plot_cut(frequency, cut, AntPos, pattern_directory +"Radiation Pattern Position = %4.2f Freq = %4.2f Ef = %4.2f Loss = %4.2f.png" %(AntPos, frequency, efficiency, loss_val))
+			process_grasp.plot_cut(frequency, cut, AntPos, pattern_directory +"Radiation_Pattern_Position=%4.2f_Freq=%4.2f_Ef=%4.2f_Loss=%4.2f.png" %(AntPos, frequency, efficiency, loss_val))
+			# process_grasp.plot_cut(frequency, cut, AntPos, pattern_directory +"Radiation Pattern Position = %4.2f Freq = %4.2f Ef = %4.2f Loss = %4.2f.png" %(AntPos, frequency, efficiency, loss_val))
 
 		## WRITE DATA TO FILES
 		local_log = open(data_directory+"Results AntPos=%4.2f Ef = %4.2f Loss=%4.3f.csv" %(AntPos, efficiency, loss_val), 'w+')
@@ -446,12 +451,11 @@ class LWA_like(antenna):
 		print("Done writing MSH")
 
 class ELfeed(LWA_like):
-	def __init__(self, sp = 1.2,
+	def __init__(self, sp = 1.2, start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
 				bnd_sp = [0, 1.5], grasp_version = 10.3): #seperation is half the distance between dipoles
 		
-		LWA_like.__init__(self, grasp_version = grasp_version)
+		LWA_like.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = 0, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipole"
-		self.gen_file_names()
 
 		self.parameter_names += ["sp"]
 		self.parameters.update({"sp":sp})
@@ -465,6 +469,7 @@ class ELfeed(LWA_like):
 	def get_error_ant_intersection(self):
 		ans =  self.parameters["sp"] - self.parameters["x"] - self.parameters["y"] - 0.08 - 0.012
 		if ans < 0:
+			print("antenna antenna Instersection: ", ans)
 			return ans**2
 		else:
 			return 0
@@ -479,12 +484,12 @@ class ELfeed(LWA_like):
 
 class ELfeedDir(ELfeed):
 	def __init__(self, dl = 1.2, dw = .482, dsep = .25,
+				start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
 				bnd_dl = [0, 2.5], bnd_dw = [0, .75], bnd_dsep = [0, 1.5], #  positive dir_sep vals are directors
 				grasp_version = 10.3): 						   #  Negative dir_sep vals are reflectors
 		
-		ELfeed.__init__(self, grasp_version = grasp_version)
+		ELfeed.__init__(self,start_f = start_f, end_f = end_f, n_f = n_f, alpha = 0, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipoleWDir"
-		self.gen_file_names()
 
 		self.parameter_names += ["dl", "dw", "dsep"]
 		self.parameters.update({"dl":dl, "dw":dw, "dsep":dsep})
@@ -513,11 +518,10 @@ class ELfeedDir(ELfeed):
 
 class ELfeedRef(ELfeedDir):
 	def __init__( dsep = -1.5, bnd_dsep = [-3.05, 0], #  positive dir_sep vals are directors
-				grasp_version = 10.3): 	  #  Negative dir_sep vals are reflectors
+				start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.3): 	  #  Negative dir_sep vals are reflectors
 
-		ELfeedDir.__init__(self, grasp_version = grasp_version)
+		ELfeedDir.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = 0, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipoleWDir"
-		self.gen_file_names()
 
 		self.parameters.update({"dsep":dsep})
 		self.bounds.update({"dsep":bnd_dsep})
