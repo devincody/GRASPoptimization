@@ -460,6 +460,37 @@ class LWA_like(antenna):
 		f.close()
 		print("Done writing MSH")
 
+
+class LWA_DIR(LWA_like):
+	def __init__(self, dl = 1.2, dsep = .25,
+				start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
+				bnd_dl = [0, 2.5], bnd_dsep = [0, 1.5], #  positive dir_sep vals are directors
+				grasp_version = 10.3): #seperation is half the distance between dipoles
+		
+		LWA_like.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = 0, grasp_version = grasp_version)
+		self.model_name = "40mLWADIR"
+
+		self.parameter_names += ["dl", "dsep"]
+		self.parameters.update({"dl":dl, "dsep":dsep})
+		self.bounds.update({"dl":bnd_dl, "dsep":bnd_dsep})
+		
+		# self.tor_line_numbers = {"z_dist":489, "sp":333, "start_f":474, "end_f":479, "n_f":484,"alpha":510} #checked
+		
+	def __str__(self):
+		return "LWA like feed with Directors"
+
+	def get_error_ant_intersection(self):
+		ans =  self.parameters["dsep"] - self.parameters["z"]
+		if ans < 0:
+			print("Director antenna Instersection: ", ans)
+			return ans**2
+		else:
+			return 0
+
+	def get_error_intersection(self):
+		return LWA_like.get_error_intersection(self) + self.get_error_ant_intersection()
+
+
 class ELfeed(LWA_like):
 	def __init__(self, sp = 1.2, start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
 				bnd_sp = [0, 1.5], grasp_version = 10.3): #seperation is half the distance between dipoles

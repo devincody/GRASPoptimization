@@ -4,3 +4,5 @@ __*
 *.ini
 model_tor.txt
 *.pyc
+opt_full.py
+*.swp
