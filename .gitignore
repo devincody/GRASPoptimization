@@ -3,3 +3,4 @@
 __*
 *.ini
 model_tor.txt
+*.pyc

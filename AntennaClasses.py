@@ -12,8 +12,6 @@ import scipy.optimize as op
 '''
 Class based python architecture to keep track of antenna dependencies and parameters
 
-Writen (regretfully) by Devin Cody
-
 Todo:
 x Release log after writing so it can be read during simulations
 * Make setting of frequencies, zdists, n_freq easier
@@ -179,6 +177,7 @@ class antenna(object):
 		self.log = open(self.log_name, 'a')
 		names = self.get_optimizable_parameter_names()
 		# print("gen log head", names)
+		self.log.write("z_dist,")
 		for x in names:
 			self.log.write(x +",")
 		self.log.write("Efficiency, Loss\n")
@@ -313,6 +312,22 @@ class antenna(object):
 			local_log.write("%6.2f, %6.2f, %6.2f, %6.2f, %6.2f, %6.2f, %6.4f\n" % (freq[ii], s11[ii], dmax[ii], mis[ii], aperture[ii], tsys[ii]/1E3, SEFD[ii]/1E6))
 		local_log.close()
 
+		## WRITE DATA TO LOG.CSV
+		param = [self.parameters["z_dist"]]
+		names = self.get_optimizable_parameter_names()
+
+		for name in names:
+			param.append(self.parameters[name])
+		param.append(efficiency)
+		param.append(loss_val)
+		template = "%7.4f, "*len(param) + '\n'
+		try:
+			self.log = open(self.log_name, 'a')
+			self.log.write(template % tuple(param))
+			self.log.close()
+		except:
+			print("could not write to log.csv: ", template%tuple(param))
+
 
 	def _loss(self, freq, effic, miss):
 		#calculate the loss funciton
@@ -337,22 +352,7 @@ class antenna(object):
 			os.rename(self.specific_result_folder_path, self.specific_result_folder_path + "_EF = %4.3f_minLoss = %4.3f" % (ef, minloss))
 		except:
 			print("Error: Cannot rename file %s" %self.specific_result_folder_path)
-		
-		param = []
-
-		names = self.get_optimizable_parameter_names()
-
-		for name in names:
-			param.append(self.parameters[name])
-		param.append(ef)
-		param.append(minloss) # because intersection, no efficiency to report
-		template = "%7.4f, "*len(param) + '\n' # plus 2 for loss, eff; minus 1 for z_dist
-		try:
-			self.log = open(self.log_name, 'a')
-			self.log.write(template % tuple(param))
-			self.log.close()
-		except:
-			print("could not write to log.csv: ", template%tuple(param))
+	
 
 
 	def simulate_single_configuration(self, parameters, parameter_names, plot_feed = False):
@@ -407,7 +407,7 @@ class antenna(object):
 class LWA_like(antenna):
 	def __init__(self, x = .77, y = .16, z = -.01,
 				start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
-				bnd_x = [0, 1.5], bnd_y = [0, .75], bnd_z = [-2.5, 0], 
+				bnd_x = [0, 1.5], bnd_y = [0, .75], bnd_z = [-3.5, 1], 
 				bnd_start_f = [0,100], bnd_end_f = [0,100], bnd_n_f =[1,100], bnd_alpha = [0, 360],
 				grasp_version = 10.3):
 		
