@@ -4,11 +4,11 @@ import platform
 
 import scipy.optimize as op
 
-from AntennaClasses import ELfeedDir, LWA_like
+from AntennaClasses import *
 
 
 def main():
-	a = LWA_like(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 45, grasp_version = 10.3)
+	a = LWA_DIR(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 45, grasp_version = 10.3)
 	a.set_number_of_focal_lengths(5)
 	a.init_global_file_log()
 
@@ -36,10 +36,10 @@ def main():
 	# or parameters that are altered once per execution (e.g. n_f)
 	
 
-	# random(a)
+	random(a)
 	# nelder_mead(a).
-	simulate_single(a)
-	setup(a)
+	# simulate_single(a)
+	# setup(a)
 
 
 
