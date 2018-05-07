@@ -467,7 +467,7 @@ class LWA_DIR(LWA_like):
 				bnd_dl = [0, 2.5], bnd_dsep = [0, 1.5], #  positive dir_sep vals are directors
 				grasp_version = 10.3): #seperation is half the distance between dipoles
 		
-		LWA_like.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = 0, grasp_version = grasp_version)
+		LWA_like.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
 		self.model_name = "40mLWADIR"
 
 		self.parameter_names += ["dl", "dsep"]
@@ -495,7 +495,7 @@ class ELfeed(LWA_like):
 	def __init__(self, sp = 1.2, start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
 				bnd_sp = [0, 1.5], grasp_version = 10.3): #seperation is half the distance between dipoles
 		
-		LWA_like.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = 0, grasp_version = grasp_version)
+		LWA_like.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipole"
 
 		self.parameter_names += ["sp"]
