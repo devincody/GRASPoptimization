@@ -253,7 +253,7 @@ strut4  coor_sys
  
 Ant_dish_struts  scatterer_cluster  
 (
-  scatterers       : sequence(ref(Antenna_plus_dish),ref(polygonal_struts_01))
+  scatterers       : sequence(ref(Antenna_plus_dish),ref(polygonal_struts_01),ref(rectangular_plate))
 )
  
 freq_20_80_df_5_MHz_01  frequency_range  
@@ -269,7 +269,7 @@ voltage_generator2  voltage_generator
     ),
   parameter_selection : s_parameters,
   parameter_file   : S_parameters.par,
-  coor_sys         : ref(base),
+  coor_sys         : ref(base)
 )
  
 minus_y_terminal  piecewise_straight_wire  
@@ -327,8 +327,7 @@ rectangular_plate  rectangular_plate
   coor_sys         : ref(Mounting_Plate),
   corner_1         : struct(x: "ref(mounting_plate_sz)" m, y: "ref(mounting_plate_sz)" m, z: 0.0 m),
   corner_2         : struct(x: "-ref(mounting_plate_sz)" m, y: "ref(mounting_plate_sz)" m, z: 0.0 m),
-  opp_point        : struct(x: 0.0 m, y: "-ref(mounting_plate_sz)" m, z: 0.0 m),
-  el_prop          : sequence(ref(PerfCond))
+  opp_point        : struct(x: 0.0 m, y: "-ref(mounting_plate_sz)" m, z: 0.0 m)
 )
  
 PerfCond  perfect_conductivity  
@@ -342,7 +341,7 @@ mounting_plate_sz  real_variable
  
 z_dist  real_variable  
 (
-  value            : 16.5
+  value            : 16.0
 )
  
 start_f  real_variable  
@@ -357,7 +356,7 @@ end_f  real_variable
  
 n_f  real_variable  
 (
-  value            : 5.0
+  value            : 2.0
 )
  
 alpha  real_variable  
@@ -373,6 +372,30 @@ strut_dz  real_variable
 strut_length  real_variable  
 (
   value            : 19.35
+)
+ 
+FEED_cluster  scatterer_cluster  
+(
+  scatterers       : sequence(ref(first_ant_scatterer_cluster),ref(polygonal_struts_01),ref(rectangular_plate)
+)
+)
+ 
+FEED_mom  mom  
+(
+  frequency        : ref(freq_20_80_df_5_MHz_01),
+  scatterer        : ref(FEED_cluster),
+  file_name        : " ",
+  colour_plot_file : " "
+)
+ 
+Feed_cut  spherical_cut  
+(
+  coor_sys         : ref(base),
+  theta_range      : struct(start: 0.0, end: 360.0, np: 201),
+  phi_range        : struct(start: 0.0, end: 90.0, np: 3),
+  file_name        : Feed_Data.cut,
+  comment          : "Field data in cuts",
+  frequency        : ref(freq_20_80_df_5_MHz_01)
 )
  
 //DO NOT MODIFY OBJECTS BELOW THIS LINE.
@@ -430,5 +453,5 @@ view_1_polygonal_struts_plot  polygonal_struts_plot
 (
 )
  
- //$$ Saved at 13:27:20 on 05.05.2018 by GRASP ver. 10.3.1 SN=006343
+ //$$ Saved at 17:50:01 on 06.05.2018 by GRASP ver. 10.3.1 SN=006343
   

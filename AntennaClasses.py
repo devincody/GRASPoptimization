@@ -26,7 +26,7 @@ class antenna(object):
 				 model_name = "",			 
 				 parameter_names = ["z_dist"],
 				 parameters = {"z_dist":16.6},
-				 bounds = {"z_dist":[14.5,17.5]},
+				 bounds = {"z_dist":[15.5,17]},
 				 grasp_version = 10.3
 				 ):
 		self.model_name = model_name
@@ -152,10 +152,14 @@ class antenna(object):
 			self.bool_gen_results_path_yet = True
 
 
-	def gen_sub_folders(self):
+	def gen_sub_folders(self, plot_feed = False):
 		for directory in ["/plots/", "/plots/Efficiency/", "/plots/SEFD/", "/plots/Patterns/", "/data/"]:
 			if not os.path.exists(self.get_specific_results_path() + directory):
 				os.mkdir(self.get_specific_results_path() + directory)
+		if plot_feed:
+			feed_dir = "/plots/FeedPatterns/"
+			if not os.path.exists(self.get_specific_results_path() + feed_dir):
+				os.mkdir(self.get_specific_results_path() + feed_dir)
 
 	def init_global_file_log(self):
 		self.log_name = self.get_results_path() +"/log.csv"
@@ -241,16 +245,12 @@ class antenna(object):
 
 		process = subprocess.Popen(command, stdout=subprocess.PIPE, cwd = self.GRASP_working_file)
 		output, error = process.communicate()
-<<<<<<< HEAD
-		print("GRASP OUT: ", output)
-=======
 		# print ("GRASP commuique: ", output, error)
->>>>>>> 2bb6e9199c9073df41028b14e011c5ede248aed1
 		print("Done EXECUTING GRASP")
 		sys.stdout.flush()
 
 
-	def process_data_files(self):
+	def process_data_files(self, plot_feed = False):
 		'''
 		Collects all data from GRASP result files, plots everything
 		'''
@@ -258,6 +258,8 @@ class antenna(object):
 		## COLLECT ALL DATA FROM GRASP GENERATED FILES
 		freq, s11 = process_grasp.process_par(self.GRASP_working_file + "S_parameters.par")
 		dmax, cut = process_grasp.process_cut(self.GRASP_working_file + "Field_Data.cut", freq)
+		if plot_feed:
+			_ , feed_cut = process_grasp.process_cut(self.GRASP_working_file + "Feed_Data.cut", freq)
 
 		## CALCULATE RELEVANT FIGURES OF MERIT
 		mis = process_grasp.calc_mismatch(s11)
@@ -281,16 +283,24 @@ class antenna(object):
 		# print("NEW DIRECTORIES", plots_directory, data_directory)
 
 		pattern_directory = plots_directory + "Patterns/AntPos=%4.2f_loss=%4.2f/"% (AntPos, efficiency)
+		if plot_feed:
+			feed_directory = plots_directory + "FeedPatterns/AntPos=%4.2f_loss=%4.2f/"% (AntPos, efficiency)
 
 		## MAKE FILES
 		if not os.path.exists(pattern_directory):
 			os.mkdir(pattern_directory)
+
+		if plot_feed:
+			if not os.path.exists(feed_directory):
+				os.mkdir(feed_directory)
 
 		## PLOT DATA
 		process_grasp.plot_pair_efficiencies(freq, s11, dmax, plots_directory + "Efficiency/Efficiencies Antenna Position = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, efficiency, loss_val), AntPos)
 		process_grasp.plot_SEFD(freq, dmax, plots_directory + "SEFD/SEFD Antenna Position = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, efficiency, loss_val), AntPos)
 		for frequency in freq:
 			process_grasp.plot_cut(frequency, cut, AntPos, pattern_directory +"Radiation_Pattern_Position=%4.2f_Freq=%4.2f_Ef=%4.2f_Loss=%4.2f.png" %(AntPos, frequency, efficiency, loss_val))
+			if plot_feed:
+				process_grasp.plot_cut(frequency, feed_cut, AntPos, feed_directory +"Feed_Pattern_Position=%4.2f_Freq=%4.2f_Ef=%4.2f_Loss=%4.2f.png" %(AntPos, frequency, efficiency, loss_val), feed_pattern = True)
 			# process_grasp.plot_cut(frequency, cut, AntPos, pattern_directory +"Radiation Pattern Position = %4.2f Freq = %4.2f Ef = %4.2f Loss = %4.2f.png" %(AntPos, frequency, efficiency, loss_val))
 
 		## WRITE DATA TO FILES
@@ -345,7 +355,7 @@ class antenna(object):
 			print("could not write to log.csv: ", template%tuple(param))
 
 
-	def simulate_single_configuration(self, parameters, parameter_names):
+	def simulate_single_configuration(self, parameters, parameter_names, plot_feed = False):
 		'''
 		must take in a vector of antenna parameters
 		and return a loss function
@@ -363,7 +373,7 @@ class antenna(object):
 			self.wrap_up_simulation(error, error)
 			return error
 
-		self.gen_sub_folders()
+		self.gen_sub_folders(plot_feed)
 		self.edit_msh()
 
 		self.EF = []
@@ -372,7 +382,7 @@ class antenna(object):
 			self.parameters["z_dist"] = AntPos
 			self.edit_tor()
 			self.exeGRASP()
-			self.process_data_files()
+			self.process_data_files(plot_feed)
 
 		minLoss = np.min(self.LOSS)
 		best_ef = self.EF[self.LOSS.index(minLoss)]

@@ -35,23 +35,8 @@ def main():
 	# remove parameters which are altered multiple times (e.g. z_dist)
 	# or parameters that are altered once per execution (e.g. n_f)
 	
-	
-	nelder_mead(a)
-
-
-	# bounds = a.get_bounds()
-	# print (bounds["x"])
-
-
-	####Update parameters
-	# 
-	# x_new = list(x)
-	# for i in range(2000):
-	# 	x_new = []
-	# 	for idx, k in enumerate(names):
-	# 		# print(k)
-	# 		x_new.append(np.random.uniform(bounds[k][0], bounds[k][1]))
-	# 	print ("loss = ", a.simulate_single_configuration(x_new, names))
+	random(a)
+	# nelder_mead(a)
 
 def nelder_mead(a):
 	method = 'Nelder-Mead'
@@ -67,6 +52,23 @@ def nelder_mead(a):
 	
 	# 	   #sep,      x,        y,        z,         dirL,    dirW,   dirS
 	print(op.minimize(a.simulate_single_configuration, x0=x, args=(names), method=method))#, bounds= bnd, constraints = constr))
+
+
+def random(a):
+	bounds = a.get_bounds()
+	# print (bounds["x"])
+
+	x = [1.05, .25, -.16, 1.5, 1.06, .6, .3]
+	names = a.get_optimizable_parameter_names()
+	names.remove("alpha")
+
+	x_new = list(x)
+	for i in range(2000):
+		x_new = []
+		for idx, k in enumerate(names):
+			# print(k)
+			x_new.append(np.random.uniform(bounds[k][0], bounds[k][1]))
+		print ("loss = ", a.simulate_single_configuration(x_new, names, plot_feed = True))
 
 
 if __name__ == '__main__':

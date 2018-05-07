@@ -127,7 +127,7 @@ def plot_SEFD(freq, dmax, location, z):
 	plt.savefig(location)
 
 
-def plot_cut(frequency, cut, z, title):
+def plot_cut(frequency, cut, z, title, feed_pattern = False):
 	#freq is which frequency to use
 	#
 	plt.rc('axes', linewidth=2)
@@ -142,13 +142,13 @@ def plot_cut(frequency, cut, z, title):
 		data = np.copy(cut[series_name_co])
 
 
-
-		#For Feed Patterns
-		# half = int(len(data)/2)
-		# temp = np.copy(data[half:])
-		# temp1 = np.copy(data[:half])
-		# data[len(temp):] = temp1
-		# data[:len(temp)] = temp
+		if feed_pattern:
+			# For Feed Patterns
+			half = int(len(data)/2)
+			temp = np.copy(data[half:])
+			temp1 = np.copy(data[:half])
+			data[len(temp):] = temp1
+			data[:len(temp)] = temp
 
 		# print(cut["angles"])
 		axi.plot(cut["angles"] ,data, 'b', label= "co")
