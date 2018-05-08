@@ -180,7 +180,7 @@ class antenna(object):
 		self.log.write("z_dist,")
 		for x in names:
 			self.log.write(x +",")
-		self.log.write("Efficiency, Loss\n")
+		self.log.write("Efficiency,Loss\n")
 		self.log.close()
 
 	def edit_msh(self):
@@ -552,10 +552,10 @@ class ELfeedDir(ELfeed):
 	def get_error_intersection(self):
 		return ELfeed.get_error_intersection(self) + self.get_error_dir_intersection()
 
-	def _gen_global_log_headers(self):
-		self.log = open(self.log_name, 'a')
-		self.log.write("antenna separation,antenna x,antenna y,antenna z,director length,director width,director sep,Efficiency,Loss\n")
-		self.log.close()
+	# def _gen_global_log_headers(self):
+	# 	self.log = open(self.log_name, 'a')
+	# 	self.log.write("antenna separation,antenna x,antenna y,antenna z,director length,director width,director sep,Efficiency,Loss\n")
+	# 	self.log.close()
 
 class ELfeedRef(ELfeedDir):
 	def __init__( dsep = -1.5, bnd_dsep = [-3.05, 0], #  positive dir_sep vals are directors
@@ -581,10 +581,10 @@ class ELfeedRef(ELfeedDir):
 	def get_error_intersection(self):
 		return ELfeedRef.get_error_intersection(self) +  self.get_error_dir_ant_intersection()
 
-	def _gen_global_log_headers(self):
-		self.log = open(self.log_name, 'a')
-		self.log.write("antenna separation,antenna x,antenna y,antenna z,reflector length,reflector width,reflector sep,Efficiency,Loss\n")
-		self.log.close()
+	# def _gen_global_log_headers(self):
+	# 	self.log = open(self.log_name, 'a')
+	# 	self.log.write("antenna separation,antenna x,antenna y,antenna z,reflector length,reflector width,reflector sep,Efficiency,Loss\n")
+	# 	self.log.close()
 
 
 
