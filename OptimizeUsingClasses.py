@@ -36,10 +36,10 @@ def main():
 	# or parameters that are altered once per execution (e.g. n_f)
 	
 
-	random(a)
+	#random(a)
 	# nelder_mead(a).
 	# simulate_single(a)
-	# setup(a)
+	setup(a)
 
 
 
@@ -50,7 +50,8 @@ def simulate_single(a):
 	a.simulate_single_configuration(x, names, plot_feed = True)	
 
 def setup(a):
-	x = [1.0761, .7498, 0.4728]
+	#x = [1.0761, .7498, 0.4728]
+	x = [0.95, .15, -.36, 1.5, 1.06, .6, .3]			#11 DIR
 	names = a.get_optimizable_parameter_names()
 	names.remove("alpha")
 	new_parameters = {}
