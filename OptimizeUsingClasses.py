@@ -8,8 +8,12 @@ from AntennaClasses import *
 
 
 def main():
+<<<<<<< HEAD
 	a = LWA_DIR(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 45, grasp_version = 10.3)
 
+=======
+	a = LWA_DIR_DIR(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 45, grasp_version = 10.3)
+>>>>>>> cdc67ae40fe8e0bebc9636e588ee6fdf81160297
 	a.set_number_of_focal_lengths(5)
 	a.init_global_file_log()
 
@@ -37,11 +41,15 @@ def main():
 	# or parameters that are altered once per execution (e.g. n_f)
 	
 
+
 	# random(a)
-	nelder_mead(a)
-	nelder_mead2(a)
+	# nelder_mead(a)
+	# nelder_mead2(a)
+	#random(a)
+	# nelder_mead(a).
+
 	# simulate_single(a)
-	# setup(a)
+	setup(a)
 
 
 
@@ -52,7 +60,8 @@ def simulate_single(a):
 	a.simulate_single_configuration(x, names, plot_feed = True)	
 
 def setup(a):
-	x = [1.0761, .7498, 0.4728]
+	#x = [1.0761, .7498, 0.4728]
+	x = [0.95, .15, -.36, 1.5, 1.06, .6, .3]			#11 DIR
 	names = a.get_optimizable_parameter_names()
 	names.remove("alpha")
 	new_parameters = {}
