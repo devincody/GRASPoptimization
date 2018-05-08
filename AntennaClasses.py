@@ -211,11 +211,17 @@ class antenna(object):
 		while line: #iterate through all lines in INPUT
 			g.write(line) # write same line to output
 			if "real_variable" in line: #check if keyword in line
+				# print(line)
 				for key in change_list: #iterate through keys
-					if key in line: #check if key is also in line
+					if key in line and line[len(key)] == ' ': #check if key is also in line
+													  #This is tricky, we have to make sure there is a space
+													  #after the name of the key so that keys that share parts
+													  #of names will not simultaneously activate the function
+						# print("key: ", key)
 						g.write(f.readline()) # read next line, should be "("
 						f.readline()
 						write_string = "  value            : %7.5f\n" % self.parameters[key]
+						# print("string: ", write_string)
 						g.write(write_string) #write modified line to file
 
 			line = f.readline()
@@ -490,6 +496,29 @@ class LWA_DIR(LWA_like):
 	def get_error_intersection(self):
 		return LWA_like.get_error_intersection(self) + self.get_error_ant_intersection()
 
+class LWA_DIR_DIR(LWA_DIR):
+	def __init__(self, dl2 = 1.2, dsep2 = .25,
+				start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
+				bnd_dl2 = [0, 2.5], bnd_dsep2 = [0, 1.5], #  positive dir_sep vals are directors
+				grasp_version = 10.3): #seperation is half the distance between dipoles
+		
+		LWA_DIR.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
+		self.model_name = "40mLWADIRDIR"
+
+		self.parameter_names += ["dl2", "dsep2"]
+		self.parameters.update({"dl2":dl2, "dsep2":dsep2})
+		self.bounds.update({"dl2":bnd_dl2, "dsep2":bnd_dsep2})
+		
+		# self.tor_line_numbers = {"z_dist":489, "sp":333, "start_f":474, "end_f":479, "n_f":484,"alpha":510} #checked
+		
+	def __str__(self):
+		return "LWA like feed with TWO Directors"
+
+	def get_error_ant_intersection(self):
+		return 0
+
+	def get_error_intersection(self):
+		return LWA_DIR.get_error_intersection(self) + self.get_error_ant_intersection()
 
 class ELfeed(LWA_like):
 	def __init__(self, sp = 1.2, start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
