@@ -16,16 +16,19 @@ cwd = os.getcwd()
 items = os.listdir(cwd)
 for i in items:
 	if ".csv" in i[-5:]:
-		print("item: ", i)
+		print("Processing file ", i)
 		a = pd.read_csv(i, skiprows = 2, header = 0, index_col=False)
 
 		keys = a.keys()
 		# print(keys)
 		# print(a)
 
-		if "Unnamed" in keys[-1] and " " in a[k[-1]][1]:
-			a = a.drop(keys[-1])
-			print("dropping last column")
+		try:
+			if "Unnamed" in keys[-1] and " " in a[keys[-1]][1]:
+				a = a.drop(keys[-1], axis = 1)
+				print("dropping last column", keys[-1])
+		except:
+			pass
 
 		try:
 			loss = ' Loss'
