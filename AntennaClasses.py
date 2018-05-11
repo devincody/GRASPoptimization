@@ -212,7 +212,7 @@ class antenna(object):
 			g.write(line) # write same line to output
 			if "real_variable" in line: #check if keyword in line
 				# print(line)
-				for key in change_list: #iterate through keys
+o				for key in change_list: #iterate through keys
 					if key in line and line[len(key)] == ' ': #check if key is also in line
 													  #This is tricky, we have to make sure there is a space
 													  #after the name of the key so that keys that share parts

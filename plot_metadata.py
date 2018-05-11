@@ -26,7 +26,7 @@ for i in items:
 			parameters = list(a.keys())
 			parameters.remove(loss)
 			for p in parameters:
-				print p
+				# print p
 				if not "Unnamed:" in p:
 					fig, ax = plt.subplots()
 					ax.scatter(a[p],a[loss], alpha = .8, c = a['alpha']/45, cmap = 'seismic')

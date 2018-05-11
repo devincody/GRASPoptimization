@@ -8,22 +8,37 @@ from AntennaClasses import *
 
 
 def main():
-	a = LWA_DIR_DIR(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 45, grasp_version = 10.3)
-	a.set_number_of_focal_lengths(5)
-	a.init_global_file_log()
 
-
+	## HELIOS
 	if platform.node() == "Helios":
+		a = ELfeedDirRef(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.3)
+		a.set_number_of_focal_lengths(5)
+		a.init_global_file_log()
+
 		print("Executing on Helios")
 		a.set_global_directory_name("/mnt/f/Documents/Caltech/LWA/GRASP/")
 		a.set_ticra_directory_name("/mnt/f/Program Files/TICRA/")
 		a.set_grasp_analysis_extension(".exe")
+
+	## G1
 	elif platform.node() == 'DESKTOP-3UVMJQF':
+		a = ELfeedRef(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.3)
+		a.set_number_of_focal_lengths(5)
+		a.init_global_file_log()
+
+
 		print("Executing on G1 Office")
 		a.set_global_directory_name("/mnt/c/Users/dcody/Documents/GRASP/")
 		a.set_ticra_directory_name("/mnt/c/Program Files/TICRA/")
 		a.set_grasp_analysis_extension(".exe")
+
+	## MOORE
 	else:
+		a = ELfeedDir(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.3)
+		a.set_number_of_focal_lengths(5)
+		a.init_global_file_log()
+
+
 		print("Executing on Moore")
 		a.set_global_directory_name()
 		a.set_ticra_directory_name()#"/cygdrive/c/Program Files/TICRA/")
@@ -40,31 +55,52 @@ def main():
 	# random(a)
 	# nelder_mead(a)
 	# nelder_mead2(a)
-	#random(a)
+	random(a)
 	# nelder_mead(a).
-
-	# simulate_single(a)
-	setup(a)
 
 
 
 def simulate_single(a):
-	x = [1.0761, .7498, 0.4728]
+
+	a.parameters["sp"] = 1.05
+	a.parameters["x"] = .77
+	a.parameters["y"] = .16
+	a.parameters["z"] = -0.01
+	a.parameters["dl"] = 1.06
+	a.parameters["dw"] = .60
+	a.parameters["dsep"] = .3
+
+	a.parameters["rl"] = 1.06
+	a.parameters["rw"] = .60
+	a.parameters["rsep"] = -.3
+	
+	a.parameters["z_dist"] = 16.4
+
+	x=[]
+
 	names = a.get_optimizable_parameter_names()
 	names.remove("alpha")
+	for nam in names:
+		x.append(a.parameters[nam])
 	a.simulate_single_configuration(x, names, plot_feed = True)	
 
 def setup(a):
-	#x = [1.0761, .7498, 0.4728]
-	x = [0.95, .15, -.36, 1.5, 1.06, .6, .3]			#11 DIR
-	names = a.get_optimizable_parameter_names()
-	names.remove("alpha")
-	new_parameters = {}
-	for ii, name in enumerate(names):
-		# print (ii, name, new_parameters, parameters, parameter_names)
-		new_parameters[name] = x[ii]
-	a.set_parameters(new_parameters)
+
+	a.parameters["sp"] = 1.03
+	a.parameters["x"] = .77
+	a.parameters["y"] = .16
+	a.parameters["z"] = -.5
+	a.parameters["dl"] = 1.46
+	a.parameters["dw"] = .63
+	a.parameters["dsep"] = 1.37
+
+	a.parameters["rl"] = 1.06
+	a.parameters["rw"] = .60
+	a.parameters["rsep"] = -.3
 	a.parameters["z_dist"] = 16.625
+
+	print(a.parameters["x"])
+
 	a.edit_msh()
 	a.edit_tor()
 
