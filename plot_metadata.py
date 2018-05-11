@@ -12,6 +12,8 @@ if not os.path.exists(metadata_path):
 	os.mkdir(metadata_path)
 os.chdir(metadata_path)
 
+units = defaultdict(lambda:'m', {'alpha':'deg', 'theta':'deg', 'efficiency':'%'})
+
 cwd = os.getcwd()
 items = os.listdir(cwd)
 for i in items:
@@ -20,11 +22,10 @@ for i in items:
 		a = pd.read_csv(i, skiprows = 2, header = 0, index_col=False)
 
 		keys = a.keys()
-		# print(keys)
-		# print(a)
+		# print keys
 
 		try:
-			if "Unnamed" in keys[-1] and " " in a[keys[-1]][1]:
+			if "Unnamed" in keys[-1]:
 				a = a.drop(keys[-1], axis = 1)
 				print("dropping last column", keys[-1])
 		except:
@@ -36,13 +37,10 @@ for i in items:
 		except:
 			loss = 'Loss'
 			a[loss]
+
 		a["radius"] = np.sqrt(a['x']**2 + a['z']**2)
 		a["theta"] = np.arctan2(a['z'],a['x'])*180.0/np.pi
-		# print(type(a))
-		# print(type(a[loss]))
-		# print(type(a.loc[:,loss]))
-		# print(type(a.loc[1,loss]))
-		# a[loss] = a[loss].multiply(-1.0)
+
 		a[loss] *= -1
 
 		path = i[:-4]
@@ -56,9 +54,24 @@ for i in items:
 			if not "Unnamed:" in p:
 				fig, ax = plt.subplots()
 				ax.scatter(a[p],a[loss], alpha = .8, c = a['alpha']/45, cmap = 'seismic')
-				ax.set_xlabel(p)
+				ax.set_xlabel("%s [%s]" % (p, units[p.lower()]))
 				ax.set_ylabel('Loss')
+				ax.grid(linewidth = 1, linestyle = '--')
+				ax.set_axisbelow(True)
+				ax.set_title("Loss vs. %s"% p)
 				plt.savefig(path + '/' + p + '.png')
 				plt.close()
+
+		cols = a.columns.tolist()
+		print cols
+		cols.remove(loss)
+		cols.remove("Efficiency")
+		cols.append("Efficiency")
+		cols.append(loss)
+
+		a = a[cols]
+		# a.sort_values([loss], inplace = True, ascending = False)
+		a = a.nlargest(20,[loss], keep='first')
+		a.to_csv("%s/%s_Top20.csv"%(path,path))
 
 
