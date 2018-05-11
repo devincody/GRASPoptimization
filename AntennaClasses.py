@@ -203,7 +203,10 @@ class antenna(object):
 		change_list = self.get_parameter_names()
 		msh_items = ["x", "y", "z"]
 		for x in msh_items:
-			change_list.remove(x)
+			try:
+				change_list.remove(x)
+			except:
+				pass
 		# print(change_list)
 		# modified_line = self.get_tor_line_replacement()
 
@@ -212,7 +215,7 @@ class antenna(object):
 			g.write(line) # write same line to output
 			if "real_variable" in line: #check if keyword in line
 				# print(line)
-o				for key in change_list: #iterate through keys
+				for key in change_list: #iterate through keys
 					if key in line and line[len(key)] == ' ': #check if key is also in line
 													  #This is tricky, we have to make sure there is a space
 													  #after the name of the key so that keys that share parts
@@ -408,7 +411,26 @@ o				for key in change_list: #iterate through keys
 		# param.append(minLoss)
 		# self.Log.write(template % tuple(param))
 		return minLoss
+	
+
+
+class gaussian_ideal(antenna):
+	def __init__(self, start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
+				bnd_start_f = [0,100], bnd_end_f = [0,100], bnd_n_f =[1,100], bnd_alpha = [0, 360],
+				grasp_version = 10.3):
 		
+		antenna.__init__(self, parameters = {"z_dist":15.6}, bounds = {"z_dist":[14.5,16]}, grasp_version = grasp_version)
+		self.model_name = "40mIDEAL"
+
+		self.parameter_names += ["start_f", "end_f", "n_f", "alpha"]
+		self.parameters.update({"start_f":start_f, "end_f":end_f, "n_f":n_f, "alpha":alpha })
+		self.bounds.update({"start_f":bnd_start_f, "end_f":bnd_end_f,"n_f":bnd_n_f, "alpha":bnd_alpha})
+		# self.tor_line_numbers = {"z_dist":339, "start_f":346, "end_f":351, "n_f":356,"alpha":361} #checked
+		
+	def __str__(self):
+		return "Ideal Gaussian Pattern without struts"
+
+
 
 class LWA_like(antenna):
 	def __init__(self, x = .77, y = .16, z = -.01,
@@ -558,7 +580,7 @@ class ELfeedDir(ELfeed):
 				bnd_dl = [0, 2.5], bnd_dw = [0, .75], bnd_dsep = [0, 1.5], #  positive dir_sep vals are directors
 				grasp_version = 10.3): 						   #  Negative dir_sep vals are reflectors
 		
-		ELfeed.__init__(self,start_f = start_f, end_f = end_f, n_f = n_f, alpha = 0, grasp_version = grasp_version)
+		ELfeed.__init__(self,start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipoleWDir"
 
 		self.parameter_names += ["dl", "dw", "dsep"]
@@ -587,10 +609,10 @@ class ELfeedDir(ELfeed):
 	# 	self.log.close()
 
 class ELfeedRef(ELfeedDir):
-	def __init__( dsep = -1.5, bnd_dsep = [-3.05, 0], #  positive dir_sep vals are directors
+	def __init__(self, dsep = -1.5, bnd_dsep = [-3.05, 0], #  positive dir_sep vals are directors
 				start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.3): 	  #  Negative dir_sep vals are reflectors
 
-		ELfeedDir.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = 0, grasp_version = grasp_version)
+		ELfeedDir.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipoleWDir"
 
 		self.parameters.update({"dsep":dsep})
@@ -608,14 +630,39 @@ class ELfeedRef(ELfeedDir):
 			return 0
 
 	def get_error_intersection(self):
-		return ELfeedRef.get_error_intersection(self) +  self.get_error_dir_ant_intersection()
+		return ELfeedDir.get_error_intersection(self) +  self.get_error_dir_ant_intersection()
 
 	# def _gen_global_log_headers(self):
 	# 	self.log = open(self.log_name, 'a')
 	# 	self.log.write("antenna separation,antenna x,antenna y,antenna z,reflector length,reflector width,reflector sep,Efficiency,Loss\n")
 	# 	self.log.close()
 
+class ELfeedDirRef(ELfeedDir):
+	def __init__(self, rl = 1.2, rw = .482, rsep = -1.25,
+				start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
+				bnd_rl = [0, 2.0], bnd_rw = [0, .75], bnd_rsep = [-3.05, 0], #  positive dir_sep vals are directors
+				grasp_version = 10.3): 
 
+		ELfeedDir.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
+		self.model_name = "40mQuadDipoleWDirRef"
+
+		self.parameter_names += ["rl", "rw", "rsep"]
+		self.parameters.update({"rl":rl, "rw":rw, "rsep":rsep})
+		self.bounds.update({"rl":bnd_rl, "rw":bnd_rw, "rsep":bnd_rsep})
+		
+
+	def __str__(self):
+		return "Eleven Feed with one Director (dsep > 0) and one Reflector (rsep < 0)"
+
+	def get_error_dir_ant_intersection(self):
+		ans =  self.parameters["z"] - self.parameters["rsep"]
+		if ans < 0:
+			return ans**2
+		else:
+			return 0
+
+	def get_error_intersection(self):
+		return ELfeedDir.get_error_intersection(self) +  self.get_error_dir_ant_intersection()
 
 
 
