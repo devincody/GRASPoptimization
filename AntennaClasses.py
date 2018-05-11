@@ -203,7 +203,10 @@ class antenna(object):
 		change_list = self.get_parameter_names()
 		msh_items = ["x", "y", "z"]
 		for x in msh_items:
-			change_list.remove(x)
+			try:
+				change_list.remove(x)
+			except:
+				pass
 		# print(change_list)
 		# modified_line = self.get_tor_line_replacement()
 
@@ -408,7 +411,26 @@ class antenna(object):
 		# param.append(minLoss)
 		# self.Log.write(template % tuple(param))
 		return minLoss
+	
+
+
+class gaussian_ideal(antenna):
+	def __init__(self, start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
+				bnd_start_f = [0,100], bnd_end_f = [0,100], bnd_n_f =[1,100], bnd_alpha = [0, 360],
+				grasp_version = 10.3):
 		
+		antenna.__init__(self, parameters = {"z_dist":15.6}, bounds = {"z_dist":[14.5,16]}, grasp_version = grasp_version)
+		self.model_name = "40mIDEAL"
+
+		self.parameter_names += ["start_f", "end_f", "n_f", "alpha"]
+		self.parameters.update({"start_f":start_f, "end_f":end_f, "n_f":n_f, "alpha":alpha })
+		self.bounds.update({"start_f":bnd_start_f, "end_f":bnd_end_f,"n_f":bnd_n_f, "alpha":bnd_alpha})
+		# self.tor_line_numbers = {"z_dist":339, "start_f":346, "end_f":351, "n_f":356,"alpha":361} #checked
+		
+	def __str__(self):
+		return "Ideal Gaussian Pattern without struts"
+
+
 
 class LWA_like(antenna):
 	def __init__(self, x = .77, y = .16, z = -.01,

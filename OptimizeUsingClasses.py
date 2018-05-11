@@ -8,12 +8,8 @@ from AntennaClasses import *
 
 
 def main():
-<<<<<<< HEAD
-	a = LWA_DIR(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 45, grasp_version = 10.3)
+	a = gaussian_ideal(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.3)
 
-=======
-	a = LWA_DIR_DIR(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 45, grasp_version = 10.3)
->>>>>>> cdc67ae40fe8e0bebc9636e588ee6fdf81160297
 	a.set_number_of_focal_lengths(5)
 	a.init_global_file_log()
 
@@ -48,20 +44,23 @@ def main():
 	#random(a)
 	# nelder_mead(a).
 
-	# simulate_single(a)
-	setup(a)
+	simulate_single(a)
+	# setup(a)
 
 
 
 def simulate_single(a):
-	x = [1.0761, .7498, 0.4728]
+	# x = [1.0761, .7498, 0.4728]
+	# x = [0.749, 0.621, 0.286, 1.433, 0.926]
+	x=[]
 	names = a.get_optimizable_parameter_names()
 	names.remove("alpha")
 	a.simulate_single_configuration(x, names, plot_feed = True)	
 
 def setup(a):
 	#x = [1.0761, .7498, 0.4728]
-	x = [0.95, .15, -.36, 1.5, 1.06, .6, .3]			#11 DIR
+	x = [0.749, 0.621, 0.286, 1.433, 0.926]
+	# x = [0.95, .15, -.36, 1.5, 1.06, .6, .3]			#11 DIR
 	names = a.get_optimizable_parameter_names()
 	names.remove("alpha")
 	new_parameters = {}
