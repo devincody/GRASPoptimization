@@ -245,8 +245,8 @@ number_of_frequencies: "ref(n_f)")
 voltage_generator2  voltage_generator  
 (
   generators       : sequence
-    (    struct(x: "ref(separation)" m, y: 0.0 m, z: 1.5 m, amplitude: 1.0 V, phase: 90.0),
-    struct(x: "-ref(separation)" m, y: 0.0 m, z: 1.5 m, amplitude: 1.0 V, phase: 90.0)
+    (    struct(x: "ref(sp)" m, y: 0.0 m, z: 1.5 m, amplitude: 1.0 V, phase: 90.0),
+    struct(x: "-ref(sp)" m, y: 0.0 m, z: 1.5 m, amplitude: 1.0 V, phase: 90.0)
     ),
   parameter_selection : s_parameters,
   parameter_file   : S_parameters.par,
@@ -327,54 +327,54 @@ plus_x_leaf_py  tabulated_mesh
  
 minus_x_plus_y  coor_sys  
 (
-  origin           : struct(x: 0.0 m, y: "ref(separation)" m, z: 0.0 m),
+  origin           : struct(x: 0.0 m, y: "ref(sp)" m, z: 0.0 m),
   base             : ref(minus_X)
 )
  
-separation  real_variable  
+sp  real_variable  
 (
   value            : 1.31192
 )
  
 minus_x_minus_y  coor_sys  
 (
-  origin           : struct(x: 0.0 m, y: "-ref(separation)" m, z: 0.0 m),
+  origin           : struct(x: 0.0 m, y: "-ref(sp)" m, z: 0.0 m),
   base             : ref(minus_X)
 )
  
 minus_y_plus_x  coor_sys  
 (
-  origin           : struct(x: 0.0 m, y: "ref(separation)" m, z: 0.0 m),
+  origin           : struct(x: 0.0 m, y: "ref(sp)" m, z: 0.0 m),
   base             : ref(minus_Y)
 )
  
 minus_y_minus_x  coor_sys  
 (
-  origin           : struct(x: 0.0 m, y: "-ref(separation)" m, z: 0.0 m),
+  origin           : struct(x: 0.0 m, y: "-ref(sp)" m, z: 0.0 m),
   base             : ref(minus_Y)
 )
  
 plus_y_plus_x  coor_sys  
 (
-  origin           : struct(x: 0.0 m, y: "ref(separation)" m, z: 0.0 m),
+  origin           : struct(x: 0.0 m, y: "ref(sp)" m, z: 0.0 m),
   base             : ref(plus_Y)
 )
  
 plus_y_minus_x  coor_sys  
 (
-  origin           : struct(x: 0.0 m, y: "-ref(separation)" m, z: 0.0 m),
+  origin           : struct(x: 0.0 m, y: "-ref(sp)" m, z: 0.0 m),
   base             : ref(plus_Y)
 )
  
 plus_x_plus_y  coor_sys  
 (
-  origin           : struct(x: 0.0 m, y: "ref(separation)" m, z: 0.0 m),
+  origin           : struct(x: 0.0 m, y: "ref(sp)" m, z: 0.0 m),
   base             : ref(base)
 )
  
 plus_x_minus_y  coor_sys  
 (
-  origin           : struct(x: 0.0 m, y: "-ref(separation)" m, z: 0.0 m),
+  origin           : struct(x: 0.0 m, y: "-ref(sp)" m, z: 0.0 m),
   base             : ref(base)
 )
  
@@ -495,22 +495,22 @@ z_dist  real_variable
 Dir_minusx_minusy  rectangular_plate  
 (
   coor_sys         : ref(minus_y_minus_x),
-  corner_1         : struct(x: "ref(dir_len)/2" m, y: "ref(dir_wid)/2" m, z: "ref(dir_sep)+ref(ant_apex)" m),
-  corner_2         : struct(x: "ref(dir_len)/2" m, y: "-ref(dir_wid)/2" m, z: "ref(dir_sep)+ref(ant_apex)" m),
-  opp_point        : struct(x: "-ref(dir_len)/2" m, y: "-ref(dir_wid)/2" m, z: "ref(dir_sep)+ref(ant_apex)" m)
+  corner_1         : struct(x: "ref(dl)/2" m, y: "ref(dw)/2" m, z: "ref(dsep)+ref(ant_apex)" m),
+  corner_2         : struct(x: "ref(dl)/2" m, y: "-ref(dw)/2" m, z: "ref(dsep)+ref(ant_apex)" m),
+  opp_point        : struct(x: "-ref(dl)/2" m, y: "-ref(dw)/2" m, z: "ref(dsep)+ref(ant_apex)" m)
 )
  
-dir_len  real_variable  
+dl  real_variable  
 (
   value            : 2.04563
 )
  
-dir_wid  real_variable  
+dw  real_variable  
 (
   value            : 0.29609
 )
  
-dir_sep  real_variable  
+dsep  real_variable  
 (
   value            : 1.07623
 )
@@ -523,25 +523,25 @@ ant_apex  real_variable
 Dir_minusx_minusx  rectangular_plate  
 (
   coor_sys         : ref(minus_x_minus_y),
-  corner_1         : struct(x: "ref(dir_len)/2" m, y: "ref(dir_wid)/2" m, z: "ref(dir_sep)+ref(ant_apex)" m),
-  corner_2         : struct(x: "ref(dir_len)/2" m, y: "-ref(dir_wid)/2" m, z: "ref(dir_sep)+ref(ant_apex)" m),
-  opp_point        : struct(x: "-ref(dir_len)/2" m, y: "-ref(dir_wid)/2" m, z: "ref(dir_sep)+ref(ant_apex)" m)
+  corner_1         : struct(x: "ref(dl)/2" m, y: "ref(dw)/2" m, z: "ref(dsep)+ref(ant_apex)" m),
+  corner_2         : struct(x: "ref(dl)/2" m, y: "-ref(dw)/2" m, z: "ref(dsep)+ref(ant_apex)" m),
+  opp_point        : struct(x: "-ref(dl)/2" m, y: "-ref(dw)/2" m, z: "ref(dsep)+ref(ant_apex)" m)
 )
  
 Dir_minusy_plusx  rectangular_plate  
 (
   coor_sys         : ref(minus_y_plus_x),
-  corner_1         : struct(x: "ref(dir_len)/2" m, y: "ref(dir_wid)/2" m, z: "ref(dir_sep)+ref(ant_apex)" m),
-  corner_2         : struct(x: "ref(dir_len)/2" m, y: "-ref(dir_wid)/2" m, z: "ref(dir_sep)+ref(ant_apex)" m),
-  opp_point        : struct(x: "-ref(dir_len)/2" m, y: "-ref(dir_wid)/2" m, z: "ref(dir_sep)+ref(ant_apex)" m)
+  corner_1         : struct(x: "ref(dl)/2" m, y: "ref(dw)/2" m, z: "ref(dsep)+ref(ant_apex)" m),
+  corner_2         : struct(x: "ref(dl)/2" m, y: "-ref(dw)/2" m, z: "ref(dsep)+ref(ant_apex)" m),
+  opp_point        : struct(x: "-ref(dl)/2" m, y: "-ref(dw)/2" m, z: "ref(dsep)+ref(ant_apex)" m)
 )
  
 Dir_minusx_plusy  rectangular_plate  
 (
   coor_sys         : ref(minus_x_plus_y),
-  corner_1         : struct(x: "ref(dir_len)/2" m, y: "ref(dir_wid)/2" m, z: "ref(dir_sep)+ref(ant_apex)" m),
-  corner_2         : struct(x: "ref(dir_len)/2" m, y: "-ref(dir_wid)/2" m, z: "ref(dir_sep)+ref(ant_apex)" m),
-  opp_point        : struct(x: "-ref(dir_len)/2" m, y: "-ref(dir_wid)/2" m, z: "ref(dir_sep)+ref(ant_apex)" m)
+  corner_1         : struct(x: "ref(dl)/2" m, y: "ref(dw)/2" m, z: "ref(dsep)+ref(ant_apex)" m),
+  corner_2         : struct(x: "ref(dl)/2" m, y: "-ref(dw)/2" m, z: "ref(dsep)+ref(ant_apex)" m),
+  opp_point        : struct(x: "-ref(dl)/2" m, y: "-ref(dw)/2" m, z: "ref(dsep)+ref(ant_apex)" m)
 )
  
 alpha  real_variable  
@@ -646,5 +646,5 @@ view_1_polygonal_struts_plot  polygonal_struts_plot
 (
 )
  
- //$$ Saved at 13:26:45 on 08.05.2018 by GRASP ver. 10.3.1 SN=006343
+ //$$ Saved at 23:13:52 on 10.05.2018 by GRASP ver. 10.3.1 SN=006387
   

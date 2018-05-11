@@ -558,7 +558,7 @@ class ELfeedDir(ELfeed):
 				bnd_dl = [0, 2.5], bnd_dw = [0, .75], bnd_dsep = [0, 1.5], #  positive dir_sep vals are directors
 				grasp_version = 10.3): 						   #  Negative dir_sep vals are reflectors
 		
-		ELfeed.__init__(self,start_f = start_f, end_f = end_f, n_f = n_f, alpha = 0, grasp_version = grasp_version)
+		ELfeed.__init__(self,start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipoleWDir"
 
 		self.parameter_names += ["dl", "dw", "dsep"]
@@ -587,10 +587,10 @@ class ELfeedDir(ELfeed):
 	# 	self.log.close()
 
 class ELfeedRef(ELfeedDir):
-	def __init__( dsep = -1.5, bnd_dsep = [-3.05, 0], #  positive dir_sep vals are directors
+	def __init__(self, dsep = -1.5, bnd_dsep = [-3.05, 0], #  positive dir_sep vals are directors
 				start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.3): 	  #  Negative dir_sep vals are reflectors
 
-		ELfeedDir.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = 0, grasp_version = grasp_version)
+		ELfeedDir.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipoleWDir"
 
 		self.parameters.update({"dsep":dsep})
@@ -608,14 +608,39 @@ class ELfeedRef(ELfeedDir):
 			return 0
 
 	def get_error_intersection(self):
-		return ELfeedRef.get_error_intersection(self) +  self.get_error_dir_ant_intersection()
+		return ELfeedDir.get_error_intersection(self) +  self.get_error_dir_ant_intersection()
 
 	# def _gen_global_log_headers(self):
 	# 	self.log = open(self.log_name, 'a')
 	# 	self.log.write("antenna separation,antenna x,antenna y,antenna z,reflector length,reflector width,reflector sep,Efficiency,Loss\n")
 	# 	self.log.close()
 
+class ELfeedDirRef(ELfeedDir):
+	def __init__(self, rl = 1.2, rw = .482, rsep = -1.25,
+				start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
+				bnd_rl = [0, 2.0], bnd_rw = [0, .75], bnd_rsep = [-3.05, 0], #  positive dir_sep vals are directors
+				grasp_version = 10.3): 
 
+		ELfeedDir.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
+		self.model_name = "40mQuadDipoleWDirRef"
+
+		self.parameter_names += ["rl", "rw", "rsep"]
+		self.parameters.update({"rl":rl, "rw":rw, "rsep":rsep})
+		self.bounds.update({"rl":bnd_rl, "rw":bnd_rw, "rsep":bnd_rsep})
+		
+
+	def __str__(self):
+		return "Eleven Feed with one Director (dsep > 0) and one Reflector (rsep < 0)"
+
+	def get_error_dir_ant_intersection(self):
+		ans =  self.parameters["z"] - self.parameters["rsep"]
+		if ans < 0:
+			return ans**2
+		else:
+			return 0
+
+	def get_error_intersection(self):
+		return ELfeedDir.get_error_intersection(self) +  self.get_error_dir_ant_intersection()
 
 
 
