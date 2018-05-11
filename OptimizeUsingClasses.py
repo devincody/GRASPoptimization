@@ -143,7 +143,7 @@ def random(a):
 	names = a.get_optimizable_parameter_names()
 	names.remove("alpha")
 
-	for i in range(2000):
+	for i in range(20000):
 		x_new = []
 		for idx, k in enumerate(names):
 			# print(k)
