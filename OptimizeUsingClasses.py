@@ -8,12 +8,7 @@ from AntennaClasses import *
 
 
 def main():
-<<<<<<< HEAD
-	a = LWA_DIR(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 45, grasp_version = 10.3)
-
-=======
 	a = LWA_DIR_DIR(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 45, grasp_version = 10.3)
->>>>>>> cdc67ae40fe8e0bebc9636e588ee6fdf81160297
 	a.set_number_of_focal_lengths(5)
 	a.init_global_file_log()
 
