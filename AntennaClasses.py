@@ -416,7 +416,7 @@ class antenna(object):
 
 class gaussian_ideal(antenna):
 	def __init__(self, start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
-				bnd_start_f = [0,100], bnd_end_f = [0,100], bnd_n_f =[1,100], bnd_alpha = [0, 360],
+				bnd_start_f = [0,1000], bnd_end_f = [0,1000], bnd_n_f =[1,1000], bnd_alpha = [0, 360],
 				grasp_version = 10.3):
 		
 		antenna.__init__(self, parameters = {"z_dist":15.6}, bounds = {"z_dist":[14.5,16]}, grasp_version = grasp_version)
@@ -436,7 +436,7 @@ class LWA_like(antenna):
 	def __init__(self, x = .77, y = .16, z = -.01,
 				start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
 				bnd_x = [0, 1.5], bnd_y = [0, .75], bnd_z = [-3.5, 1], 
-				bnd_start_f = [0,100], bnd_end_f = [0,100], bnd_n_f =[1,100], bnd_alpha = [0, 360],
+				bnd_start_f = [0,1000], bnd_end_f = [0,1000], bnd_n_f =[1,1000], bnd_alpha = [0, 360],
 				grasp_version = 10.3):
 		
 		antenna.__init__(self, grasp_version = grasp_version)
@@ -573,6 +573,23 @@ class ELfeed(LWA_like):
 	# 	self.log = open(self.log_name, 'a')
 	# 	self.log.write("antenna separation,antenna x,antenna y,antenna z,Efficiency,Loss\n")
 	# 	self.log.close()
+
+class HIGH_F_ELfeed(ELfeed):
+	def __init__(self, start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
+				grasp_version = 10.3): #seperation is half the distance between dipoles
+		
+		LWA_like.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
+		self.model_name = "40mQuadDipole_High_Freq"
+
+		
+		# self.tor_line_numbers = {"z_dist":489, "sp":333, "start_f":474, "end_f":479, "n_f":484,"alpha":510} #checked
+		
+	def __str__(self):
+		return "High Frequency Eleven Feed with no Directors"
+
+	def get_error_intersection(self):
+		return Elfeed.get_error_intersection(self)
+
 
 class ELfeedDir(ELfeed):
 	def __init__(self, dl = 1.2, dw = .482, dsep = .25,
