@@ -63,7 +63,7 @@ for i in items:
 				plt.close()
 
 		cols = a.columns.tolist()
-		print cols
+		print (cols)
 		cols.remove(loss)
 		cols.remove("Efficiency")
 		cols.append("Efficiency")
