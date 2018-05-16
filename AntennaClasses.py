@@ -66,6 +66,9 @@ class antenna(object):
 	def get_model_name(self):
 		return self.model_name
 
+	def set_method_name(self, name):
+		self.method = name
+
 	def get_bounds(self):
 		return deepcopy(self.bounds)
 
@@ -131,7 +134,7 @@ class antenna(object):
 		return error
 
 	def _create_file_w_timestamp(self, location = os.getcwd()):
-		file_name = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+		file_name = self.model_name +"_" + self.method + "_" + datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 		mydir = os.path.join(
 			location, 
 			file_name)

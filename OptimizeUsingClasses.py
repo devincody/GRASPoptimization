@@ -13,7 +13,6 @@ def main():
 	if platform.node() == "Helios":
 		a = HIGH_F_ELfeed(start_f =  600.0, end_f = 800.0, n_f = 2, alpha = 0, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(5)
-		a.init_global_file_log()
 
 		print("Executing on Helios")
 		print("%s"%a)
@@ -25,8 +24,6 @@ def main():
 	elif platform.node() == 'DESKTOP-3UVMJQF':
 		a = ELfeedRef(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(5)
-		a.init_global_file_log()
-
 
 		print("Executing on G1 Office")
 		a.set_global_directory_name("/mnt/c/Users/dcody/Documents/GRASP/")
@@ -37,15 +34,14 @@ def main():
 	else:
 		a = ELfeed(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(5)
-		a.init_global_file_log()
-
 
 		print("Executing on Moore")
 		a.set_global_directory_name()
 		a.set_ticra_directory_name()#"/cygdrive/c/Program Files/TICRA/")
 		a.set_grasp_analysis_extension()
 	
-	a.gen_file_names()
+	a.set_method_name("general")
+	
 	
 
 	# remove parameters which are altered multiple times (e.g. z_dist)
@@ -57,14 +53,18 @@ def main():
 	# nelder_mead(a)
 	# nelder_mead2(a)
 	# random(a)
-	# nelder_mead(a).
-	setup(a)
+	nelder_mead(a)
+	# setup_configuration(a)
 	# simulate_single(a)
 
+def setup_simulation_files(a, method_name):
+	a.set_method_name(method_name)
+	a.init_global_file_log()
+	a.gen_file_names()
 
 
 def simulate_single(a):
-
+	setup_simulation_files(a, "single")
 	a.parameters["sp"] = 1.05
 	a.parameters["x"] = .77
 	a.parameters["y"] = .16
@@ -87,42 +87,29 @@ def simulate_single(a):
 		x.append(a.parameters[nam])
 	a.simulate_single_configuration(x, names, plot_feed = True)	
 
-def setup(a):
+def setup_configuration(a):
+	setup_simulation_files(a, "setup")
 
 	if a.model_name == "40mQuadDipole_High_Freq":
 		scale = 0.1
 	else:
 		scale = 1
 
-	
-	try:
-		a.parameters["x"] = .77 * scale
-		a.parameters["y"] = .16 * scale
-		a.parameters["z"] = -.01 * scale
-	except:
-		print("Could not set BASE parameter")
 
-	if "Eleven" in a:	
-		try:
-			a.parameters["sp"] = 1.05 * scale
-		except:
-			print("Could not set SEPERATION parameter")
+	a.parameters["x"] = .77 * scale
+	a.parameters["y"] = .16 * scale
+	a.parameters["z"] = -.01 * scale
 
-	if "Dir" in a or "DIR" in a:
-		try:
-			a.parameters["dl"] = 1.060
-			a.parameters["dw"] = .6
-			a.parameters["dsep"] = .3
-		except:
-			print("Could not set DIRECTOR parameter")
+	a.parameters["sp"] = 1.05 * scale
 
-	if "Ref" in a or "REF" in a:
-		try:
-			a.parameters["rl"] = 1.06
-			a.parameters["rw"] = .60
-			a.parameters["rsep"] = -.3
-		except:
-			print("Could not set REFLECTOR parameter")
+	# a.parameters["dl"] = 1.060
+	# a.parameters["dw"] = .6
+	# a.parameters["dsep"] = .3
+
+	# a.parameters["rl"] = 1.06
+	# a.parameters["rw"] = .60
+	# a.parameters["rsep"] = -.3
+
 
 	a.parameters["z_dist"] = 16.625
 
@@ -133,12 +120,16 @@ def setup(a):
 
 def nelder_mead(a):
 	method = 'Nelder-Mead'
+
+	setup_simulation_files(a, method)
+	
 	names = a.get_optimizable_parameter_names()
 	names.remove("alpha")
 	# method = 'Powell'
 
 	# x = [1.0761, .7498, 0.4728]  						#LWA_LIKE
-	x = [1.0761, .7498, -3, 1.43, .8]  						#LWA_DIR
+	# x = [1.0761, .7498, -3, 1.43, .8]  						#LWA_DIR
+	x = [.6989, .1746, .6014, 1.1301]  						#11
 	# x = [1.05, .25, -.16, 1.5, 1.06, .6, .3]			#11 DIR
 	for name, val in zip(names, x):
 		print (name,":=  ", val)
@@ -149,6 +140,7 @@ def nelder_mead(a):
 
 def nelder_mead2(a):
 	method = 'Nelder-Mead'
+	setup_simulation_files(a, method)
 	names = a.get_optimizable_parameter_names()
 	names.remove("alpha")
 	# method = 'Powell'
@@ -164,6 +156,7 @@ def nelder_mead2(a):
 
 
 def random(a):
+	setup_simulation_files(a, "Random")
 	bounds = a.get_bounds()
 
 
