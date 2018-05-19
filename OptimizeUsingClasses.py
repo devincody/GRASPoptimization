@@ -11,7 +11,7 @@ def main():
 
 	## HELIOS
 	if platform.node() == "Helios":
-		a = HIGH_F_ELfeed(start_f =  600.0, end_f = 800.0, n_f = 2, alpha = 0, grasp_version = 10.3)
+		a = ELfeedExt(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(5)
 
 		print("Executing on Helios")
@@ -52,8 +52,8 @@ def main():
 	# random(a)
 	# nelder_mead(a)
 	# nelder_mead2(a)
-	# random(a)
-	nelder_mead(a)
+	random(a)
+	# nelder_mead(a)
 	# setup_configuration(a)
 	# simulate_single(a)
 
@@ -129,8 +129,10 @@ def nelder_mead(a):
 
 	# x = [1.0761, .7498, 0.4728]  						#LWA_LIKE
 	# x = [1.0761, .7498, -3, 1.43, .8]  						#LWA_DIR
-	x = [.6989, .1746, .6014, 1.1301]  						#11
+	# x = [.6989, .1746, .6014, 1.1301]  						#11
 	# x = [1.05, .25, -.16, 1.5, 1.06, .6, .3]			#11 DIR
+	x = [0.8161,0.0318,-0.3301,0.9399,0.7703,0.0045, 0.1227]  #11 DIR
+
 	for name, val in zip(names, x):
 		print (name,":=  ", val)
 
