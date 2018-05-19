@@ -24,7 +24,7 @@ class antenna(object):
 				 model_name = "",			 
 				 parameter_names = ["z_dist"],
 				 parameters = {"z_dist":16.6},
-				 bounds = {"z_dist":[15.5,17]},
+				 bounds = {"z_dist":[15.5,17.5]},
 				 grasp_version = 10.3
 				 ):
 		self.model_name = model_name
