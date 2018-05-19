@@ -578,10 +578,10 @@ class ELfeed(LWA_like):
 	# 	self.log.close()
 
 class HIGH_F_ELfeed(ELfeed):
-	def __init__(self, start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
+	def __init__(self, start_f = 600.0, end_f = 800.0, n_f = 5, alpha = 0,
 				grasp_version = 10.3): #seperation is half the distance between dipoles
 		
-		LWA_like.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
+		ELfeed.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipole_High_Freq"
 
 		
@@ -591,8 +591,23 @@ class HIGH_F_ELfeed(ELfeed):
 		return "High Frequency Eleven Feed with no Directors"
 
 	def get_error_intersection(self):
-		return Elfeed.get_error_intersection(self)
+		return ELfeed.get_error_intersection(self)
 
+class ELfeedExt(ELfeed):
+	def __init__(self, start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
+				grasp_version = 10.3): #seperation is half the distance between dipoles
+		
+		ELfeed.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
+		self.model_name = "40mQuadDipolePlateExtensions"
+
+		
+		# self.tor_line_numbers = {"z_dist":489, "sp":333, "start_f":474, "end_f":479, "n_f":484,"alpha":510} #checked
+		
+	def __str__(self):
+		return "High Frequency Eleven Feed with Mounting Plate Extensions"
+
+	def get_error_intersection(self):
+		return ELfeed.get_error_intersection(self)
 
 class ELfeedDir(ELfeed):
 	def __init__(self, dl = 1.2, dw = .482, dsep = .25,
