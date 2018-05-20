@@ -28,6 +28,7 @@ class antenna(object):
 				 grasp_version = 10.3
 				 ):
 		self.model_name = model_name
+		self.model_abbreviation = "abstract"
 		
 		self.parameter_names = parameter_names
 		self.parameters = parameters
@@ -134,7 +135,7 @@ class antenna(object):
 		return error
 
 	def _create_file_w_timestamp(self, location = os.getcwd()):
-		file_name = self.model_name +"_" + self.method + "_" + datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+		file_name = self.model_abbreviation +"_" + self.method + "_" + datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 		mydir = os.path.join(
 			location, 
 			file_name)
@@ -306,12 +307,12 @@ class antenna(object):
 				os.mkdir(feed_directory)
 
 		## PLOT DATA
-		process_grasp.plot_pair_efficiencies(freq, s11, dmax, plots_directory + "Efficiency/Efficiencies Antenna Position = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, efficiency, loss_val), AntPos)
-		process_grasp.plot_SEFD(freq, dmax, plots_directory + "SEFD/SEFD Antenna Position = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, efficiency, loss_val), AntPos)
+		process_grasp.plot_pair_efficiencies(freq, s11, dmax, plots_directory + "Efficiency/Efficiencies Position = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, efficiency, loss_val), AntPos)
+		process_grasp.plot_SEFD(freq, dmax, plots_directory + "SEFD/SEFD Pos = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, efficiency, loss_val), AntPos)
 		for frequency in freq:
-			process_grasp.plot_cut(frequency, cut, AntPos, pattern_directory +"Radiation_Pattern_Position=%4.2f_Freq=%4.2f_Ef=%4.2f_Loss=%4.2f.png" %(AntPos, frequency, efficiency, loss_val))
+			process_grasp.plot_cut(frequency, cut, AntPos, pattern_directory +"DishPat_Pos=%4.2f_Freq=%4.2f_Ef=%4.2f_Loss=%4.2f.png" %(AntPos, frequency, efficiency, loss_val))
 			if plot_feed:
-				process_grasp.plot_cut(frequency, feed_cut, AntPos, feed_directory +"Feed_Pattern_Position=%4.2f_Freq=%4.2f_Ef=%4.2f_Loss=%4.2f.png" %(AntPos, frequency, efficiency, loss_val), feed_pattern = True)
+				process_grasp.plot_cut(frequency, feed_cut, AntPos, feed_directory +"FeedPat_Pos=%4.2f_Freq=%4.2f_Ef=%4.2f_Loss=%4.2f.png" %(AntPos, frequency, efficiency, loss_val), feed_pattern = True)
 			# process_grasp.plot_cut(frequency, cut, AntPos, pattern_directory +"Radiation Pattern Position = %4.2f Freq = %4.2f Ef = %4.2f Loss = %4.2f.png" %(AntPos, frequency, efficiency, loss_val))
 
 		## WRITE DATA TO FILES
@@ -424,6 +425,7 @@ class gaussian_ideal(antenna):
 		
 		antenna.__init__(self, parameters = {"z_dist":15.6}, bounds = {"z_dist":[14.5,16]}, grasp_version = grasp_version)
 		self.model_name = "40mIDEAL"
+		self.model_abbreviation = "gauss"
 
 		self.parameter_names += ["start_f", "end_f", "n_f", "alpha"]
 		self.parameters.update({"start_f":start_f, "end_f":end_f, "n_f":n_f, "alpha":alpha })
@@ -438,12 +440,13 @@ class gaussian_ideal(antenna):
 class LWA_like(antenna):
 	def __init__(self, x = .77, y = .16, z = -.01,
 				start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
-				bnd_x = [0, 1.5], bnd_y = [0, .75], bnd_z = [-3.5, 1], 
+				bnd_x = [0, 1.5], bnd_y = [0, .75], bnd_z = [-3.0, 1], 
 				bnd_start_f = [0,1000], bnd_end_f = [0,1000], bnd_n_f =[1,1000], bnd_alpha = [0, 360],
 				grasp_version = 10.3):
 		
 		antenna.__init__(self, grasp_version = grasp_version)
 		self.model_name = "40mLWA104"
+		self.model_abbreviation = "LWA_like"
 
 		self.parameter_names += ["x", "y", "z", "start_f", "end_f", "n_f", "alpha"]
 		self.parameters.update({"x":x, "y":y, "z":z, "start_f":start_f, "end_f":end_f, "n_f":n_f, "alpha":alpha })
@@ -500,6 +503,7 @@ class LWA_DIR(LWA_like):
 		
 		LWA_like.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
 		self.model_name = "40mLWADIR"
+		self.model_abbreviation = "LWADIR"
 
 		self.parameter_names += ["dl", "dsep"]
 		self.parameters.update({"dl":dl, "dsep":dsep})
@@ -529,6 +533,7 @@ class LWA_DIR_DIR(LWA_DIR):
 		
 		LWA_DIR.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
 		self.model_name = "40mLWADIRDIR"
+		self.model_abbreviation = "LWADIRDIR"
 
 		self.parameter_names += ["dl2", "dsep2"]
 		self.parameters.update({"dl2":dl2, "dsep2":dsep2})
@@ -551,6 +556,7 @@ class ELfeed(LWA_like):
 		
 		LWA_like.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipole"
+		self.model_abbreviation = "Eleven"
 
 		self.parameter_names += ["sp"]
 		self.parameters.update({"sp":sp})
@@ -583,6 +589,7 @@ class HIGH_F_ELfeed(ELfeed):
 		
 		ELfeed.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipole_High_Freq"
+		self.model_abbreviation = "11HighFreq"
 
 		
 		# self.tor_line_numbers = {"z_dist":489, "sp":333, "start_f":474, "end_f":479, "n_f":484,"alpha":510} #checked
@@ -602,6 +609,7 @@ class ELfeedExt(ELfeed):
 		
 		ELfeed.__init__(self,start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipolePlateExtensions"
+		self.model_abbreviation = "11Ext"
 
 		self.parameter_names += ["el", "ew"]
 		self.parameters.update({"el":el, "ew":ew})
@@ -624,6 +632,7 @@ class ELfeedDir(ELfeed):
 		
 		ELfeed.__init__(self,start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipoleWDir"
+		self.model_abbreviation = "11DIR"
 
 		self.parameter_names += ["dl", "dw", "dsep"]
 		self.parameters.update({"dl":dl, "dw":dw, "dsep":dsep})
@@ -656,6 +665,7 @@ class ELfeedRef(ELfeedDir):
 
 		ELfeedDir.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipoleWDir"
+		self.model_abbreviation = "11REF"
 
 		self.parameters.update({"dsep":dsep})
 		self.bounds.update({"dsep":bnd_dsep})
@@ -687,6 +697,7 @@ class ELfeedDirRef(ELfeedDir):
 
 		ELfeedDir.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipoleWDirRef"
+		self.model_abbreviation = "11DIRREF"
 
 		self.parameter_names += ["rl", "rw", "rsep"]
 		self.parameters.update({"rl":rl, "rw":rw, "rsep":rsep})
