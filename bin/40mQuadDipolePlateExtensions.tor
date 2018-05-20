@@ -1,0 +1,661 @@
+plus_y_leaf_px  tabulated_mesh  
+(
+  coor_sys         : ref(plus_x_minus_y),
+  file_name        : patch_leaf_inverted_V.msh
+)
+ 
+base  coor_sys_grasp_angles  
+(
+  origin           : struct(x: 0.0 m, y: 0.0 m, z: "ref(z_dist)" m),
+  theta            : 180.0,
+  psi              : "180-ref(alpha)",
+  base             : ref(single_global_coor)
+)
+ 
+minus_X  coor_sys  
+(
+  x_axis           : struct(x: -1.0, y: 0.0, z: 0.0),
+  y_axis           : struct(x: 0.0, y: -1.0, z: 0.0),
+  base             : ref(base)
+)
+ 
+minus_y_leaf_mx  tabulated_mesh  
+(
+  coor_sys         : ref(minus_x_minus_y),
+  file_name        : patch_leaf_inverted_V.msh
+)
+ 
+minus_x_terminal  piecewise_straight_wire  
+(
+  coor_sys         : ref(plus_y_minus_x),
+  nodes            : sequence
+    (    struct(x: "-ref(wire_len)" m, y: 0.0 m, z: 1.5 m),
+    struct(x: 0.0 m, y: 0.0 m, z: 1.5 m)
+    ),
+  radius           : 0.1E-01 m
+)
+ 
+Antenna  scatterer_cluster  
+(
+  scatterers       : sequence(ref(minus_y_dipole),ref(minus_x_dipole),ref(plus_x_dipole),ref(plus_y_dipole))
+)
+ 
+frequency  frequency  
+(
+  frequency_list   : sequence(20.0 MHz,50.0 MHz,80.0 MHz)
+)
+ 
+mom  mom  
+(
+  frequency        : ref(freq_20_80_df_5_MHz_01),
+  scatterer        : ref(Ant_dish_struts),
+  coor_sys         : ref(base)
+)
+ 
+spherical_cut  spherical_cut  
+(
+  coor_sys         : ref(single_global_coor),
+  theta_range      : struct(start: -180.0, end: 180.0, np: 201),
+  phi_range        : struct(start: 0.0, end: 90.0, np: 3),
+  file_name        : Field_Data.cut,
+  comment          : "Field data in cuts",
+  frequency        : ref(freq_20_80_df_5_MHz_01)
+)
+ 
+theta_phi  spherical_grid  
+(
+  coor_sys         : ref(base),
+  grid_type        : theta_phi,
+  x_range          : struct(start: -180.0, end: 180.0, np: 41),
+  y_range          : struct(start: -180.0, end: 180.0, np: 41),
+  frequency        : ref(frequency)
+)
+ 
+plus_Y  coor_sys_grasp_angles  
+(
+  psi              : -90.0,
+  base             : ref(base)
+)
+ 
+minus_Y  coor_sys_grasp_angles  
+(
+  psi              : 90.0,
+  base             : ref(base)
+)
+ 
+minus_x_leaf_py  tabulated_mesh  
+(
+  coor_sys         : ref(plus_y_minus_x),
+  file_name        : patch_leaf_inverted_V.msh
+)
+ 
+plus_x_leaf_my  tabulated_mesh  
+(
+  coor_sys         : ref(minus_y_minus_x),
+  file_name        : patch_leaf_inverted_V.msh
+)
+ 
+freq_50MHz  frequency  
+(
+  frequency_list   : sequence(50.0 MHz)
+)
+ 
+UV_grid  spherical_grid  
+(
+  coor_sys         : ref(base),
+  x_range          : struct(start: -1.0, end: 1.0, np: 51),
+  y_range          : struct(start: -1.0, end: 1.0, np: 51),
+  truncation       : elliptical,
+  frequency        : ref(freq_50MHz)
+)
+ 
+freq_20_80_df_1_MHz  frequency_range  
+(
+  frequency_range  : struct(start_frequency: 20.0 MHz, end_frequency: 80.0 MHz, number_of_frequencies: 60)
+)
+ 
+frequency_range  frequency_range  
+(
+  frequency_range  : struct(start_frequency: 20.0 MHz, end_frequency: 80.0 MHz, number_of_frequencies: 1)
+)
+ 
+freq_20MHz  frequency  
+(
+  frequency_list   : sequence(20.0 MHz)
+)
+ 
+freq_80MHz  frequency  
+(
+  frequency_list   : sequence(80.0 MHz)
+)
+ 
+single_global_coor  coor_sys  
+(
+)
+ 
+single_frequencies  frequency  
+(
+  frequency_list   : sequence(50.0 MHz)
+)
+ 
+single_surface  paraboloid  
+(
+  focal_length     : 16.0 m
+)
+ 
+single_rim  elliptical_rim  
+(
+  half_axis        : struct(x: 20.0 m, y: 20.0 m)
+)
+ 
+single_reflector  reflector  
+(
+  coor_sys         : ref(single_global_coor),
+  surface          : ref(single_surface),
+  rim              : ref(single_rim)
+)
+ 
+single_feed_coor  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: 0.0 m, z: 16.0 m),
+  y_axis           : struct(x: 0.0, y: -1.0, z: 0.0),
+  base             : ref(single_global_coor)
+)
+ 
+single_cut_coor  coor_sys  
+(
+  base             : ref(single_global_coor)
+)
+ 
+single_cut  spherical_cut  
+(
+  coor_sys         : ref(single_cut_coor),
+  theta_range      : struct(start: -42.9421067980681, end: 42.9421067980681, np: 161),
+  phi_range        : struct(start: 0.0, end: 90.0, np: 3),
+  file_name        : " ",
+  comment          : "Field data in cuts",
+  frequency        : ref(single_frequencies)
+)
+ 
+Antenna_plus_dish  scatterer_cluster  
+(
+  scatterers       : sequence(ref(Antenna),ref(single_reflector))
+)
+ 
+polygonal_struts_01  polygonal_struts  
+(
+  position         : sequence
+    (    struct(coor_sys: ref(NewStrut1), z1: 0.0 m, z2: "ref(strut_length)" m),
+    struct(coor_sys: ref(NewStrut2), z1: 0.0 m, z2: "ref(strut_length)" m),
+    struct(coor_sys: ref(NewStrut3), z1: 0.0 m, z2: "ref(strut_length)" m),
+    struct(coor_sys: ref(NewStrut4), z1: 0.0 m, z2: "ref(strut_length)" m)
+    ),
+  cross_section    : sequence
+    (    struct(x: -13.0 in, y: -13.0 in),
+    struct(x: -13.0 in, y: 13.0 in),
+    struct(x: 13.0 in, y: 13.0 in),
+    struct(x: 13.0 in, y: -13.0 in)
+    )
+)
+ 
+strut1  coor_sys  
+(
+  origin           : struct(x: 6.57 m, y: 6.57 m, z: 1.3 m),
+  x_axis           : struct(x: 0.707106781186548, y: -0.707106781186547, z: 0.0),
+  y_axis           : struct(x: 0.618449525877658, y: 0.618449525877659, z: 0.484809620246337),
+  base             : ref(single_global_coor)
+)
+ 
+strut2  coor_sys  
+(
+  origin           : struct(x: -6.57 m, y: 6.57 m, z: 1.3 m),
+  x_axis           : struct(x: 0.707106781186547, y: 0.707106781186548, z: 0.0),
+  y_axis           : struct(x: -0.618449525877659, y: 0.618449525877659, z: 0.484809620246337),
+  base             : ref(single_global_coor)
+)
+ 
+strut3  coor_sys  
+(
+  origin           : struct(x: -6.57 m, y: -6.57 m, z: 1.3 m),
+  x_axis           : struct(x: -0.618449525877659, y: -0.618449525877659, z: 0.484809620246337),
+  y_axis           : struct(x: 0.707106781186547, y: -0.707106781186547, z: 0.0),
+  base             : ref(single_global_coor)
+)
+ 
+strut4  coor_sys  
+(
+  origin           : struct(x: 6.57 m, y: -6.57 m, z: 1.3 m),
+  x_axis           : struct(x: -0.707106781186547, y: -0.707106781186548, z: 0.0),
+  y_axis           : struct(x: 0.618449525877659, y: -0.618449525877659, z: 0.484809620246337),
+  base             : ref(single_global_coor)
+)
+ 
+Ant_dish_struts  scatterer_cluster  
+(
+  scatterers       : sequence(ref(Antenna_plus_dish),ref(polygonal_struts_01),ref(MountingPlate),
+ref(extension_plate1),ref(extension_plate2),ref(extension_plate3),ref(extension_plate4))
+)
+ 
+freq_20_80_df_5_MHz_01  frequency_range  
+(
+  frequency_range  : struct(start_frequency: "ref(start_f)" MHz, end_frequency: "ref(end_f)" MHz, 
+number_of_frequencies: "ref(n_f)")
+)
+ 
+voltage_generator2  voltage_generator  
+(
+  generators       : sequence
+    (    struct(x: "ref(sp)" m, y: 0.0 m, z: 1.5 m, amplitude: 1.0 V, phase: 90.0),
+    struct(x: "-ref(sp)" m, y: 0.0 m, z: 1.5 m, amplitude: 1.0 V, phase: 90.0)
+    ),
+  parameter_selection : s_parameters,
+  parameter_file   : S_parameters.par,
+  coor_sys         : ref(base)
+)
+ 
+NewStrut2  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: 0.0 m, z: "ref(strut_dz)" m),
+  y_axis           : struct(x: 0.0, y: 0.998895091712983, z: -0.469956992895184E-01),
+  base             : ref(strut2)
+)
+ 
+NewStrut1  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: 0.0 m, z: "ref(strut_dz)" m),
+  y_axis           : struct(x: 0.0, y: 0.998894356482906, z: -0.470113240251915E-01),
+  base             : ref(strut1)
+)
+ 
+NewStrut3  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: 0.0 m, z: "ref(strut_dz)" m),
+  x_axis           : struct(x: 0.998897326518368, y: 0.0, z: -0.469481743463633E-01),
+  base             : ref(strut3)
+)
+ 
+NewStrut4  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: 0.0 m, z: "ref(strut_dz)" m),
+  y_axis           : struct(x: 0.0, y: 0.998897326518368, z: -0.469481743463633E-01),
+  base             : ref(strut4)
+)
+ 
+Top_of_struts  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: 0.0 m, z: 19.945 m),
+  base             : ref(single_global_coor)
+)
+ 
+Mounting_Plate  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: 0.0 m, z: -3.59 m),
+  base             : ref(Top_of_struts)
+)
+ 
+MountingPlate  rectangular_plate  
+(
+  coor_sys         : ref(Mounting_Plate),
+  corner_1         : struct(x: "ref(mounting_plate_sz)" m, y: "ref(mounting_plate_sz)" m, z: 0.0 m),
+  corner_2         : struct(x: "-ref(mounting_plate_sz)" m, y: "ref(mounting_plate_sz)" m, z: 0.0 m),
+  opp_point        : struct(x: 0.0 m, y: "-ref(mounting_plate_sz)" m, z: 0.0 m)
+)
+ 
+plus_y_leaf_mx  tabulated_mesh  
+(
+  coor_sys         : ref(minus_x_plus_y),
+  file_name        : patch_leaf_inverted_V.msh
+)
+ 
+minus_x_leaf_my  tabulated_mesh  
+(
+  coor_sys         : ref(minus_y_plus_x),
+  file_name        : patch_leaf_inverted_V.msh
+)
+ 
+minus_y_leaf_px  tabulated_mesh  
+(
+  coor_sys         : ref(plus_x_plus_y),
+  file_name        : patch_leaf_inverted_V.msh
+)
+ 
+plus_x_leaf_py  tabulated_mesh  
+(
+  coor_sys         : ref(plus_y_plus_x),
+  file_name        : patch_leaf_inverted_V.msh
+)
+ 
+minus_x_plus_y  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: "ref(sp)" m, z: 0.0 m),
+  base             : ref(minus_X)
+)
+ 
+sp  real_variable  
+(
+  value            : 0.93649
+)
+ 
+minus_x_minus_y  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: "-ref(sp)" m, z: 0.0 m),
+  base             : ref(minus_X)
+)
+ 
+minus_y_plus_x  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: "ref(sp)" m, z: 0.0 m),
+  base             : ref(minus_Y)
+)
+ 
+minus_y_minus_x  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: "-ref(sp)" m, z: 0.0 m),
+  base             : ref(minus_Y)
+)
+ 
+plus_y_plus_x  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: "ref(sp)" m, z: 0.0 m),
+  base             : ref(plus_Y)
+)
+ 
+plus_y_minus_x  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: "-ref(sp)" m, z: 0.0 m),
+  base             : ref(plus_Y)
+)
+ 
+plus_x_plus_y  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: "ref(sp)" m, z: 0.0 m),
+  base             : ref(base)
+)
+ 
+plus_x_minus_y  coor_sys  
+(
+  origin           : struct(x: 0.0 m, y: "-ref(sp)" m, z: 0.0 m),
+  base             : ref(base)
+)
+ 
+plus_x_dipole  scatterer_cluster  
+(
+  scatterers       : sequence(ref(plus_x_leaf_my),ref(plus_x_terminal),ref(plus_x_terminal2),
+ref(plus_x_leaf_py))
+)
+ 
+minus_x_dipole  scatterer_cluster  
+(
+  scatterers       : sequence(ref(minus_x_leaf_my),ref(minus_x_leaf_py),ref(minus_x_terminal),
+ref(minus_x_terminal2))
+)
+ 
+plus_y_dipole  scatterer_cluster  
+(
+  scatterers       : sequence(ref(plus_y_leaf_px),ref(plus_y_leaf_mx),ref(plus_y_terminal),
+ref(plus_y_terminal2))
+)
+ 
+minus_y_dipole  scatterer_cluster  
+(
+  scatterers       : sequence(ref(minus_y_leaf_mx),ref(minus_y_leaf_px),ref(minus_y_terminal),
+ref(minus_y_terminal2))
+)
+ 
+minus_x_terminal2  piecewise_straight_wire  
+(
+  coor_sys         : ref(plus_y_minus_x),
+  nodes            : sequence
+    (    struct(x: 0.0 m, y: 0.0 m, z: 1.5 m),
+    struct(x: "ref(wire_len)" m, y: 0.0 m, z: 1.5 m)
+    ),
+  radius           : 0.1E-01 m
+)
+ 
+plus_x_terminal  piecewise_straight_wire  
+(
+  coor_sys         : ref(minus_y_minus_x),
+  nodes            : sequence
+    (    struct(x: "-ref(wire_len)" m, y: 0.0 m, z: 1.5 m),
+    struct(x: 0.0 m, y: 0.0 m, z: 1.5 m)
+    ),
+  radius           : 0.1E-01 m
+)
+ 
+plus_x_terminal2  piecewise_straight_wire  
+(
+  coor_sys         : ref(minus_y_minus_x),
+  nodes            : sequence
+    (    struct(x: 0.0 m, y: 0.0 m, z: 1.5 m),
+    struct(x: "ref(wire_len)" m, y: 0.0 m, z: 1.5 m)
+    ),
+  radius           : 0.1E-01 m
+)
+ 
+plus_y_terminal  piecewise_straight_wire  
+(
+  coor_sys         : ref(plus_x_minus_y),
+  nodes            : sequence
+    (    struct(x: "-ref(wire_len)" m, y: 0.0 m, z: 1.5 m),
+    struct(x: 0.0 m, y: 0.0 m, z: 1.5 m)
+    ),
+  radius           : 0.1E-01 m
+)
+ 
+plus_y_terminal2  piecewise_straight_wire  
+(
+  coor_sys         : ref(plus_x_minus_y),
+  nodes            : sequence
+    (    struct(x: 0.0 m, y: 0.0 m, z: 1.5 m),
+    struct(x: "ref(wire_len)" m, y: 0.0 m, z: 1.5 m)
+    ),
+  radius           : 0.1E-01 m
+)
+ 
+minus_y_terminal  piecewise_straight_wire  
+(
+  coor_sys         : ref(minus_x_minus_y),
+  nodes            : sequence
+    (    struct(x: "-ref(wire_len)" m, y: 0.0 m, z: 1.5 m),
+    struct(x: 0.0 m, y: 0.0 m, z: 1.5 m)
+    ),
+  radius           : 0.1E-01 m
+)
+ 
+minus_y_terminal2  piecewise_straight_wire  
+(
+  coor_sys         : ref(minus_x_minus_y),
+  nodes            : sequence
+    (    struct(x: 0.0 m, y: 0.0 m, z: 1.5 m),
+    struct(x: "ref(wire_len)" m, y: 0.0 m, z: 1.5 m)
+    ),
+  radius           : 0.1E-01 m
+)
+ 
+start_f  real_variable  
+(
+  value            : 60.0
+)
+ 
+end_f  real_variable  
+(
+  value            : 80.0
+)
+ 
+n_f  real_variable  
+(
+  value            : 5.0
+)
+ 
+z_dist  real_variable  
+(
+  value            : 17.5
+)
+ 
+dl  real_variable  
+(
+  value            : 1.46
+)
+ 
+dw  real_variable  
+(
+  value            : 0.63
+)
+ 
+dsep  real_variable  
+(
+  value            : 1.37
+)
+ 
+ant_apex  real_variable  
+(
+  value            : 1.5
+)
+ 
+alpha  real_variable  
+(
+  value            : 0.0
+)
+ 
+strut_length  real_variable  
+(
+  value            : 19.35
+)
+ 
+strut_dz  real_variable  
+(
+  value            : 0.15
+)
+ 
+mounting_plate_sz  real_variable  
+(
+  value            : 1.0
+)
+ 
+FEED_cluster  scatterer_cluster  
+(
+  scatterers       : sequence(ref(Antenna),ref(polygonal_struts_01),ref(MountingPlate),ref(extension_plate1),
+ref(extension_plate2),ref(extension_plate3),ref(extension_plate4))
+)
+ 
+Feed_cut  spherical_cut  
+(
+  coor_sys         : ref(single_global_coor),
+  theta_range      : struct(start: -180.0, end: 180.0, np: 201),
+  phi_range        : struct(start: 0.0, end: 90.0, np: 3),
+  file_name        : Feed_Data.cut,
+  comment          : "Field data in cuts",
+  frequency        : ref(freq_20_80_df_5_MHz_01)
+)
+ 
+FEED_mom  mom  
+(
+  frequency        : ref(freq_20_80_df_5_MHz_01),
+  scatterer        : ref(FEED_cluster),
+  coor_sys         : ref(base)
+)
+ 
+wire_len  real_variable  
+(
+  value            : 0.35E-01
+)
+ 
+extension_plate1  rectangular_plate  
+(
+  coor_sys         : ref(Mounting_Plate),
+  corner_1         : struct(x: "ref(mounting_plate_sz)" m, y: "ref(ew)/2" m, z: 0.0 m),
+  corner_2         : struct(x: "ref(mounting_plate_sz)" m, y: "-ref(ew)/2" m, z: 0.0 m),
+  opp_point        : struct(x: "ref(mounting_plate_sz)+ref(el)" m, y: "ref(ew)/2" m, z: 0.0 m)
+)
+ 
+extension_plate2  rectangular_plate  
+(
+  coor_sys         : ref(Mounting_Plate),
+  corner_1         : struct(x: "-ref(mounting_plate_sz)" m, y: "ref(ew)/2" m, z: 0.0 m),
+  corner_2         : struct(x: "-ref(mounting_plate_sz)" m, y: "-ref(ew)/2" m, z: 0.0 m),
+  opp_point        : struct(x: "-ref(mounting_plate_sz)-ref(el)" m, y: "ref(ew)/2" m, z: 0.0 m)
+)
+ 
+extension_plate3  rectangular_plate  
+(
+  coor_sys         : ref(Mounting_Plate),
+  corner_1         : struct(x: "ref(ew)/2" m, y: "ref(mounting_plate_sz)" m, z: 0.0 m),
+  corner_2         : struct(x: "-ref(ew)/2" m, y: "ref(mounting_plate_sz)" m, z: 0.0 m),
+  opp_point        : struct(x: "ref(ew)/2" m, y: "ref(mounting_plate_sz)+ref(el)" m, z: 0.0 m)
+)
+ 
+extension_plate4  rectangular_plate  
+(
+  coor_sys         : ref(Mounting_Plate),
+  corner_1         : struct(x: "ref(ew)/2" m, y: "-ref(mounting_plate_sz)" m, z: 0.0 m),
+  corner_2         : struct(x: "-ref(ew)/2" m, y: "-ref(mounting_plate_sz)" m, z: 0.0 m),
+  opp_point        : struct(x: "ref(ew)/2" m, y: "-ref(mounting_plate_sz)-ref(el)" m, z: 0.0 m)
+)
+ 
+ew  real_variable  
+(
+  value            : 1.5
+)
+ 
+el  real_variable  
+(
+  value            : 2.0
+)
+ 
+//DO NOT MODIFY OBJECTS BELOW THIS LINE.
+//THESE OBJECTS ARE CREATED AND MANAGED BY THE
+//GRAPHICAL USER INTERFACE AND SHOULD NOT BE
+//MODIFIED MANUALLY!
+view_1  view  
+(
+  objects          : sequence(ref(view_1_tabulated_mesh_plot),ref(view_1_coor_sys_plot),ref(view_1_wires_plot)
+,ref(view_1_mom_source_plot),ref(view_1_mom_plot),ref(view_1_output_points_plot),ref(view_1_reflector_plot),
+ref(view_1_plate_plot),ref(view_1_bor_plot),ref(view_1_feed_plot),ref(view_1_polygonal_struts_plot))
+)
+ 
+view_1_tabulated_mesh_plot  tabulated_mesh_plot  
+(
+)
+ 
+view_1_coor_sys_plot  coor_sys_plot  
+(
+)
+ 
+view_1_wires_plot  wires_plot  
+(
+)
+ 
+view_1_mom_source_plot  mom_source_plot  
+(
+)
+ 
+view_1_mom_plot  mom_plot  
+(
+)
+ 
+view_1_output_points_plot  output_points_plot  
+(
+)
+ 
+view_1_reflector_plot  reflector_plot  
+(
+)
+ 
+view_1_plate_plot  plate_plot  
+(
+)
+ 
+view_1_bor_plot  bor_plot  
+(
+)
+ 
+view_1_feed_plot  feed_plot  
+(
+)
+ 
+view_1_polygonal_struts_plot  polygonal_struts_plot  
+(
+)
+ 
+ //$$ Saved at 22:52:15 on 19.05.2018 by GRASP ver. 10.3.1 SN=006387
+  

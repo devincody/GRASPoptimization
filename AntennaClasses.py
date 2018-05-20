@@ -24,7 +24,7 @@ class antenna(object):
 				 model_name = "",			 
 				 parameter_names = ["z_dist"],
 				 parameters = {"z_dist":16.6},
-				 bounds = {"z_dist":[15.5,17]},
+				 bounds = {"z_dist":[15.5,17.5]},
 				 grasp_version = 10.3
 				 ):
 		self.model_name = model_name
@@ -578,10 +578,10 @@ class ELfeed(LWA_like):
 	# 	self.log.close()
 
 class HIGH_F_ELfeed(ELfeed):
-	def __init__(self, start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
+	def __init__(self, start_f = 600.0, end_f = 800.0, n_f = 5, alpha = 0,
 				grasp_version = 10.3): #seperation is half the distance between dipoles
 		
-		LWA_like.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
+		ELfeed.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipole_High_Freq"
 
 		
@@ -591,7 +591,29 @@ class HIGH_F_ELfeed(ELfeed):
 		return "High Frequency Eleven Feed with no Directors"
 
 	def get_error_intersection(self):
-		return Elfeed.get_error_intersection(self)
+		return ELfeed.get_error_intersection(self)
+
+
+class ELfeedExt(ELfeed):
+	def __init__(self, el = 1.2, ew = 1.2,
+				start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
+				bnd_el = [0, 2.0], bnd_ew = [0, 1.5],  #  positive dir_sep vals are directors
+				grasp_version = 10.3): 						   #  Negative dir_sep vals are reflectors
+		
+		ELfeed.__init__(self,start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
+		self.model_name = "40mQuadDipolePlateExtensions"
+
+		self.parameter_names += ["el", "ew"]
+		self.parameters.update({"el":el, "ew":ew})
+		self.bounds.update({"el":bnd_el, "ew":bnd_ew})
+		
+		# self.tor_line_numbers = {"z_dist":489, "sp":333, "dl":502, "dw":507, "dsep":512, "start_f":457, "end_f":480, "n_f":485,"alpha":547} #checked
+		#checked
+	def __str__(self):
+		return "High Frequency Eleven Feed with Mounting Plate Extensions"
+
+	def get_error_intersection(self):
+		return ELfeed.get_error_intersection(self)
 
 
 class ELfeedDir(ELfeed):
