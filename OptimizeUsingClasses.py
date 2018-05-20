@@ -22,8 +22,8 @@ def main():
 
 	## G1
 	elif platform.node() == 'DESKTOP-3UVMJQF':
-		a = ELfeedRef(start_f =  60.0, end_f = 80.0, n_f = 10, alpha = 0, grasp_version = 10.3)
-		a.set_number_of_focal_lengths(12)
+		a = ELfeedExt(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.3)
+		a.set_number_of_focal_lengths(5)
 
 		print("Executing on G1 Office")
 		print("%s"%a)
@@ -54,8 +54,8 @@ def main():
 	# random(a)
 	# nelder_mead(a)
 	# nelder_mead2(a)
-	# random(a)
-	nelder_mead(a)
+	random(a)
+	# nelder_mead(a)
 	# setup_configuration(a)
 	# simulate_single(a)
 
@@ -129,7 +129,7 @@ def nelder_mead(a):
 
 	# x = [1.0761, .7498, 0.4728]  						#LWA_LIKE
 	# x = [1.0761, .7498, -3, 1.43, .8]  						#LWA_DIR
-	# x = [.6989, .1746, .6014, 1.1301]  						#11
+	x = [.6989, .1746, .6014, 1.1301]  						#11
 	# x = [1.05, .25, -.16, 1.5, 1.06, .6, .3]			#11 DIR
 	# x = [0.6604, 0.356, -0.3087, 1.1227, 0.1509, 0.0748, -2.02]	#11 REF
 
@@ -166,6 +166,7 @@ def random(a):
 
 	names = a.get_optimizable_parameter_names()
 	names.remove("alpha")
+	# print names
 
 	for i in range(20000):
 		x_new = []
