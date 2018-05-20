@@ -22,10 +22,11 @@ def main():
 
 	## G1
 	elif platform.node() == 'DESKTOP-3UVMJQF':
-		a = ELfeedRef(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.3)
+		a = ELfeedExt(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(5)
 
 		print("Executing on G1 Office")
+		print("%s"%a)
 		a.set_global_directory_name("/mnt/c/Users/dcody/Documents/GRASP/")
 		a.set_ticra_directory_name("/mnt/c/Program Files/TICRA/")
 		a.set_grasp_analysis_extension(".exe")
@@ -36,6 +37,7 @@ def main():
 		a.set_number_of_focal_lengths(5)
 
 		print("Executing on Moore")
+		print("%s"%a)
 		a.set_global_directory_name()
 		a.set_ticra_directory_name()#"/cygdrive/c/Program Files/TICRA/")
 		a.set_grasp_analysis_extension()
@@ -65,13 +67,13 @@ def setup_simulation_files(a, method_name):
 
 def simulate_single(a):
 	setup_simulation_files(a, "single")
-	a.parameters["sp"] = 1.05
-	a.parameters["x"] = .77
-	a.parameters["y"] = .16
-	a.parameters["z"] = -0.01
-	# a.parameters["dl"] = 1.06
-	# a.parameters["dw"] = .60
-	# a.parameters["dsep"] = .3
+	a.parameters["x"] = 		0.7835
+	a.parameters["y"] = 		0.048
+	a.parameters["z"] = 		0.5627
+	a.parameters["sp"] =		1.0254
+	a.parameters["dl"] =		1.7321
+	a.parameters["dw"] =		0.3172
+	a.parameters["dsep"] =		-1.2299
 
 	# a.parameters["rl"] = 1.06
 	# a.parameters["rw"] = .60
@@ -96,15 +98,13 @@ def setup_configuration(a):
 		scale = 1
 
 
-	a.parameters["x"] = .77 * scale
-	a.parameters["y"] = .16 * scale
-	a.parameters["z"] = -.01 * scale
-
-	a.parameters["sp"] = 1.05 * scale
-
-	# a.parameters["dl"] = 1.060
-	# a.parameters["dw"] = .6
-	# a.parameters["dsep"] = .3
+	a.parameters["x"] = 		0.6332
+	a.parameters["y"] = 		0.1347
+	a.parameters["z"] = 		0.6752
+	a.parameters["sp"] =		0.9175
+	# a.parameters["dl"] =		1.7321
+	# a.parameters["dw"] =		0.3172
+	# a.parameters["dsep"] =		-1.2299
 
 	# a.parameters["rl"] = 1.06
 	# a.parameters["rw"] = .60
@@ -129,9 +129,11 @@ def nelder_mead(a):
 
 	# x = [1.0761, .7498, 0.4728]  						#LWA_LIKE
 	# x = [1.0761, .7498, -3, 1.43, .8]  						#LWA_DIR
-	# x = [.6989, .1746, .6014, 1.1301]  						#11
+	x = [.6989, .1746, .6014, 1.1301]  						#11
 	# x = [1.05, .25, -.16, 1.5, 1.06, .6, .3]			#11 DIR
-	x = [0.8161,0.0318,-0.3301,0.9399,0.7703,0.0045, 0.1227]  #11 DIR
+	# x = [0.6604, 0.356, -0.3087, 1.1227, 0.1509, 0.0748, -2.02]	#11 REF
+
+	# x = [0.8161,0.0318,-0.3301,0.9399,0.7703,0.0045, 0.1227]  #11 DIR
 
 	for name, val in zip(names, x):
 		print (name,":=  ", val)
@@ -164,6 +166,7 @@ def random(a):
 
 	names = a.get_optimizable_parameter_names()
 	names.remove("alpha")
+	# print names
 
 	for i in range(20000):
 		x_new = []
