@@ -49,7 +49,8 @@ def main():
 	# remove parameters which are altered multiple times (e.g. z_dist)
 	# or parameters that are altered once per execution (e.g. n_f)
 	
-	x = [0.8624, 0.0173, 0.4996, 1.0106, 1.2, 1.2] 
+	# x = [0.8624, 0.0173, 0.4996, 1.0106, 1.2, 1.2] 
+	x = [0.5542,0.4909,-0.0832,1.1488,1.8825,0.6464]
 
 	# random(a)
 	nelder_mead(a, x)
@@ -119,9 +120,9 @@ def setup_configuration(a):
 	a.edit_tor()
 
 def nelder_mead(a, x):
-	method = 'NM'
+	method = 'Nelder-Mead'
 
-	setup_simulation_files(a, method)
+	setup_simulation_files(a, "NM")
 	
 	names = a.get_optimizable_parameter_names()
 	names.remove("alpha")
