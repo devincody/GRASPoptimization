@@ -33,7 +33,7 @@ def main():
 
 	## MOORE
 	else:
-		a = ELfeed(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.3)
+		a = ELfeedExt(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(5)
 
 		print("Executing on Moore")
@@ -49,12 +49,14 @@ def main():
 	# remove parameters which are altered multiple times (e.g. z_dist)
 	# or parameters that are altered once per execution (e.g. n_f)
 	
+	x = [0.8756, 0.083, -0.6018, 1.0773, 1.1448, 0.6672] 
+	# x = [0.8624, 0.0173, 0.4996, 1.0106, 1.2, 1.2] 
 
 
 	# random(a)
-	# nelder_mead(a)
+	nelder_mead(a, x)
 	# nelder_mead2(a)
-	random(a)
+	# random(a)
 	# nelder_mead(a)
 	# setup_configuration(a)
 	# simulate_single(a)
@@ -66,7 +68,7 @@ def setup_simulation_files(a, method_name):
 
 
 def simulate_single(a):
-	setup_simulation_files(a, "single")
+	setup_simulation_files(a, "sing")
 	a.parameters["x"] = 		0.7835
 	a.parameters["y"] = 		0.048
 	a.parameters["z"] = 		0.5627
@@ -118,49 +120,33 @@ def setup_configuration(a):
 	a.edit_msh()
 	a.edit_tor()
 
-def nelder_mead(a):
+def nelder_mead(a, x):
 	method = 'Nelder-Mead'
 
-	setup_simulation_files(a, method)
+	setup_simulation_files(a, "NM")
 	
 	names = a.get_optimizable_parameter_names()
 	names.remove("alpha")
 	# method = 'Powell'
 
-	# x = [1.0761, .7498, 0.4728]  						#LWA_LIKE
-	# x = [1.0761, .7498, -3, 1.43, .8]  						#LWA_DIR
-	x = [.6989, .1746, .6014, 1.1301]  						#11
-	# x = [1.05, .25, -.16, 1.5, 1.06, .6, .3]			#11 DIR
-	# x = [0.6604, 0.356, -0.3087, 1.1227, 0.1509, 0.0748, -2.02]	#11 REF
+	# # x = [1.0761, .7498, 0.4728]  						#LWA_LIKE
+	# # x = [1.0761, .7498, -3, 1.43, .8]  						#LWA_DIR
+	# x =  				#11
+	# # x = [1.05, .25, -.16, 1.5, 1.06, .6, .3]			#11 DIR
+	# # x = [0.6604, 0.356, -0.3087, 1.1227, 0.1509, 0.0748, -2.02]	#11 REF
 
-	# x = [0.8161,0.0318,-0.3301,0.9399,0.7703,0.0045, 0.1227]  #11 DIR
+	# # x = [0.8161,0.0318,-0.3301,0.9399,0.7703,0.0045, 0.1227]  #11 DIR
 
 	for name, val in zip(names, x):
 		print (name,":=  ", val)
 
-	
-	# 	   #sep,      x,        y,        z,         dirL,    dirW,   dirS
-	print(op.minimize(a.simulate_single_configuration, x0=x, args=(names, True), method=method))#, bounds= bnd, constraints = constr))
-
-def nelder_mead2(a):
-	method = 'Nelder-Mead'
-	setup_simulation_files(a, method)
-	names = a.get_optimizable_parameter_names()
-	names.remove("alpha")
-	# method = 'Powell'
-
-	# x = [1.0761, .7498, 0.4728]  						#LWA_LIKE
-	x = [1.0761, .7498, 0, 1.43, .8]  						#LWA_DIR
-	# x = [1.05, .25, -.16, 1.5, 1.06, .6, .3]			#11 DIR
-	for name, val in zip(names, x):
-		print (name,":=  ", val)
 	
 	# 	   #sep,      x,        y,        z,         dirL,    dirW,   dirS
 	print(op.minimize(a.simulate_single_configuration, x0=x, args=(names, True), method=method))#, bounds= bnd, constraints = constr))
 
 
 def random(a):
-	setup_simulation_files(a, "Random")
+	setup_simulation_files(a, "Rand")
 	bounds = a.get_bounds()
 
 
