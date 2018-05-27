@@ -36,6 +36,9 @@ class antenna(object):
 		self.grasp_version = grasp_version
 
 		self.bool_gen_results_path_yet = False
+		self.specific_result_folder_path = ""
+		self.include_freq_in_title = False
+		self.max_pattern_dB = 30
 
 
 	def __str__(self):
@@ -57,12 +60,19 @@ class antenna(object):
 
 	def gen_specific_result_folder(self): #specific as in for a particular antenna configuration
 		self.specific_result_folder_path = self.get_results_path() + "/" + self.get_datapoint_string()
+
+		if (self.include_freq_in_title):
+			self.specific_result_folder_path += "_freq=%4.2f"%self.parameters["start_f"]
+
 		if not os.path.exists(self.specific_result_folder_path):
 			os.mkdir(self.specific_result_folder_path)
 			print ("Generated: " + self.get_datapoint_string(format_str = "%6.4f"))
 
 	def get_specific_results_path(self):
-		return self.get_results_path() + "/" + self.get_datapoint_string()
+		if (self.specific_result_folder_path == ""):
+			self.gen_specific_result_folder()
+		return self.specific_result_folder_path	
+
 
 	def get_model_name(self):
 		return self.model_name
@@ -155,13 +165,28 @@ class antenna(object):
 
 
 	def gen_sub_folders(self, plot_feed = False):
-		for directory in ["/plots/", "/plots/Efficiency/", "/plots/SEFD/", "/plots/Patterns/", "/data/"]:
+		#Options to generate folders for
+		# 1. Plotting Feed patterns
+		# 2. Including the frequency of operation (start_f) in the title
+
+		if (self.include_freq_in_title):
+			plot_dir = "/plots_f=%4.3f/"%self.parameters["start_f"]
+			data_dir = "/data_f=%4.3f/"%self.parameters["start_f"]
+		else:
+			plot_dir = "/plots/"
+			data_dir = "/data/"
+
+		dirlist = [plot_dir, plot_dir + "Efficiency/", plot_dir + "SEFD/", plot_dir + "Patterns/", data_dir]
+		# dirlist = ["/plots/", "/plots/Efficiency/", "/plots/SEFD/", "/plots/Patterns/", "/data/"]
+		if plot_feed:
+			dirlist.append(plot_dir + "FeedPatterns/")
+		for directory in dirlist:
 			if not os.path.exists(self.get_specific_results_path() + directory):
 				os.mkdir(self.get_specific_results_path() + directory)
-		if plot_feed:
-			feed_dir = "/plots/FeedPatterns/"
-			if not os.path.exists(self.get_specific_results_path() + feed_dir):
-				os.mkdir(self.get_specific_results_path() + feed_dir)
+		# if plot_feed:
+		# 	feed_dir = "/plots/FeedPatterns/"
+		# 	if not os.path.exists(self.get_specific_results_path() + feed_dir):
+		# 		os.mkdir(self.get_specific_results_path() + feed_dir)
 
 	def init_global_file_log(self):
 		self.log_name = self.get_results_path() +"/log.csv"
@@ -262,13 +287,15 @@ class antenna(object):
 		sys.stdout.flush()
 
 
-	def process_data_files(self, plot_feed = False):
+	def process_data_files(self, plot_feed = False, override_frequency = False):
 		'''
 		Collects all data from GRASP result files, plots everything
 		'''
 
 		## COLLECT ALL DATA FROM GRASP GENERATED FILES
 		freq, s11 = process_grasp.process_par(self.GRASP_working_file + "S_parameters.par")
+		if (override_frequency):
+			freq = np.linspace(self.parameters["start_f"], self.parameters["end_f"], self.parameters["n_f"])
 		dmax, cut = process_grasp.process_cut(self.GRASP_working_file + "Field_Data.cut", freq)
 		if plot_feed:
 			_ , feed_cut = process_grasp.process_cut(self.GRASP_working_file + "Feed_Data.cut", freq)
@@ -289,8 +316,12 @@ class antenna(object):
 		AntPos = self.parameters["z_dist"]
 
 		## GENERATE FILE NAMES
-		plots_directory = self.get_specific_results_path() + "/plots/"
-		data_directory = self.get_specific_results_path() + "/data/"
+		if (self.include_freq_in_title):
+			plots_directory = self.get_specific_results_path() + "/plots_f=%4.3f/"%freq
+			data_directory = self.get_specific_results_path() + "/data_f=%4.3f/"%freq
+		else:
+			plots_directory = self.get_specific_results_path() + "/plots/"
+			data_directory = self.get_specific_results_path() + "/data/"
 
 		# print("NEW DIRECTORIES", plots_directory, data_directory)
 
@@ -310,9 +341,9 @@ class antenna(object):
 		process_grasp.plot_pair_efficiencies(freq, s11, dmax, plots_directory + "Efficiency/Efficiencies Position = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, efficiency, loss_val), AntPos)
 		process_grasp.plot_SEFD(freq, dmax, plots_directory + "SEFD/SEFD Pos = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, efficiency, loss_val), AntPos)
 		for frequency in freq:
-			process_grasp.plot_cut(frequency, cut, AntPos, pattern_directory +"DishPat_Pos=%4.2f_Freq=%4.2f_Ef=%4.2f_Loss=%4.2f.png" %(AntPos, frequency, efficiency, loss_val))
+			process_grasp.plot_cut(frequency, cut, AntPos, pattern_directory +"DishPat_Pos=%4.2f_Freq=%4.2f_Ef=%4.2f_Loss=%4.2f.png" %(AntPos, frequency, efficiency, loss_val), max_pattern_dB = self.max_pattern_dB)
 			if plot_feed:
-				process_grasp.plot_cut(frequency, feed_cut, AntPos, feed_directory +"FeedPat_Pos=%4.2f_Freq=%4.2f_Ef=%4.2f_Loss=%4.2f.png" %(AntPos, frequency, efficiency, loss_val), feed_pattern = True)
+				process_grasp.plot_cut(frequency, feed_cut, AntPos, feed_directory +"FeedPat_Pos=%4.2f_Freq=%4.2f_Ef=%4.2f_Loss=%4.2f.png" %(AntPos, frequency, efficiency, loss_val), feed_pattern = True, max_pattern_dB = self.max_pattern_dB)
 			# process_grasp.plot_cut(frequency, cut, AntPos, pattern_directory +"Radiation Pattern Position = %4.2f Freq = %4.2f Ef = %4.2f Loss = %4.2f.png" %(AntPos, frequency, efficiency, loss_val))
 
 		## WRITE DATA TO FILES
@@ -353,6 +384,8 @@ class antenna(object):
 				n+= 1
 				if (miss[i] < .4):
 					miss_loss += (.4 - miss[i])
+		if (n == 0):
+			return -np.mean(effic), 0
 		return ans/n, miss_loss/n
 
 	def wrap_up_simulation(self, ef, minloss):
@@ -368,7 +401,7 @@ class antenna(object):
 	
 
 
-	def simulate_single_configuration(self, parameters, parameter_names, plot_feed = False):
+	def simulate_single_configuration(self, parameters, parameter_names, plot_feed = False, override_frequency = False):
 		'''
 		must take in a vector of antenna parameters
 		and return a loss function
@@ -392,28 +425,17 @@ class antenna(object):
 		self.EF = []
 		self.LOSS = []
 		for AntPos in np.linspace(self.bounds["z_dist"][0], self.bounds["z_dist"][1], self.number_of_z_dists):
+
 			self.parameters["z_dist"] = AntPos
 			self.edit_tor()
 			self.exeGRASP()
-			self.process_data_files(plot_feed)
+			self.process_data_files(plot_feed,  override_frequency)
 
 		minLoss = np.min(self.LOSS)
 		best_ef = self.EF[self.LOSS.index(minLoss)]
 
 		self.wrap_up_simulation(best_ef, minLoss)
 
-		# try:
-		# 	os.rename(self.specific_result_folder_path, self.specific_result_folder_path + "_EF = %4.3f_minLoss = %4.3f" % (best_ef, minLoss))
-		# except:
-		# 	print("Error: Cannot rename file %s" % self.specific_result_folder_path)
-		# template = "%7.4f, "*9 + '\n'
-		# param = []
-		# for name in self.parameter_names:
-		# 	if name != "z_dist"
-		# 		param.append(self.parameters[name])
-		# param.append(best_ef)
-		# param.append(minLoss)
-		# self.Log.write(template % tuple(param))
 		return minLoss
 	
 
@@ -430,12 +452,26 @@ class gaussian_ideal(antenna):
 		self.parameter_names += ["start_f", "end_f", "n_f", "alpha"]
 		self.parameters.update({"start_f":start_f, "end_f":end_f, "n_f":n_f, "alpha":alpha })
 		self.bounds.update({"start_f":bnd_start_f, "end_f":bnd_end_f,"n_f":bnd_n_f, "alpha":bnd_alpha})
-		# self.tor_line_numbers = {"z_dist":339, "start_f":346, "end_f":351, "n_f":356,"alpha":361} #checked
 		
 	def __str__(self):
 		return "Ideal Gaussian Pattern without struts"
 
+class QRFH(antenna):
+	def __init__(self, start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0, phase = 120,
+				bnd_start_f = [0,3000], bnd_end_f = [0,1000], bnd_n_f =[1,1000], bnd_alpha = [0, 360], bnd_phase = [0, 1200],
+				grasp_version = 10.3):
+		
+		antenna.__init__(self, parameters = {"z_dist":15.85}, bounds = {"z_dist":[15.0,16.5]}, grasp_version = grasp_version)
+		self.model_name = "40mQRFHsim"
+		self.model_abbreviation = "QRFH"
 
+		self.parameter_names += ["phase", "start_f", "end_f", "n_f", "alpha"]
+		self.parameters.update({"phase":phase, "start_f":start_f, "end_f":end_f, "n_f":n_f, "alpha":alpha })
+		self.bounds.update({"phase":bnd_phase, "start_f":bnd_start_f, "end_f":bnd_end_f,"n_f":bnd_n_f, "alpha":bnd_alpha})
+		self.max_pattern_dB = 50
+		
+	def __str__(self):
+		return "QRFH tabulated beam Pattern with struts"
 
 class LWA_like(antenna):
 	def __init__(self, x = .77, y = .16, z = -.01,

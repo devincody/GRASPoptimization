@@ -1,6 +1,8 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
 import platform
+import os
+import shutil
 
 import scipy.optimize as op
 
@@ -33,32 +35,59 @@ def main():
 
 	## MOORE
 	else:
-		a = ELfeedExt(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.3)
-		a.set_number_of_focal_lengths(5)
+		a = QRFH(start_f =  60.0, end_f = 80.0, n_f = 1, alpha = 0, grasp_version = 10.3)
+		a.set_number_of_focal_lengths(20)
 
 		print("Executing on Moore")
 		print("%s"%a)
 		a.set_global_directory_name()
 		a.set_ticra_directory_name()#"/cygdrive/c/Program Files/TICRA/")
 		a.set_grasp_analysis_extension()
+
+		cst_dir = "F:\\Devin\\CST\\QRFH\\qrfh_v0_aper_circ_HF_donutnewnew_DC_COPY_noscale\\Result"
+
+
 	
 	a.set_method_name("general")
-	
 	
 
 	# remove parameters which are altered multiple times (e.g. z_dist)
 	# or parameters that are altered once per execution (e.g. n_f)
 	
 	# x = [0.8624, 0.0173, 0.4996, 1.0106, 1.2, 1.2] 
-	x = [0.5542,0.4909,-0.0832,1.1488,1.8825,0.6464]
+	# x = [0.5542,0.4909,-0.0832,1.1488,1.8825,0.6464]
 
 	# random(a)
-	nelder_mead(a, x)
+	# nelder_mead(a, x)
 	# nelder_mead2(a)
 	# random(a)
 	# nelder_mead(a)
 	# setup_configuration(a)
-	# simulate_single(a)
+	#simulate_single(a)
+	iterate_over_cut_files(a, cst_dir)
+
+def iterate_over_cut_files(a, cst_dir):
+	setup_simulation_files(a, "po_tabs")
+	a.include_freq_in_title = True
+	frequency_scale = 5.75
+	#move new file to working directory overwriting last
+	#a.GRASP_working_file
+	files = os.listdir(cst_dir)
+	for file in files:
+		if ("[1]_theta-phi).cut" in file[-20:]):
+			print (file)
+			freq = float(file.split()[1][3:-1]) #find the freq
+			print  (freq*1000)
+			a.parameters["start_f"] = 1000.0*freq/frequency_scale
+			shutil.copy2(cst_dir+"\\"+file, a.GRASP_working_file + "pat.cut")
+
+			a.simulate_single_configuration([],[], plot_feed = False, override_frequency = True)
+
+
+	#simulate_single_configuration????
+	#figure out how to collect frequencies for each z_dist
+	#new script to read datalogs.csv
+
 
 def setup_simulation_files(a, method_name):
 	a.set_method_name(method_name)
@@ -68,19 +97,19 @@ def setup_simulation_files(a, method_name):
 
 def simulate_single(a):
 	setup_simulation_files(a, "sing")
-	a.parameters["x"] = 		0.7835
-	a.parameters["y"] = 		0.048
-	a.parameters["z"] = 		0.5627
-	a.parameters["sp"] =		1.0254
-	a.parameters["dl"] =		1.7321
-	a.parameters["dw"] =		0.3172
-	a.parameters["dsep"] =		-1.2299
+	# a.parameters["x"] = 		0.7835
+	# a.parameters["y"] = 		0.048
+	# a.parameters["z"] = 		0.5627
+	# a.parameters["sp"] =		1.0254
+	# a.parameters["dl"] =		1.7321
+	# a.parameters["dw"] =		0.3172
+	# a.parameters["dsep"] =		-1.2299
 
 	# a.parameters["rl"] = 1.06
 	# a.parameters["rw"] = .60
 	# a.parameters["rsep"] = -.3
 	
-	a.parameters["z_dist"] = 16.4
+	# a.parameters["z_dist"] = 16.4
 
 	x=[]
 

@@ -127,7 +127,7 @@ def plot_SEFD(freq, dmax, location, z):
 	plt.savefig(location)
 
 
-def plot_cut(frequency, cut, z, title, feed_pattern = False):
+def plot_cut(frequency, cut, z, title, feed_pattern = False, max_pattern_dB = 30):
 	#freq is which frequency to use
 	#
 	plt.rc('axes', linewidth=2)
@@ -157,11 +157,11 @@ def plot_cut(frequency, cut, z, title, feed_pattern = False):
 		# axi.plot(cut["angles"]-180,cut[series_name_cx], 'r', label= "cx")
 		axi.set_title("$\phi$ = %4.2f" %phi, fontsize = 20)
 		axi.legend()
-		axi.set_ylim([-20,30])
+		axi.set_ylim([-20,max_pattern_dB])
 		axi.set_xlim([-180,180])
 		axi.set_xticks(range(-180, 181, 30))
 		axi.grid(linewidth = 2, linestyle = '--')
-		axi.set_yticks(range(-20,31,5))
+		axi.set_yticks(range(-20, max_pattern_dB + 1,5))
 
 		fontsize = 14
 		for tick in axi.xaxis.get_major_ticks():
