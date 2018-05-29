@@ -54,8 +54,8 @@ def main():
 	# remove parameters which are altered multiple times (e.g. z_dist)
 	# or parameters that are altered once per execution (e.g. n_f)
 	
+	x = [0.8756, 0.083, -0.6018, 1.0773, 1.1448, 0.6672] 
 	# x = [0.8624, 0.0173, 0.4996, 1.0106, 1.2, 1.2] 
-	# x = [0.5542,0.4909,-0.0832,1.1488,1.8825,0.6464]
 
 	# random(a)
 	# nelder_mead(a, x)

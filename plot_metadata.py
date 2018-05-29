@@ -64,7 +64,9 @@ for i in items:
 
 		cols = a.columns.tolist()
 		print (cols)
-		cols.remove(loss)
+		
+		#reorder loss and eff with radius and theta, better formatting
+		cols.remove(loss) 
 		cols.remove("Efficiency")
 		cols.append("Efficiency")
 		cols.append(loss)

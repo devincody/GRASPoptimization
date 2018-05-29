@@ -588,7 +588,7 @@ class LWA_DIR_DIR(LWA_DIR):
 
 class ELfeed(LWA_like):
 	def __init__(self, sp = 1.2, start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
-				bnd_sp = [0, 1.5], grasp_version = 10.3): #seperation is half the distance between dipoles
+				bnd_sp = [.5, 1.5], grasp_version = 10.3): #seperation is half the distance between dipoles
 		
 		LWA_like.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipole"
