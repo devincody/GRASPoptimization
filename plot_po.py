@@ -3,9 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import os
 
-start_f = 0.1818
-end_f = 2
-n_f = 20
+start_f = 0.38261
+end_f = 2.6087
+n_f = 66
 
 report_top = 10
 

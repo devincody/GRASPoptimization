@@ -35,7 +35,8 @@ def main():
 
 	## MOORE
 	else:
-		a = QRFH(start_f =  60.0, end_f = 80.0, n_f = 1, alpha = 0, grasp_version = 10.3)
+		# a = QRFH(start_f =  60.0, end_f = 80.0, n_f = 1, alpha = 0, grasp_version = 10.3)
+		a = QRFH(freq = 60, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(20)
 
 		print("Executing on Moore")
@@ -68,7 +69,7 @@ def main():
 
 def iterate_over_cut_files(a, cst_dir):
 	setup_simulation_files(a, "po_tabs")
-	a.include_freq_in_title = True
+	a.include_freq_in_title = False
 	frequency_scale = 5.75
 	#move new file to working directory overwriting last
 	#a.GRASP_working_file
@@ -78,7 +79,7 @@ def iterate_over_cut_files(a, cst_dir):
 			print (file)
 			freq = float(file.split()[1][3:-1]) #find the freq
 			print  (freq*1000)
-			a.parameters["start_f"] = 1000.0*freq/frequency_scale
+			a.parameters["freq"] = 1000.0*freq/frequency_scale
 			shutil.copy2(cst_dir+"\\"+file, a.GRASP_working_file + "pat.cut")
 
 			a.simulate_single_configuration([],[], plot_feed = False, override_frequency = True)

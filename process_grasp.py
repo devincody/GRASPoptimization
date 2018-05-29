@@ -25,6 +25,7 @@ def process_par(f_name): #Process S parameters document return  1D numpy arrays 
 
 
 def process_cut(f_name, freq):
+	print("freq: ", freq)
 	f = open(f_name)
 	line = f.readline()
 	dmax = []

@@ -20,7 +20,7 @@ spherical_cut  spherical_cut
   phi_range        : struct(start: 0.0, end: 90.0, np: 3),
   file_name        : Field_Data.cut,
   comment          : "Field data in cuts",
-  frequency        : ref(freq_20_80_df_5_MHz_01)
+  frequency        : ref(single_frequencies)
 )
  
 plus_Y  coor_sys_grasp_angles  
@@ -35,23 +35,13 @@ minus_Y  coor_sys_grasp_angles
   base             : ref(base)
 )
  
-freq_20_80_df_1_MHz  frequency_range  
-(
-  frequency_range  : struct(start_frequency: 20.0 MHz, end_frequency: 80.0 MHz, number_of_frequencies: 60)
-)
- 
-frequency_range  frequency_range  
-(
-  frequency_range  : struct(start_frequency: 20.0 MHz, end_frequency: 80.0 MHz, number_of_frequencies: 1)
-)
- 
 single_global_coor  coor_sys  
 (
 )
  
 single_frequencies  frequency  
 (
-  frequency_list   : sequence("ref(start_f)" MHz)
+  frequency_list   : sequence("ref(freq)" MHz)
 )
  
 single_surface  paraboloid  
@@ -141,12 +131,6 @@ Ant_dish_struts  scatterer_cluster
   scatterers       : sequence(ref(Antenna_plus_dish))
 )
  
-freq_20_80_df_5_MHz_01  frequency_range  
-(
-  frequency_range  : struct(start_frequency: "ref(start_f)" MHz, end_frequency: "ref(end_f)" MHz, 
-number_of_frequencies: "ref(n_f)")
-)
- 
 NewStrut2  coor_sys  
 (
   origin           : struct(x: 0.0 m, y: 0.0 m, z: "ref(strut_dz)" m),
@@ -202,12 +186,12 @@ mounting_plate_sz  real_variable
  
 z_dist  real_variable  
 (
-  value            : 16.5
+  value            : 16.32632
 )
  
 start_f  real_variable  
 (
-  value            : 2000.0
+  value            : 660.86957
 )
  
 end_f  real_variable  
@@ -242,7 +226,7 @@ Feed_cut  spherical_cut
   phi_range        : struct(start: 0.0, end: 90.0, np: 3),
   file_name        : Feed_Data.cut,
   comment          : "Field data in cuts",
-  frequency        : ref(freq_20_80_df_5_MHz_01)
+  frequency        : ref(single_frequencies)
 )
  
 dl  real_variable  
@@ -292,6 +276,11 @@ strut_analysis_arbitrary_cross  strut_analysis_arbitrary_cross
 z_phase  real_variable  
 (
   value            : 120.0
+)
+ 
+freq  real_variable  
+(
+  value            : 660.86957
 )
  
 //DO NOT MODIFY OBJECTS BELOW THIS LINE.
@@ -349,5 +338,5 @@ view_1_polygonal_struts_plot  polygonal_struts_plot
 (
 )
  
- //$$ Saved at 11:23:03 on 25.05.2018 by GRASP ver. 10.3.1 SN=006387
+ //$$ Saved at 00:53:17 on 29.05.2018 by GRASP ver. 10.3.1 SN=006387
   

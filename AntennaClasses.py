@@ -62,7 +62,7 @@ class antenna(object):
 		self.specific_result_folder_path = self.get_results_path() + "/" + self.get_datapoint_string()
 
 		if (self.include_freq_in_title):
-			self.specific_result_folder_path += "_freq=%4.2f"%self.parameters["start_f"]
+			self.specific_result_folder_path += "_freq=%4.2f"%self.parameters["freq"]
 
 		if not os.path.exists(self.specific_result_folder_path):
 			os.mkdir(self.specific_result_folder_path)
@@ -170,8 +170,8 @@ class antenna(object):
 		# 2. Including the frequency of operation (start_f) in the title
 
 		if (self.include_freq_in_title):
-			plot_dir = "/plots_f=%4.3f/"%self.parameters["start_f"]
-			data_dir = "/data_f=%4.3f/"%self.parameters["start_f"]
+			plot_dir = "/plots_f=%4.3f/"%self.parameters["freq"]
+			data_dir = "/data_f=%4.3f/"%self.parameters["freq"]
 		else:
 			plot_dir = "/plots/"
 			data_dir = "/data/"
@@ -295,7 +295,10 @@ class antenna(object):
 		## COLLECT ALL DATA FROM GRASP GENERATED FILES
 		freq, s11 = process_grasp.process_par(self.GRASP_working_file + "S_parameters.par")
 		if (override_frequency):
-			freq = np.linspace(self.parameters["start_f"], self.parameters["end_f"], self.parameters["n_f"])
+			try:
+				freq = np.linspace(self.parameters["start_f"], self.parameters["end_f"], self.parameters["n_f"])
+			except:
+				freq = np.array([self.parameters["freq"]])
 		dmax, cut = process_grasp.process_cut(self.GRASP_working_file + "Field_Data.cut", freq)
 		if plot_feed:
 			_ , feed_cut = process_grasp.process_cut(self.GRASP_working_file + "Feed_Data.cut", freq)
@@ -457,17 +460,17 @@ class gaussian_ideal(antenna):
 		return "Ideal Gaussian Pattern without struts"
 
 class QRFH(antenna):
-	def __init__(self, start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0, phase = 120,
-				bnd_start_f = [0,3000], bnd_end_f = [0,1000], bnd_n_f =[1,1000], bnd_alpha = [0, 360], bnd_phase = [0, 1200],
+	def __init__(self, freq = 600, phase = 120, 
+				bnd_freq = [0,3000], bnd_phase = [0, 1200],
 				grasp_version = 10.3):
 		
-		antenna.__init__(self, parameters = {"z_dist":15.85}, bounds = {"z_dist":[15.0,16.5]}, grasp_version = grasp_version)
+		antenna.__init__(self, parameters = {"z_dist":16.3}, bounds = {"z_dist":[16.2,16.4]}, grasp_version = grasp_version)
 		self.model_name = "40mQRFHsim"
 		self.model_abbreviation = "QRFH"
 
-		self.parameter_names += ["phase", "start_f", "end_f", "n_f", "alpha"]
-		self.parameters.update({"phase":phase, "start_f":start_f, "end_f":end_f, "n_f":n_f, "alpha":alpha })
-		self.bounds.update({"phase":bnd_phase, "start_f":bnd_start_f, "end_f":bnd_end_f,"n_f":bnd_n_f, "alpha":bnd_alpha})
+		self.parameter_names += ["phase", "freq"]
+		self.parameters.update({"phase":phase, "freq":freq })
+		self.bounds.update({"phase":bnd_phase, "freq":bnd_freq})
 		self.max_pattern_dB = 50
 		
 	def __str__(self):
