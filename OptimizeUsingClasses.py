@@ -24,7 +24,7 @@ def main():
 
 	## G1
 	elif platform.node() == 'DESKTOP-3UVMJQF':
-		a = ELfeedExt(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.3)
+		a = gaussian_ideal(start_f =  60.0, end_f = 80.0, n_f = 5, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(5)
 
 		print("Executing on G1 Office")
@@ -64,8 +64,8 @@ def main():
 	# random(a)
 	# nelder_mead(a)
 	# setup_configuration(a)
-	#simulate_single(a)
-	iterate_over_cut_files(a, cst_dir)
+	simulate_single(a, override_frequency = True)
+	# iterate_over_cut_files(a, cst_dir)
 
 def iterate_over_cut_files(a, cst_dir):
 	setup_simulation_files(a, "po_tabs")
@@ -96,7 +96,7 @@ def setup_simulation_files(a, method_name):
 	a.gen_file_names()
 
 
-def simulate_single(a):
+def simulate_single(a, override_frequency = False):
 	setup_simulation_files(a, "sing")
 	# a.parameters["x"] = 		0.7835
 	# a.parameters["y"] = 		0.048
@@ -115,10 +115,15 @@ def simulate_single(a):
 	x=[]
 
 	names = a.get_optimizable_parameter_names()
-	names.remove("alpha")
-	for nam in names:
-		x.append(a.parameters[nam])
-	a.simulate_single_configuration(x, names, plot_feed = True)	
+
+	try:
+		names.remove("alpha")
+		for nam in names:
+			x.append(a.parameters[nam])
+	except:
+		pass
+
+	a.simulate_single_configuration(x, names, plot_feed = True, override_frequency = override_frequency)	
 
 def setup_configuration(a):
 	setup_simulation_files(a, "setup")

@@ -25,7 +25,7 @@ def process_par(f_name): #Process S parameters document return  1D numpy arrays 
 
 
 def process_cut(f_name, freq):
-	print("freq: ", freq)
+	# print("freq: ", freq)
 	f = open(f_name)
 	line = f.readline()
 	dmax = []
@@ -70,6 +70,7 @@ def process_cut(f_name, freq):
 			dbi_cx.append(cx)
 			if ii == 100:
 				dmax.append(np.max([co, cx]))
+				# print( dmax)
 
 		cut[series_name_co] = dbi_co
 		cut[series_name_cx] = dbi_cx
@@ -77,6 +78,7 @@ def process_cut(f_name, freq):
 	cut["angles"] = angles
 
 	dmax_f = np.zeros(len(freq))
+	# print(len(freq))
 	for i in range(len(freq)):
 		dmax_f[i] = np.max(dmax[i*3:(i+1)*3])
 
@@ -100,7 +102,7 @@ def calc_app_eff(freq, dmax):
 
 def plot_pair_efficiencies(freq, s11, dmax, location, z):
 	plt.figure()
-	plt.plot(freq,calc_mismatch(s11), 'b', label= "Mismatch Efficiency")
+	plt.plot(freq, calc_mismatch(s11), 'b', label= "Mismatch Efficiency")
 	plt.title("Mismatch and Aperture Efficiencies z = %4.2f" % z)
 	plt.xlabel("Frequency [MHz]")
 	plt.ylabel("Efficiency")
