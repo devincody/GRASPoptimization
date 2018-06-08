@@ -117,9 +117,11 @@ class antenna(object):
 		for name in names:
 			ans += name
 			ans += "=" + format_str%self.parameters[name] + "_"
-
-		if ans[-1] == '_':
-			ans = ans[:-1] #remove last char if it is "_"
+		try:
+			if ans[-1] == '_':
+				ans = ans[:-1] #remove last char if it is "_"
+		except:
+			ans = "no_params"
 		return ans
 
 	def get_parameters(self):
@@ -303,7 +305,9 @@ class antenna(object):
 				freq = np.linspace(self.parameters["start_f"], self.parameters["end_f"], self.parameters["n_f"])
 			except:
 				freq = np.array([self.parameters["freq"]])
+
 		dmax, cut = process_grasp.process_cut(self.GRASP_working_file + "Field_Data.cut", freq, off_axis)
+
 		if plot_feed:
 			_ , feed_cut = process_grasp.process_cut(self.GRASP_working_file + "Feed_Data.cut", freq, off_axis)
 
@@ -477,17 +481,17 @@ class antenna(object):
 
 
 class gaussian_ideal(antenna):
-	def __init__(self, start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
-				bnd_start_f = [0,1000], bnd_end_f = [0,1000], bnd_n_f =[1,1000], bnd_alpha = [0, 360],
+	def __init__(self, start_f = 60.0, end_f = 80.0, n_f = 5, 
+				bnd_start_f = [0,1000], bnd_end_f = [0,1000], bnd_n_f =[1,1000],
 				grasp_version = 10.3):
 		
 		antenna.__init__(self, parameters = {"z_dist":15.6}, bounds = {"z_dist":[14.5,16]}, grasp_version = grasp_version)
 		self.model_name = "40mIDEAL"
 		self.model_abbreviation = "gauss"
 
-		self.parameter_names += ["start_f", "end_f", "n_f", "alpha"]
-		self.parameters.update({"start_f":start_f, "end_f":end_f, "n_f":n_f, "alpha":alpha })
-		self.bounds.update({"start_f":bnd_start_f, "end_f":bnd_end_f,"n_f":bnd_n_f, "alpha":bnd_alpha})
+		self.parameter_names += ["start_f", "end_f", "n_f"]
+		self.parameters.update({"start_f":start_f, "end_f":end_f, "n_f":n_f })
+		self.bounds.update({"start_f":bnd_start_f, "end_f":bnd_end_f,"n_f":bnd_n_f})
 		
 	def __str__(self):
 		return "Ideal Gaussian Pattern without struts"
