@@ -333,7 +333,7 @@ minus_x_plus_y  coor_sys
  
 sp  real_variable  
 (
-  value            : 0.93649
+  value            : 1.2
 )
  
 minus_x_minus_y  coor_sys  
@@ -489,7 +489,7 @@ n_f  real_variable
  
 z_dist  real_variable  
 (
-  value            : 17.5
+  value            : 17.0
 )
  
 dl  real_variable  
@@ -565,7 +565,7 @@ extension_plate1  rectangular_plate
   coor_sys         : ref(Mounting_Plate),
   corner_1         : struct(x: "ref(mounting_plate_sz)" m, y: "ref(ew)/2" m, z: 0.0 m),
   corner_2         : struct(x: "ref(mounting_plate_sz)" m, y: "-ref(ew)/2" m, z: 0.0 m),
-  opp_point        : struct(x: "ref(mounting_plate_sz)+ref(el)" m, y: "ref(ew)/2" m, z: 0.0 m)
+  opp_point        : struct(x: "ref(mounting_plate_sz)+ref(el)" m, y: "ref(ew)/2" m, z: "ref(ed)" m)
 )
  
 extension_plate2  rectangular_plate  
@@ -573,7 +573,7 @@ extension_plate2  rectangular_plate
   coor_sys         : ref(Mounting_Plate),
   corner_1         : struct(x: "-ref(mounting_plate_sz)" m, y: "ref(ew)/2" m, z: 0.0 m),
   corner_2         : struct(x: "-ref(mounting_plate_sz)" m, y: "-ref(ew)/2" m, z: 0.0 m),
-  opp_point        : struct(x: "-ref(mounting_plate_sz)-ref(el)" m, y: "ref(ew)/2" m, z: 0.0 m)
+  opp_point        : struct(x: "-ref(mounting_plate_sz)-ref(el)" m, y: "ref(ew)/2" m, z: "ref(ed)" m)
 )
  
 extension_plate3  rectangular_plate  
@@ -581,7 +581,7 @@ extension_plate3  rectangular_plate
   coor_sys         : ref(Mounting_Plate),
   corner_1         : struct(x: "ref(ew)/2" m, y: "ref(mounting_plate_sz)" m, z: 0.0 m),
   corner_2         : struct(x: "-ref(ew)/2" m, y: "ref(mounting_plate_sz)" m, z: 0.0 m),
-  opp_point        : struct(x: "ref(ew)/2" m, y: "ref(mounting_plate_sz)+ref(el)" m, z: 0.0 m)
+  opp_point        : struct(x: "ref(ew)/2" m, y: "ref(mounting_plate_sz)+ref(el)" m, z: "ref(ed)" m)
 )
  
 extension_plate4  rectangular_plate  
@@ -589,17 +589,22 @@ extension_plate4  rectangular_plate
   coor_sys         : ref(Mounting_Plate),
   corner_1         : struct(x: "ref(ew)/2" m, y: "-ref(mounting_plate_sz)" m, z: 0.0 m),
   corner_2         : struct(x: "-ref(ew)/2" m, y: "-ref(mounting_plate_sz)" m, z: 0.0 m),
-  opp_point        : struct(x: "ref(ew)/2" m, y: "-ref(mounting_plate_sz)-ref(el)" m, z: 0.0 m)
+  opp_point        : struct(x: "ref(ew)/2" m, y: "-ref(mounting_plate_sz)-ref(el)" m, z: "ref(ed)" m)
 )
  
 ew  real_variable  
 (
-  value            : 1.5
+  value            : 1.2
 )
  
 el  real_variable  
 (
-  value            : 2.0
+  value            : 1.2
+)
+ 
+ed  real_variable  
+(
+  value            : -0.2
 )
  
 //DO NOT MODIFY OBJECTS BELOW THIS LINE.
@@ -657,5 +662,5 @@ view_1_polygonal_struts_plot  polygonal_struts_plot
 (
 )
  
- //$$ Saved at 22:52:15 on 19.05.2018 by GRASP ver. 10.3.1 SN=006387
+ //$$ Saved at 18:14:20 on 06.06.2018 by GRASP ver. 10.3.1 SN=006387
   

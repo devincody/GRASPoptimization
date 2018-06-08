@@ -178,7 +178,7 @@ class antenna(object):
 			plot_dir = "/plots/"
 			data_dir = "/data/"
 
-		dirlist = [plot_dir, plot_dir + "Efficiency/", plot_dir + "SEFD/", plot_dir + "Patterns/", data_dir]
+		dirlist = [plot_dir, plot_dir + "Efficiency/", plot_dir + "SEFD/", plot_dir + "Patterns/", data_dir, plot_dir + "Impedance/"]
 		# dirlist = ["/plots/", "/plots/Efficiency/", "/plots/SEFD/", "/plots/Patterns/", "/data/"]
 		if plot_feed:
 			dirlist.append(plot_dir + "FeedPatterns/")
@@ -289,34 +289,42 @@ class antenna(object):
 		sys.stdout.flush()
 
 
-	def process_data_files(self, plot_feed = False, override_frequency = False):
+	def process_data_files(self, plot_feed = False, override_frequency = False, off_axis = False, plot_cx = False):
 		'''
 		Collects all data from GRASP result files, plots everything
 		'''
 
+		## IF off axis is true, then we should plot cx such that we can see all the radiation pattern peak
+		if off_axis:
+			plot_cx = True
+
 		## COLLECT ALL DATA FROM GRASP GENERATED FILES
-		freq, s11 = process_grasp.process_par(self.GRASP_working_file + "S_parameters.par")
+		freq, s11, s11_phase = process_grasp.process_par(self.GRASP_working_file + "S_parameters.par")
 		if (override_frequency):
 			try:
 				freq = np.linspace(self.parameters["start_f"], self.parameters["end_f"], self.parameters["n_f"])
 			except:
 				freq = np.array([self.parameters["freq"]])
 
-			#Put some dummy data into s11
-			s11 = np.zeros(len(freq))
-		dmax, cut = process_grasp.process_cut(self.GRASP_working_file + "Field_Data.cut", freq)
+		dmax, cut = process_grasp.process_cut(self.GRASP_working_file + "Field_Data.cut", freq, off_axis)
+
 		if plot_feed:
-			_ , feed_cut = process_grasp.process_cut(self.GRASP_working_file + "Feed_Data.cut", freq)
+			_ , feed_cut = process_grasp.process_cut(self.GRASP_working_file + "Feed_Data.cut", freq, off_axis)
 
 		## CALCULATE RELEVANT FIGURES OF MERIT
 		mis = process_grasp.calc_mismatch(s11)
+		zin = process_grasp.calc_input_z(s11, s11_phase, 50)
+		yin = 1.0/zin
+		mis100 = process_grasp.calc_mismatch(10*np.log10(process_grasp.calc_refection_coefficient(zin, 100)**2))
+		print(mis100)
+
 		aperture = process_grasp.calc_app_eff(freq, dmax)
 		tsys = process_grasp.Tsys(freq)
 		SEFD = process_grasp.SEFD(freq, dmax)
 
 		## CALCULATE EFFICIENCIES AND LOSSES
-		efficiency, mis_loss = self._loss(freq, aperture, mis)
-		loss_val = efficiency + mis_loss
+		efficiency, mis_loss = self._loss(freq, aperture, mis) #efficiency is negative, miss is pos
+		loss_val = efficiency * mis_loss
 		self.EF.append(efficiency)
 		self.LOSS.append(loss_val)
 
@@ -333,9 +341,9 @@ class antenna(object):
 
 		# print("NEW DIRECTORIES", plots_directory, data_directory)
 
-		pattern_directory = plots_directory + "Patterns/AntPos=%4.2f_loss=%4.2f/"% (AntPos, efficiency)
+		pattern_directory = plots_directory + "Patterns/AntPos=%4.2f_loss=%4.2f/"% (AntPos, loss_val)
 		if plot_feed:
-			feed_directory = plots_directory + "FeedPatterns/AntPos=%4.2f_loss=%4.2f/"% (AntPos, efficiency)
+			feed_directory = plots_directory + "FeedPatterns/AntPos=%4.2f_loss=%4.2f/"% (AntPos, loss_val)
 
 		## MAKE FILES
 		if not os.path.exists(pattern_directory):
@@ -347,11 +355,21 @@ class antenna(object):
 
 		## PLOT DATA
 		process_grasp.plot_pair_efficiencies(freq, s11, dmax, plots_directory + "Efficiency/Efficiencies Position = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, efficiency, loss_val), AntPos)
+		process_grasp.plot_pair_efficiencies(freq, 20*np.log10(np.abs(process_grasp.calc_refection_coefficient(zin, 100))), dmax, 
+											 plots_directory + "Efficiency/Efficiencies Z=100 Position = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, efficiency, loss_val), AntPos)
+		process_grasp.plot_smith(freq, s11, s11_phase, plots_directory + "Impedance/Smith Position = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, efficiency, loss_val))
+		process_grasp.plot_imp(freq, yin, "Antenna Admittance", plots_directory + "Impedance/Admittance Position = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, efficiency, loss_val))
+
 		process_grasp.plot_SEFD(freq, dmax, plots_directory + "SEFD/SEFD Pos = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, efficiency, loss_val), AntPos)
 		for frequency in freq:
-			process_grasp.plot_cut(frequency, cut, AntPos, pattern_directory +"DishPat_Pos=%4.2f_Freq=%4.2f_Ef=%4.2f_Loss=%4.2f.png" %(AntPos, frequency, efficiency, loss_val), max_pattern_dB = self.max_pattern_dB)
+			process_grasp.plot_cut(frequency, cut, AntPos, 
+								   pattern_directory +"DishPat_Pos=%4.2f_Freq=%4.2f_Ef=%4.2f_Loss=%4.2f.png" %(AntPos, frequency, efficiency, loss_val), 
+								   max_pattern_dB = self.max_pattern_dB, plot_cx = plot_cx)
 			if plot_feed:
-				process_grasp.plot_cut(frequency, feed_cut, AntPos, feed_directory +"FeedPat_Pos=%4.2f_Freq=%4.2f_Ef=%4.2f_Loss=%4.2f.png" %(AntPos, frequency, efficiency, loss_val), feed_pattern = True, max_pattern_dB = self.max_pattern_dB)
+				process_grasp.plot_cut(frequency, feed_cut, AntPos, 
+									   feed_directory +"FeedPat_Pos=%4.2f_Freq=%4.2f_Ef=%4.2f_Loss=%4.2f.png" %(AntPos, frequency, efficiency, loss_val), 
+									   feed_pattern = True, max_pattern_dB = self.max_pattern_dB, plot_cx = plot_cx)
+
 			# process_grasp.plot_cut(frequency, cut, AntPos, pattern_directory +"Radiation Pattern Position = %4.2f Freq = %4.2f Ef = %4.2f Loss = %4.2f.png" %(AntPos, frequency, efficiency, loss_val))
 
 		## WRITE DATA TO FILES
@@ -359,9 +377,9 @@ class antenna(object):
 		local_log.write(time.strftime("%c"))
 		local_log.write("\n")
 		local_log.write("Ef = %6.4f Loss = %6.4f.png\n" %(efficiency, loss_val))
-		local_log.write("Frequency [MHz], S11 [dB], Dmax [dBi], Mismatch Efficiency, Aperture Efficiency, Tsys [1E3 K], SEFD [1E6 Jy]\n")
+		local_log.write("Frequency [MHz], S11 [dB], Dmax [dBi], Mismatch Efficiency, Input Impedance, Aperture Efficiency, Tsys [1E3 K], SEFD [1E6 Jy]\n")
 		for ii in range(len(freq)):
-			local_log.write("%6.2f, %6.2f, %6.2f, %6.2f, %6.2f, %6.2f, %6.4f\n" % (freq[ii], s11[ii], dmax[ii], mis[ii], aperture[ii], tsys[ii]/1E3, SEFD[ii]/1E6))
+			local_log.write("%7.4f, %7.4f, %7.4f, %7.4f, %7.4f + %7.4fj, %7.4f, %7.4f, %7.4f\n" % (freq[ii], s11[ii], dmax[ii], mis[ii], np.real(zin[ii]), np.imag(zin[ii]), aperture[ii], tsys[ii]/1E3, SEFD[ii]/1E6))
 		local_log.close()
 
 		## WRITE DATA TO LOG.CSV
@@ -381,6 +399,21 @@ class antenna(object):
 			print("could not write to log.csv: ", template%tuple(param))
 
 
+	def _loss_old(self, freq, effic, miss):
+		#calculate the loss funciton
+		ans = 0
+		n = 0
+		miss_loss = 0
+		for i, f in enumerate(freq):
+			if (f >= 59.99 and f <= 80.01):
+				ans -= effic[i]
+				n+= 1
+				if (miss[i] < .4):
+					miss_loss += (.4 - miss[i])
+		if (n == 0):
+			return -np.mean(effic), 0
+		return ans/n, miss_loss/n
+
 	def _loss(self, freq, effic, miss):
 		#calculate the loss funciton
 		ans = 0
@@ -390,10 +423,9 @@ class antenna(object):
 			if (f >= 60 and f <= 80):
 				ans -= effic[i]
 				n+= 1
-				if (miss[i] < .4):
-					miss_loss += (.4 - miss[i])
+				miss_loss += miss[i]
 		if (n == 0):
-			return -np.mean(effic), 0
+			return -np.mean(effic), np.mean(miss)
 		return ans/n, miss_loss/n
 
 	def wrap_up_simulation(self, ef, minloss):
@@ -409,7 +441,7 @@ class antenna(object):
 	
 
 
-	def simulate_single_configuration(self, parameters, parameter_names, plot_feed = False, override_frequency = False):
+	def simulate_single_configuration(self, parameters, parameter_names, plot_feed = False, override_frequency = False, off_axis = False):
 		'''
 		must take in a vector of antenna parameters
 		and return a loss function
@@ -437,7 +469,7 @@ class antenna(object):
 			self.parameters["z_dist"] = AntPos
 			self.edit_tor()
 			self.exeGRASP()
-			self.process_data_files(plot_feed,  override_frequency)
+			self.process_data_files(plot_feed,  override_frequency, off_axis)
 
 		minLoss = np.min(self.LOSS)
 		best_ef = self.EF[self.LOSS.index(minLoss)]
@@ -646,18 +678,18 @@ class HIGH_F_ELfeed(ELfeed):
 
 
 class ELfeedExt(ELfeed):
-	def __init__(self, el = 1.2, ew = 1.2,
+	def __init__(self, el = 1.2, ew = 1.2, ed = -.2,
 				start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
-				bnd_el = [0, 2.0], bnd_ew = [0, 1.5],  #  positive dir_sep vals are directors
+				bnd_el = [0, 2.0], bnd_ew = [0, 1.5], bnd_ed = [-1, 0.5],  #  positive dir_sep vals are directors
 				grasp_version = 10.3): 						   #  Negative dir_sep vals are reflectors
 		
 		ELfeed.__init__(self,start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipolePlateExtensions"
 		self.model_abbreviation = "11Ext"
 
-		self.parameter_names += ["el", "ew"]
-		self.parameters.update({"el":el, "ew":ew})
-		self.bounds.update({"el":bnd_el, "ew":bnd_ew})
+		self.parameter_names += ["el", "ew", "ed"]
+		self.parameters.update({"el":el, "ew":ew, "ed":ed})
+		self.bounds.update({"el":bnd_el, "ew":bnd_ew, "ed":bnd_ed})
 		
 		# self.tor_line_numbers = {"z_dist":489, "sp":333, "dl":502, "dw":507, "dsep":512, "start_f":457, "end_f":480, "n_f":485,"alpha":547} #checked
 		#checked
