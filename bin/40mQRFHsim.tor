@@ -1,6 +1,6 @@
 base  coor_sys_grasp_angles  
 (
-  origin           : struct(x: 0.0 m, y: 0.0 m, z: "ref(z_dist)" m),
+  origin           : struct(x: 0.0 m, y: "ref(off_axis)" m, z: "ref(z_dist)" m),
   theta            : 180.0,
   psi              : "180-ref(alpha)",
   base             : ref(single_global_coor)
@@ -16,7 +16,7 @@ minus_X  coor_sys
 spherical_cut  spherical_cut  
 (
   coor_sys         : ref(base),
-  theta_range      : struct(start: 0.0, end: 360.0, np: 201),
+  theta_range      : struct(start: 0.0, end: 360.0, np: 2001),
   phi_range        : struct(start: 0.0, end: 90.0, np: 3),
   file_name        : Field_Data.cut,
   comment          : "Field data in cuts",
@@ -186,7 +186,7 @@ mounting_plate_sz  real_variable
  
 z_dist  real_variable  
 (
-  value            : 16.32632
+  value            : 16.35789
 )
  
 start_f  real_variable  
@@ -280,7 +280,12 @@ z_phase  real_variable
  
 freq  real_variable  
 (
-  value            : 660.86957
+  value            : 382.6087
+)
+ 
+off_axis  real_variable  
+(
+  value            : 1.2
 )
  
 //DO NOT MODIFY OBJECTS BELOW THIS LINE.
@@ -338,5 +343,5 @@ view_1_polygonal_struts_plot  polygonal_struts_plot
 (
 )
  
- //$$ Saved at 00:53:17 on 29.05.2018 by GRASP ver. 10.3.1 SN=006387
+ //$$ Saved at 18:30:41 on 29.05.2018 by GRASP ver. 10.3.1 SN=006387
   

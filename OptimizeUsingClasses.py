@@ -35,9 +35,9 @@ def main():
 
 	## MOORE
 	else:
-		# a = QRFH(start_f =  60.0, end_f = 80.0, n_f = 1, alpha = 0, grasp_version = 10.3)
-		a = QRFH(freq = 60, grasp_version = 10.3)
-		a.set_number_of_focal_lengths(20)
+		a = ELfeedExt(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.3)
+		# a = QRFH(freq = 60, grasp_version = 10.3)
+		a.set_number_of_focal_lengths(5)
 
 		print("Executing on Moore")
 		print("%s"%a)
@@ -55,17 +55,17 @@ def main():
 	# remove parameters which are altered multiple times (e.g. z_dist)
 	# or parameters that are altered once per execution (e.g. n_f)
 	
-	x = [0.8756, 0.083, -0.6018, 1.0773, 1.1448, 0.6672] 
+	x = [0.8756, 0.083, -0.6018, 1.0773, 1.1448, 0.6672, -.34] 
 	# x = [0.8624, 0.0173, 0.4996, 1.0106, 1.2, 1.2] 
 
 	# random(a)
 	# nelder_mead(a, x)
 	# nelder_mead2(a)
-	# random(a)
+	random(a)
 	# nelder_mead(a)
 	# setup_configuration(a)
-	#simulate_single(a)
-	iterate_over_cut_files(a, cst_dir)
+	# simulate_single(a)
+	# iterate_over_cut_files(a, cst_dir)
 
 def iterate_over_cut_files(a, cst_dir):
 	setup_simulation_files(a, "po_tabs")
@@ -82,7 +82,7 @@ def iterate_over_cut_files(a, cst_dir):
 			a.parameters["freq"] = 1000.0*freq/frequency_scale
 			shutil.copy2(cst_dir+"\\"+file, a.GRASP_working_file + "pat.cut")
 
-			a.simulate_single_configuration([],[], plot_feed = False, override_frequency = True)
+			a.simulate_single_configuration([],[], plot_feed = False, override_frequency = True, off_axis = True)
 
 
 	#simulate_single_configuration????
@@ -98,12 +98,13 @@ def setup_simulation_files(a, method_name):
 
 def simulate_single(a):
 	setup_simulation_files(a, "sing")
-	# a.parameters["x"] = 		0.7835
-	# a.parameters["y"] = 		0.048
-	# a.parameters["z"] = 		0.5627
-	# a.parameters["sp"] =		1.0254
-	# a.parameters["dl"] =		1.7321
-	# a.parameters["dw"] =		0.3172
+	a.parameters["x"] = 		0.7700
+	a.parameters["y"] = 		0.1600
+	a.parameters["z"] = 		-0.0100
+	a.parameters["sp"] =		1.2000
+	a.parameters["el"] =		1.2000
+	a.parameters["ew"] =		1.2000
+	a.parameters["ed"] =		-0.340
 	# a.parameters["dsep"] =		-1.2299
 
 	# a.parameters["rl"] = 1.06
