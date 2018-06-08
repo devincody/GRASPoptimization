@@ -453,8 +453,8 @@ class gaussian_ideal(antenna):
 				bnd_start_f = [0,1000], bnd_end_f = [0,1000], bnd_n_f =[1,1000],
 				grasp_version = 10.3):
 		
-		antenna.__init__(self, parameters = {"z_dist":15.6}, bounds = {"z_dist":[14.5,16]}, grasp_version = grasp_version)
-		self.model_name = "40mIDEAL"
+		antenna.__init__(self, parameters = {"z_dist":15.6}, bounds = {"z_dist":[14.5,16.0]}, grasp_version = grasp_version)
+		self.model_name = "40mIDEALPO"
 		self.model_abbreviation = "gauss"
 
 		self.parameter_names += ["start_f", "end_f", "n_f"]

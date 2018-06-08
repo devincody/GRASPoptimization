@@ -122,7 +122,7 @@ def plot_SEFD(freq, dmax, location, z):
 	plt.semilogy(freq,SEFD(freq, dmax), 'b', label= "SEFD")
 	plt.title("SEFD at z = %4.2f" % z)
 	plt.xlabel("Frequency [MHz]")
-	plt.ylabel("SEFD")
+	plt.ylabel("SEFD [Jy]")
 	plt.ylim([1, 5E5])
 
 	plt.legend()

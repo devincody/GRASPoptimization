@@ -24,8 +24,8 @@ def main():
 
 	## G1
 	elif platform.node() == 'DESKTOP-3UVMJQF':
-		a = gaussian_ideal(start_f =  60.0, end_f = 80.0, n_f = 5, grasp_version = 10.3)
-		a.set_number_of_focal_lengths(5)
+		a = gaussian_ideal(start_f =  60.0, end_f = 80.0, n_f = 20, grasp_version = 10.3)
+		a.set_number_of_focal_lengths(20)
 
 		print("Executing on G1 Office")
 		print("%s"%a)
@@ -123,7 +123,7 @@ def simulate_single(a, override_frequency = False):
 	except:
 		pass
 
-	a.simulate_single_configuration(x, names, plot_feed = True, override_frequency = override_frequency)	
+	a.simulate_single_configuration(x, names,plot_feed = False, override_frequency = override_frequency)	
 
 def setup_configuration(a):
 	setup_simulation_files(a, "setup")
