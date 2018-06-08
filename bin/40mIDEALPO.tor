@@ -1,6 +1,6 @@
 base  coor_sys_grasp_angles  
 (
-  origin           : struct(x: 0.0 m, y: "ref(off_axis)" m, z: "ref(z_dist)" m),
+  origin           : struct(x: 0.0 m, y: 0.0 m, z: "ref(z_dist)" m),
   theta            : 180.0,
   psi              : "180-ref(alpha)",
   base             : ref(single_global_coor)
@@ -13,14 +13,28 @@ minus_X  coor_sys
   base             : ref(base)
 )
  
+frequency  frequency  
+(
+  frequency_list   : sequence(20.0 MHz,50.0 MHz,80.0 MHz)
+)
+ 
 spherical_cut  spherical_cut  
 (
   coor_sys         : ref(base),
-  theta_range      : struct(start: 0.0, end: 360.0, np: 2001),
+  theta_range      : struct(start: 0.0, end: 360.0, np: 201),
   phi_range        : struct(start: 0.0, end: 90.0, np: 3),
   file_name        : Field_Data.cut,
   comment          : "Field data in cuts",
-  frequency        : ref(single_frequencies)
+  frequency        : ref(freq_20_80_df_5_MHz_01)
+)
+ 
+theta_phi  spherical_grid  
+(
+  coor_sys         : ref(base),
+  grid_type        : theta_phi,
+  x_range          : struct(start: -180.0, end: 180.0, np: 41),
+  y_range          : struct(start: -180.0, end: 180.0, np: 41),
+  frequency        : ref(frequency)
 )
  
 plus_Y  coor_sys_grasp_angles  
@@ -35,13 +49,18 @@ minus_Y  coor_sys_grasp_angles
   base             : ref(base)
 )
  
+frequency_range  frequency_range  
+(
+  frequency_range  : struct(start_frequency: 20.0 MHz, end_frequency: 80.0 MHz, number_of_frequencies: 1)
+)
+ 
 single_global_coor  coor_sys  
 (
 )
  
 single_frequencies  frequency  
 (
-  frequency_list   : sequence("ref(freq)" MHz)
+  frequency_list   : sequence(50.0 MHz)
 )
  
 single_surface  paraboloid  
@@ -71,11 +90,6 @@ single_feed_coor  coor_sys
 single_cut_coor  coor_sys  
 (
   base             : ref(single_global_coor)
-)
- 
-Antenna_plus_dish  scatterer_cluster  
-(
-  scatterers       : sequence(ref(single_reflector))
 )
  
 polygonal_struts_01  polygonal_struts  
@@ -126,9 +140,10 @@ strut4  coor_sys
   base             : ref(single_global_coor)
 )
  
-Ant_dish_struts  scatterer_cluster  
+freq_20_80_df_5_MHz_01  frequency_range  
 (
-  scatterers       : sequence(ref(Antenna_plus_dish))
+  frequency_range  : struct(start_frequency: "ref(start_f)" MHz, end_frequency: "ref(end_f)" MHz, 
+number_of_frequencies: "ref(n_f)")
 )
  
 NewStrut2  coor_sys  
@@ -171,12 +186,8 @@ Mounting_Plate  coor_sys
   base             : ref(Top_of_struts)
 )
  
-MountingPlate  rectangular_plate  
+PerfCond  perfect_conductivity  
 (
-  coor_sys         : ref(Mounting_Plate),
-  corner_1         : struct(x: "ref(mounting_plate_sz)" m, y: "ref(mounting_plate_sz)" m, z: 0.0 m),
-  corner_2         : struct(x: "-ref(mounting_plate_sz)" m, y: "ref(mounting_plate_sz)" m, z: 0.0 m),
-  opp_point        : struct(x: 0.0 m, y: "-ref(mounting_plate_sz)" m, z: 0.0 m)
 )
  
 mounting_plate_sz  real_variable  
@@ -186,12 +197,12 @@ mounting_plate_sz  real_variable
  
 z_dist  real_variable  
 (
-  value            : 16.35789
+  value            : 16.0
 )
  
 start_f  real_variable  
 (
-  value            : 660.86957
+  value            : 60.0
 )
  
 end_f  real_variable  
@@ -201,7 +212,7 @@ end_f  real_variable
  
 n_f  real_variable  
 (
-  value            : 1.0
+  value            : 20.0
 )
  
 alpha  real_variable  
@@ -219,16 +230,6 @@ strut_length  real_variable
   value            : 19.35
 )
  
-Feed_cut  spherical_cut  
-(
-  coor_sys         : ref(base),
-  theta_range      : struct(start: 0.0, end: 360.0, np: 201),
-  phi_range        : struct(start: 0.0, end: 90.0, np: 3),
-  file_name        : Feed_Data.cut,
-  comment          : "Field data in cuts",
-  frequency        : ref(single_frequencies)
-)
- 
 dl  real_variable  
 (
   value            : 1.433
@@ -239,53 +240,31 @@ dsep  real_variable
   value            : 0.926
 )
  
-tabulated_pattern  tabulated_pattern  
+gaussian_beam_pattern  gaussian_beam_pattern  
 (
-  frequency        : ref(single_frequencies),
+  frequency        : ref(freq_20_80_df_5_MHz_01),
   coor_sys         : ref(base),
-  file_name        : pat.cut,
-  number_of_cuts   : "ref(n_cuts)",
-  phase_reference  : struct(x: 0.0 mm, y: 0.0 m, z: "ref(z_phase)" mm),
-  near_far         : far
+  taper_angle      : 64.0,
+  taper            : -13.0,
+  far_forced       : on
 )
  
-n_cuts  real_variable  
+po_dish  po_single_face_scatterer  
 (
-  value            : 24.0
-)
- 
-FEED_cluster  scatterer_cluster  
-(
-  scatterers       : sequence(ref(single_reflector))
-)
- 
-po_reflector  po_single_face_scatterer  
-(
-  frequency        : ref(single_frequencies),
+  frequency        : ref(freq_20_80_df_5_MHz_01),
   scatterer        : ref(single_reflector),
+  po_points        : struct(po1: 0, po2: 0),
   file_name        : " "
 )
  
 strut_analysis_arbitrary_cross  strut_analysis_arbitrary_cross  
 (
-  frequency        : ref(single_frequencies),
+  frequency        : ref(freq_20_80_df_5_MHz_01),
   strut            : ref(polygonal_struts_01),
+  max_mesh_length  : 2.0,
+  po_points        : 0,
+  expansion_accuracy : Normal,
   file_name        : " "
-)
- 
-z_phase  real_variable  
-(
-  value            : 120.0
-)
- 
-freq  real_variable  
-(
-  value            : 382.6087
-)
- 
-off_axis  real_variable  
-(
-  value            : 1.2
 )
  
 //DO NOT MODIFY OBJECTS BELOW THIS LINE.
@@ -296,7 +275,11 @@ view_1  view
 (
   objects          : sequence(ref(view_1_tabulated_mesh_plot),ref(view_1_coor_sys_plot),ref(view_1_wires_plot)
 ,ref(view_1_mom_source_plot),ref(view_1_mom_plot),ref(view_1_output_points_plot),ref(view_1_reflector_plot),
-ref(view_1_plate_plot),ref(view_1_bor_plot),ref(view_1_feed_plot),ref(view_1_polygonal_struts_plot))
+ref(view_1_plate_plot),ref(view_1_bor_plot),ref(view_1_feed_plot),ref(view_1_polygonal_struts_plot)),
+  show_hide        : struct(reflectors: show, coordinate_systems: show, feeds: show, output_points: hide, 
+struts: show, tabulated_meshes: show, boxes: show, plates: show, wires: show, mom_meshes: hide, 
+apertures_in_screen: show, lenses: show, tabulated_planar_sources: show, plane_waves: show, dgr_intercostals: 
+show, cad_files: show, rooftop_mirrors: show, loads: show, bors: show, mom_sources: show)
 )
  
 view_1_tabulated_mesh_plot  tabulated_mesh_plot  
@@ -343,5 +326,5 @@ view_1_polygonal_struts_plot  polygonal_struts_plot
 (
 )
  
- //$$ Saved at 18:30:41 on 29.05.2018 by GRASP ver. 10.3.1 SN=006387
+ //$$ Saved at 17:49:38 on 29.05.2018 by GRASP ver. 10.3.1 SN=006387
   

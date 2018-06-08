@@ -1,11 +1,12 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
+from skrf import Network, Frequency
 import pandas as pd
 import time
 
 def main():
 	PA = "F:/Devin/Grasp/LWASandbox/40mLWA/Job_26/"
-	freq, s11 = process_par(PA + "Sparameters.par")
+	freq, s11, s11_phase = process_par(PA + "Sparameters.par")
 	dmax, cut = process_cut(PA + "FieldData.cut", freq)
 	plot_pair_efficiencies(freq, s11, dmax, "Efficiencies.png", 16)
 
@@ -15,17 +16,19 @@ def process_par(f_name): #Process S parameters document return  1D numpy arrays 
 	f.readline() #ignore header
 	freq = []
 	s11 = []
+	s11_phase = []
 	for line in f:
 		line = line.split()
 		freq.append(float(line[0])*1E3) #grab freq, convert to MHz
 		s11.append(float(line[1]))
+		s11_phase.append(float(line[2]))
 	f.close()
 	# print("freq = ", freq)
-	return np.array(freq), np.array(s11)
+	return np.array(freq), np.array(s11), np.array(s11_phase)
 
 
-def process_cut(f_name, freq):
-	# print("freq: ", freq)
+def process_cut(f_name, freq, off_axis = False):
+	print("freq: ", freq)
 	f = open(f_name)
 	line = f.readline()
 	dmax = []
@@ -68,9 +71,14 @@ def process_cut(f_name, freq):
 
 			dbi_co.append(co)
 			dbi_cx.append(cx)
-			if ii == 100:
-				dmax.append(np.max([co, cx]))
-				# print( dmax)
+
+			if (not off_axis):
+				if ii == 100:
+					dmax.append(np.max([co, cx]))
+			if (off_axis):
+				dbi_co_max = np.max(dbi_co)
+				dbi_cx_max = np.max(dbi_cx)
+				dmax.append(np.max([dbi_co_max, dbi_cx_max]))
 
 		cut[series_name_co] = dbi_co
 		cut[series_name_cx] = dbi_cx
@@ -89,6 +97,14 @@ def calc_mismatch(s11):
 	#returns %
 	return (1-10**(s11/10))
 
+def calc_input_z(s11, s11_phase, z0):
+	Gamma = 10**(s11/20.0)*np.exp(1.0j*s11_phase*np.pi/180.0) # s11 is in dBs, s11_phase is in deg
+	return z0*(1.0+Gamma)/(1.0-Gamma) #gives complex input impedance
+
+def calc_refection_coefficient(zin, z0):
+	return (zin-z0)/(zin+z0)
+
+
 def calc_app_eff(freq, dmax): 
 	#freq in MHz, dmax in dB
 	#returns %
@@ -99,6 +115,22 @@ def calc_app_eff(freq, dmax):
 	dmax_lin = 10**(dmax/10)
 	return dmax_lin*wave_len**2 /(4*np.pi*aphy)
 
+def plot_smith(freq, s11, s11_phase, location):
+	plt.figure()
+	f = Frequency(np.min(freq), np.max(freq), len(freq), 'mhz')
+	n = Network(freq = f, s = 10**(s11/20)*np.exp(1j*s11_phase*np.pi/180), z0 = 50)
+	n.plot_s_smith(draw_labels = True)
+	plt.savefig(location)
+
+def plot_imp(freq, im, title, location):
+	plt.figure()
+	plt.plot(freq, np.real(im), label = "real")
+	plt.plot(freq, np.imag(im), label = "imag")
+	plt.title(title)
+	plt.xlabel("Frequency [MHz]")
+	plt.legend()
+	plt.ylabel(title)
+	plt.savefig(location)
 
 def plot_pair_efficiencies(freq, s11, dmax, location, z):
 	plt.figure()
@@ -122,7 +154,7 @@ def plot_SEFD(freq, dmax, location, z):
 	plt.semilogy(freq,SEFD(freq, dmax), 'b', label= "SEFD")
 	plt.title("SEFD at z = %4.2f" % z)
 	plt.xlabel("Frequency [MHz]")
-	plt.ylabel("SEFD")
+	plt.ylabel("SEFD [Jy]")
 	plt.ylim([1, 5E5])
 
 	plt.legend()
@@ -130,7 +162,7 @@ def plot_SEFD(freq, dmax, location, z):
 	plt.savefig(location)
 
 
-def plot_cut(frequency, cut, z, title, feed_pattern = False, max_pattern_dB = 30):
+def plot_cut(frequency, cut, z, title, feed_pattern = False, max_pattern_dB = 30, plot_cx = False):
 	#freq is which frequency to use
 	#
 	plt.rc('axes', linewidth=2)
@@ -144,7 +176,6 @@ def plot_cut(frequency, cut, z, title, feed_pattern = False, max_pattern_dB = 30
 
 		data = np.copy(cut[series_name_co])
 
-
 		if feed_pattern:
 			# For Feed Patterns
 			half = int(len(data)/2)
@@ -156,6 +187,18 @@ def plot_cut(frequency, cut, z, title, feed_pattern = False, max_pattern_dB = 30
 		# print(cut["angles"])
 		axi.plot(cut["angles"] ,data, 'b', label= "co")
 
+		if (plot_cx):
+			data = np.copy(cut[series_name_cx])
+			if feed_pattern:
+				# For Feed Patterns
+				half = int(len(data)/2)
+				temp = np.copy(data[half:])
+				temp1 = np.copy(data[:half])
+				data[len(temp):] = temp1
+				data[:len(temp)] = temp
+
+			# print(cut["angles"])
+			axi.plot(cut["angles"] ,data, 'r', label= "cx")
 
 		# axi.plot(cut["angles"]-180,cut[series_name_cx], 'r', label= "cx")
 		axi.set_title("$\phi$ = %4.2f" %phi, fontsize = 20)

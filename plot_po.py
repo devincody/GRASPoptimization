@@ -78,6 +78,7 @@ for it in items:
 		ax.set_title("Efficiency vs. Frequency at several Focus Lengths")
 		ax.set_xlabel("Frequency [GHz]")
 		ax.set_ylabel("Efficiency [%]")
+		plt.ylim(0,80)
 		plt.savefig(path + "/" + path + ".png")
 
 		# Remove "Unnamed" column in pandas Dataframe
