@@ -25,6 +25,7 @@ def process_par(f_name): #Process S parameters document return  1D numpy arrays 
 
 
 def process_cut(f_name, freq):
+	# print("freq: ", freq)
 	f = open(f_name)
 	line = f.readline()
 	dmax = []
@@ -69,6 +70,7 @@ def process_cut(f_name, freq):
 			dbi_cx.append(cx)
 			if ii == 100:
 				dmax.append(np.max([co, cx]))
+				# print( dmax)
 
 		cut[series_name_co] = dbi_co
 		cut[series_name_cx] = dbi_cx
@@ -76,6 +78,7 @@ def process_cut(f_name, freq):
 	cut["angles"] = angles
 
 	dmax_f = np.zeros(len(freq))
+	# print(len(freq))
 	for i in range(len(freq)):
 		dmax_f[i] = np.max(dmax[i*3:(i+1)*3])
 
@@ -99,7 +102,7 @@ def calc_app_eff(freq, dmax):
 
 def plot_pair_efficiencies(freq, s11, dmax, location, z):
 	plt.figure()
-	plt.plot(freq,calc_mismatch(s11), 'b', label= "Mismatch Efficiency")
+	plt.plot(freq, calc_mismatch(s11), 'b', label= "Mismatch Efficiency")
 	plt.title("Mismatch and Aperture Efficiencies z = %4.2f" % z)
 	plt.xlabel("Frequency [MHz]")
 	plt.ylabel("Efficiency")
@@ -127,7 +130,7 @@ def plot_SEFD(freq, dmax, location, z):
 	plt.savefig(location)
 
 
-def plot_cut(frequency, cut, z, title, feed_pattern = False):
+def plot_cut(frequency, cut, z, title, feed_pattern = False, max_pattern_dB = 30):
 	#freq is which frequency to use
 	#
 	plt.rc('axes', linewidth=2)
@@ -157,11 +160,11 @@ def plot_cut(frequency, cut, z, title, feed_pattern = False):
 		# axi.plot(cut["angles"]-180,cut[series_name_cx], 'r', label= "cx")
 		axi.set_title("$\phi$ = %4.2f" %phi, fontsize = 20)
 		axi.legend()
-		axi.set_ylim([-20,30])
+		axi.set_ylim([-20,max_pattern_dB])
 		axi.set_xlim([-180,180])
 		axi.set_xticks(range(-180, 181, 30))
 		axi.grid(linewidth = 2, linestyle = '--')
-		axi.set_yticks(range(-20,31,5))
+		axi.set_yticks(range(-20, max_pattern_dB + 1,5))
 
 		fontsize = 14
 		for tick in axi.xaxis.get_major_ticks():
