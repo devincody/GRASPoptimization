@@ -516,7 +516,7 @@ class QRFH(antenna):
 class LWA_like(antenna):
 	def __init__(self, x = .77, y = .16, z = -.01,
 				start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
-				bnd_x = [0, 1.5], bnd_y = [0, .75], bnd_z = [-3.0, 1], 
+				bnd_x = [0.3, 1.5], bnd_y = [0, .55], bnd_z = [-1.0, 1], 
 				bnd_start_f = [0,1000], bnd_end_f = [0,1000], bnd_n_f =[1,1000], bnd_alpha = [0, 360],
 				grasp_version = 10.3):
 		
@@ -628,7 +628,7 @@ class LWA_DIR_DIR(LWA_DIR):
 
 class ELfeed(LWA_like):
 	def __init__(self, sp = 1.2, start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
-				bnd_sp = [.5, 1.5], grasp_version = 10.3): #seperation is half the distance between dipoles
+				bnd_sp = [.7, 1.5], grasp_version = 10.3): #seperation is half the distance between dipoles
 		
 		LWA_like.__init__(self, start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
 		self.model_name = "40mQuadDipole"
