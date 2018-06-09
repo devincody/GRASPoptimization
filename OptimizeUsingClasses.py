@@ -13,7 +13,7 @@ def main():
 
 	## HELIOS
 	if platform.node() == "Helios":
-		a = ELfeedExt(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.3)
+		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 0, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(5)
 
 		print("Executing on Helios")
@@ -64,7 +64,6 @@ def main():
 	random(a)
 	# nelder_mead(a)
 	# setup_configuration(a)
-
 	# simulate_single(a, override_frequency = True)
 
 	# iterate_over_cut_files(a, cst_dir)
