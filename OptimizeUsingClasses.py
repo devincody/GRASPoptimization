@@ -35,9 +35,9 @@ def main():
 
 	## MOORE
 	else:
-		a = ELfeedExt(start_f =  60.0, end_f = 80.0, n_f = 5, alpha = 0, grasp_version = 10.3)
+		a = ELfeed(start_f =  40.0, end_f = 100.0, n_f = 50, alpha = 0, grasp_version = 10.3)
 		# a = QRFH(freq = 60, grasp_version = 10.3)
-		a.set_number_of_focal_lengths(5)
+		a.set_number_of_focal_lengths(1)
 
 		print("Executing on Moore")
 		print("%s"%a)
@@ -55,16 +55,16 @@ def main():
 	# remove parameters which are altered multiple times (e.g. z_dist)
 	# or parameters that are altered once per execution (e.g. n_f)
 	
-	x = [0.8756, 0.083, -0.6018, 1.0773, 1.1448, 0.6672, -.34] 
+	x = [0.8011, 0.1527, 0.517, 1.1632] 
 	# x = [0.8624, 0.0173, 0.4996, 1.0106, 1.2, 1.2] 
 
-	random(a)
+	# random(a)
 	# nelder_mead(a, x)
 	# nelder_mead2(a)
-	random(a)
+	# random(a)
 	# nelder_mead(a)
 	# setup_configuration(a)
-	# simulate_single(a, override_frequency = True)
+	simulate_single(a, override_frequency = False)
 
 	# iterate_over_cut_files(a, cst_dir)
 
@@ -99,20 +99,20 @@ def setup_simulation_files(a, method_name):
 
 def simulate_single(a, override_frequency = False):
 	setup_simulation_files(a, "sing")
-	a.parameters["x"] = 		0.7700
-	a.parameters["y"] = 		0.1600
-	a.parameters["z"] = 		-0.0100
-	a.parameters["sp"] =		1.2000
-	a.parameters["el"] =		1.2000
-	a.parameters["ew"] =		1.2000
-	a.parameters["ed"] =		-0.340
+	a.parameters["x"] = 		.82
+	a.parameters["y"] = 		.173
+	a.parameters["z"] = 		.396
+	a.parameters["sp"] =		1.085
+	# a.parameters["el"] =		1.2000
+	# a.parameters["ew"] =		1.2000
+	# a.parameters["ed"] =		-0.340
 	# a.parameters["dsep"] =		-1.2299
 
 	# a.parameters["rl"] = 1.06
 	# a.parameters["rw"] = .60
 	# a.parameters["rsep"] = -.3
 	
-	# a.parameters["z_dist"] = 16.4
+	a.bounds.update({"z_dist":[16.55,17.5]})
 
 	x=[]
 
