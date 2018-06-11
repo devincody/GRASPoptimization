@@ -24,7 +24,7 @@ def main():
 
 	## G1
 	elif platform.node() == 'DESKTOP-3UVMJQF' or platform.node() == 'ASTROS':
-		a = ELfeed(start_f =  60.0, end_f = 85.0, n_f = 10, grasp_version = 10.3)
+		a = LWA_like(start_f =  60.0, end_f = 85.0, n_f = 5, alpha = 45, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(5)
 
 		print("Executing on G1 Office")
@@ -55,16 +55,25 @@ def main():
 	# remove parameters which are altered multiple times (e.g. z_dist)
 	# or parameters that are altered once per execution (e.g. n_f)
 	
-	x = [0.8011, 0.1527, 0.517, 1.1632] 
+
+	# x = [0.8011, 0.1527, 0.517, 1.1632] 
+
+	# x = [0.8756, 0.083, -0.6018, 1.0773, 1.1448, 0.6672, -.34] 
+
 	# x = [0.8624, 0.0173, 0.4996, 1.0106, 1.2, 1.2] 
+	x=[1.0758,0.7498,0.4698]
 
 	# random(a)
-	# nelder_mead(a, x)
+	nelder_mead(a, x)
+
 	# nelder_mead2(a)
 	# random(a)
 	# nelder_mead(a)
 	# setup_configuration(a)
-	simulate_single(a, override_frequency = False)
+
+	# grid(a)
+	# simulate_single(a, override_frequency = True)
+
 
 	# iterate_over_cut_files(a, cst_dir)
 
@@ -103,6 +112,7 @@ def simulate_single(a, override_frequency = False):
 	a.parameters["y"] = 		.173
 	a.parameters["z"] = 		.396
 	a.parameters["sp"] =		1.085
+
 	# a.parameters["el"] =		1.2000
 	# a.parameters["ew"] =		1.2000
 	# a.parameters["ed"] =		-0.340
@@ -112,7 +122,13 @@ def simulate_single(a, override_frequency = False):
 	# a.parameters["rw"] = .60
 	# a.parameters["rsep"] = -.3
 	
-	a.bounds.update({"z_dist":[16.55,17.5]})
+
+	# a.bounds.update({"z_dist":[16.55,17.5]})
+
+	# a.parameters["taper"] = -10
+	# a.parameters["angle"] = 64
+	# a.parameters["z_dist"] = 16
+
 
 	x=[]
 
@@ -120,12 +136,36 @@ def simulate_single(a, override_frequency = False):
 
 	try:
 		names.remove("alpha")
-		for nam in names:
-			x.append(a.parameters[nam])
 	except:
 		pass
 
-	a.simulate_single_configuration(x, names,plot_feed = False, override_frequency = override_frequency)	
+	for nam in names:
+		x.append(a.parameters[nam])
+
+	a.simulate_single_configuration(x, names, plot_feed = False, override_frequency = override_frequency)	
+
+def grid(a):
+	setup_simulation_files(a, "grid")
+	bounds = a.get_bounds()
+
+
+	names = a.get_optimizable_parameter_names()
+	try:
+			names.remove("alpha")
+	except:
+		pass
+	# print(names, bounds)
+	number_of_points = 12
+
+	for i in range(number_of_points):
+		nm = "taper"
+		x_new = []
+		x_new.append(bounds[nm][0] + (bounds[nm][1] - bounds[nm][0])/(number_of_points-1)*i)
+		for j in range(number_of_points):
+			nm = "angle"
+			x_new.append(bounds[nm][0] + (bounds[nm][1] - bounds[nm][0])/(number_of_points-1)*j)
+			print ("loss = ", a.simulate_single_configuration(x_new, names, plot_feed = False, override_frequency = True))
+			x_new = x_new[:-1]
 
 def setup_configuration(a):
 	setup_simulation_files(a, "setup")
