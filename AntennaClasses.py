@@ -211,7 +211,7 @@ class antenna(object):
 		self.log.write("z_dist,")
 		for x in names:
 			self.log.write(x +",")
-		self.log.write("Efficiency,Loss\n")
+		self.log.write("Efficiency,Loss,Loss(100ohm)\n")
 		self.log.close()
 
 	def edit_msh(self):
@@ -303,8 +303,12 @@ class antenna(object):
 		if (override_frequency):
 			try:
 				freq = np.linspace(self.parameters["start_f"], self.parameters["end_f"], self.parameters["n_f"])
+				s11 = -50*np.ones( self.parameters["n_f"])
+				s11_phase = np.zeros( self.parameters["n_f"])
+				print("Overriding Frequencies, n_f = {}".format(self.parameters["n_f"]))
 			except:
 				freq = np.array([self.parameters["freq"]])
+				print("Using Single Frequency")
 
 		dmax, cut = process_grasp.process_cut(self.GRASP_working_file + "Field_Data.cut", freq, off_axis)
 
@@ -316,7 +320,7 @@ class antenna(object):
 		zin = process_grasp.calc_input_z(s11, s11_phase, 50)
 		yin = 1.0/zin
 		mis100 = process_grasp.calc_mismatch(10*np.log10(process_grasp.calc_refection_coefficient(zin, 100)**2))
-		print(mis100)
+		# print(mis100)
 
 		aperture = process_grasp.calc_app_eff(freq, dmax)
 		tsys = process_grasp.Tsys(freq)
@@ -325,6 +329,10 @@ class antenna(object):
 		## CALCULATE EFFICIENCIES AND LOSSES
 		efficiency, mis_loss = self._loss(freq, aperture, mis) #efficiency is negative, miss is pos
 		loss_val = efficiency * mis_loss
+
+		eff100, mis_loss100 = self._loss(freq, aperture, mis100)
+		loss_val100 = eff100 * mis_loss100
+
 		self.EF.append(efficiency)
 		self.LOSS.append(loss_val)
 
@@ -356,7 +364,7 @@ class antenna(object):
 		## PLOT DATA
 		process_grasp.plot_pair_efficiencies(freq, s11, dmax, plots_directory + "Efficiency/Efficiencies Position = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, efficiency, loss_val), AntPos)
 		process_grasp.plot_pair_efficiencies(freq, 20*np.log10(np.abs(process_grasp.calc_refection_coefficient(zin, 100))), dmax, 
-											 plots_directory + "Efficiency/Efficiencies Z=100 Position = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, efficiency, loss_val), AntPos)
+											 plots_directory + "Efficiency/Efficiencies Z=100 Position = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, eff100, loss_val100), AntPos)
 		process_grasp.plot_smith(freq, s11, s11_phase, plots_directory + "Impedance/Smith Position = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, efficiency, loss_val))
 		process_grasp.plot_imp(freq, yin, "Antenna Admittance", plots_directory + "Impedance/Admittance Position = %4.2f Ef = %4.2f Loss = %4.3f.png" % (AntPos, efficiency, loss_val))
 
@@ -377,9 +385,9 @@ class antenna(object):
 		local_log.write(time.strftime("%c"))
 		local_log.write("\n")
 		local_log.write("Ef = %6.4f Loss = %6.4f.png\n" %(efficiency, loss_val))
-		local_log.write("Frequency [MHz], S11 [dB], Dmax [dBi], Mismatch Efficiency, Input Impedance, Aperture Efficiency, Tsys [1E3 K], SEFD [1E6 Jy]\n")
+		local_log.write("Frequency [MHz], S11 [dB], Dmax [dBi], Mismatch Efficiency [%], Mismatch Efficiency (100 ohm) [%], Input Impedance [ohm], Aperture Efficiency [%], Tsys [1E3 K], SEFD [1E6 Jy]\n")
 		for ii in range(len(freq)):
-			local_log.write("%7.4f, %7.4f, %7.4f, %7.4f, %7.4f + %7.4fj, %7.4f, %7.4f, %7.4f\n" % (freq[ii], s11[ii], dmax[ii], mis[ii], np.real(zin[ii]), np.imag(zin[ii]), aperture[ii], tsys[ii]/1E3, SEFD[ii]/1E6))
+			local_log.write("%7.4f, %7.4f, %7.4f, %7.4f, %7.4f, %7.4f + %7.4fj, %7.4f, %7.4f, %7.4f\n" % (freq[ii], s11[ii], dmax[ii], mis[ii], mis100[ii], np.real(zin[ii]), np.imag(zin[ii]), aperture[ii], tsys[ii]/1E3, SEFD[ii]/1E6))
 		local_log.close()
 
 		## WRITE DATA TO LOG.CSV
@@ -390,6 +398,7 @@ class antenna(object):
 			param.append(self.parameters[name])
 		param.append(efficiency)
 		param.append(loss_val)
+		param.append(loss_val100)
 		template = "%7.4f, "*len(param) + '\n'
 		try:
 			self.log = open(self.log_name, 'a')
@@ -420,7 +429,7 @@ class antenna(object):
 		n = 0
 		miss_loss = 0
 		for i, f in enumerate(freq):
-			if (f >= 60 and f <= 80):
+			if (f >= 60 and f <= 85):
 				ans -= effic[i]
 				n+= 1
 				miss_loss += miss[i]
@@ -481,17 +490,17 @@ class antenna(object):
 
 
 class gaussian_ideal(antenna):
-	def __init__(self, start_f = 60.0, end_f = 80.0, n_f = 5, 
-				bnd_start_f = [0,1000], bnd_end_f = [0,1000], bnd_n_f =[1,1000],
+	def __init__(self, start_f = 60.0, end_f = 80.0, n_f = 5, taper = -10, angle = 64,
+				bnd_start_f = [0,1000], bnd_end_f = [0,1000], bnd_n_f =[1,1000], bnd_taper = [-14,-8], bnd_angle = [50, 80],
 				grasp_version = 10.3):
 		
-		antenna.__init__(self, parameters = {"z_dist":15.6}, bounds = {"z_dist":[14.5,16.0]}, grasp_version = grasp_version)
+		antenna.__init__(self, parameters = {"z_dist":16.1}, bounds = {"z_dist":[16,17.0]}, grasp_version = grasp_version)
 		self.model_name = "40mIDEALPO"
-		self.model_abbreviation = "gauss"
+		self.model_abbreviation = "gaussPO"
 
-		self.parameter_names += ["start_f", "end_f", "n_f"]
-		self.parameters.update({"start_f":start_f, "end_f":end_f, "n_f":n_f })
-		self.bounds.update({"start_f":bnd_start_f, "end_f":bnd_end_f,"n_f":bnd_n_f})
+		self.parameter_names += ["start_f", "end_f", "n_f", "taper", "angle"]
+		self.parameters.update({"start_f":start_f, "end_f":end_f, "n_f":n_f, "taper":taper, "angle":angle})
+		self.bounds.update({"start_f":bnd_start_f, "end_f":bnd_end_f,"n_f":bnd_n_f, "taper":bnd_taper, "angle":bnd_angle})
 		
 	def __str__(self):
 		return "Ideal Gaussian Pattern without struts"
@@ -516,7 +525,7 @@ class QRFH(antenna):
 class LWA_like(antenna):
 	def __init__(self, x = .77, y = .16, z = -.01,
 				start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
-				bnd_x = [0.3, 1.5], bnd_y = [0, .55], bnd_z = [-1.0, 1], 
+				bnd_x = [0.3, 1.5], bnd_y = [0, 1], bnd_z = [-1.0, 1], 
 				bnd_start_f = [0,1000], bnd_end_f = [0,1000], bnd_n_f =[1,1000], bnd_alpha = [0, 360],
 				grasp_version = 10.3):
 		
