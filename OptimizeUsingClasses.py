@@ -35,9 +35,9 @@ def main():
 
 	## MOORE
 	else:
-		a = ELfeed(start_f =  40.0, end_f = 100.0, n_f = 50, alpha = 0, grasp_version = 10.3)
+		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 5, alpha = 0, grasp_version = 10.3)
 		# a = QRFH(freq = 60, grasp_version = 10.3)
-		a.set_number_of_focal_lengths(1)
+		a.set_number_of_focal_lengths(5)
 
 		print("Executing on Moore")
 		print("%s"%a)
@@ -61,7 +61,9 @@ def main():
 	# x = [0.8756, 0.083, -0.6018, 1.0773, 1.1448, 0.6672, -.34] 
 
 	# x = [0.8624, 0.0173, 0.4996, 1.0106, 1.2, 1.2] 
-	x=[1.0758,0.7498,0.4698]
+	# x=[1.0758,0.7498,0.4698]
+	x=[0.7985,0.011,0.7233,0.9654,1.9486,0.5708, 0]
+
 
 	# random(a)
 	nelder_mead(a, x)
