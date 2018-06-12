@@ -28,7 +28,8 @@ def process_par(f_name): #Process S parameters document return  1D numpy arrays 
 
 
 def process_cut(f_name, freq, off_axis = False):
-	print("freq: ", freq)
+	# print("freq: ", freq)
+	print("file name: {}".format(f_name))
 	f = open(f_name)
 	line = f.readline()
 	dmax = []
@@ -88,6 +89,7 @@ def process_cut(f_name, freq, off_axis = False):
 	dmax_f = np.zeros(len(freq))
 	# print(len(freq))
 	for i in range(len(freq)):
+		# print(dmax)
 		dmax_f[i] = np.max(dmax[i*3:(i+1)*3])
 
 	return dmax_f, cut

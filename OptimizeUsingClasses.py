@@ -24,7 +24,7 @@ def main():
 
 	## G1
 	elif platform.node() == 'DESKTOP-3UVMJQF' or platform.node() == 'ASTROS':
-		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 10, grasp_version = 10.3)
+		a = LWA_like(start_f =  60.0, end_f = 85.0, n_f = 5, alpha = 45, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(5)
 
 		print("Executing on G1 Office")
@@ -70,6 +70,7 @@ def main():
 	
 	# simulate_single(a, plot_feed = True, override_frequency = False)
 
+
 	# iterate_over_cut_files(a, cst_dir)
 
 def iterate_over_cut_files(a, cst_dir):
@@ -103,6 +104,7 @@ def setup_simulation_files(a, method_name):
 
 def simulate_single(a, plot_feed = True, override_frequency = False):
 	setup_simulation_files(a, "sing")
+
 	a.parameters["x"] = 		0.9195
 	a.parameters["y"] = 		0.1155
 	a.parameters["z"] = 		-0.0403
@@ -111,12 +113,15 @@ def simulate_single(a, plot_feed = True, override_frequency = False):
 	a.parameters["ew"] =		0.7553
 	a.parameters["ed"] =		-0.8057
 	a.bounds.update({"z_dist":[16.5, 17]})
+
 	# a.parameters["dsep"] =		-1.2299
 	# a.parameters["rl"] = 1.06
 	# a.parameters["rw"] = .60
 	# a.parameters["rsep"] = -.3
 	
-	# a.parameters["z_dist"] = 16.4
+	a.parameters["taper"] = -10
+	a.parameters["angle"] = 64
+	a.parameters["z_dist"] = 16
 
 	x=[]
 
@@ -124,12 +129,35 @@ def simulate_single(a, plot_feed = True, override_frequency = False):
 
 	try:
 		names.remove("alpha")
-		for nam in names:
-			x.append(a.parameters[nam])
 	except:
 		pass
-
+		
+	for nam in names:
+		x.append(a.parameters[nam])
 	a.simulate_single_configuration(x, names, plot_feed = plot_feed, override_frequency = override_frequency)	
+
+def grid(a):
+	setup_simulation_files(a, "grid")
+	bounds = a.get_bounds()
+
+
+	names = a.get_optimizable_parameter_names()
+	try:
+			names.remove("alpha")
+	except:
+		pass
+	# print(names, bounds)
+	number_of_points = 12
+
+	for i in range(number_of_points):
+		nm = "taper"
+		x_new = []
+		x_new.append(bounds[nm][0] + (bounds[nm][1] - bounds[nm][0])/(number_of_points-1)*i)
+		for j in range(number_of_points):
+			nm = "angle"
+			x_new.append(bounds[nm][0] + (bounds[nm][1] - bounds[nm][0])/(number_of_points-1)*j)
+			print ("loss = ", a.simulate_single_configuration(x_new, names, plot_feed = False, override_frequency = True))
+			x_new = x_new[:-1]
 
 def setup_configuration(a):
 	setup_simulation_files(a, "setup")

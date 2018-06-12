@@ -24,6 +24,8 @@ for i in items:
 		keys = a.keys()
 		# print keys
 
+
+		# watch out fo rLoss(100ohm)
 		try:
 			if "Unnamed" in keys[-1]:
 				a = a.drop(keys[-1], axis = 1)

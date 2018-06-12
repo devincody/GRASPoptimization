@@ -197,7 +197,7 @@ mounting_plate_sz  real_variable
  
 z_dist  real_variable  
 (
-  value            : 16.0
+  value            : 17.0
 )
  
 start_f  real_variable  
@@ -207,12 +207,12 @@ start_f  real_variable
  
 end_f  real_variable  
 (
-  value            : 80.0
+  value            : 85.0
 )
  
 n_f  real_variable  
 (
-  value            : 20.0
+  value            : 5.0
 )
  
 alpha  real_variable  
@@ -244,8 +244,8 @@ gaussian_beam_pattern  gaussian_beam_pattern
 (
   frequency        : ref(freq_20_80_df_5_MHz_01),
   coor_sys         : ref(base),
-  taper_angle      : 64.0,
-  taper            : -13.0,
+  taper_angle      : "ref(angle)",
+  taper            : "ref(taper)",
   far_forced       : on
 )
  
@@ -253,7 +253,6 @@ po_dish  po_single_face_scatterer
 (
   frequency        : ref(freq_20_80_df_5_MHz_01),
   scatterer        : ref(single_reflector),
-  po_points        : struct(po1: 0, po2: 0),
   file_name        : " "
 )
  
@@ -261,10 +260,17 @@ strut_analysis_arbitrary_cross  strut_analysis_arbitrary_cross
 (
   frequency        : ref(freq_20_80_df_5_MHz_01),
   strut            : ref(polygonal_struts_01),
-  max_mesh_length  : 2.0,
-  po_points        : 0,
-  expansion_accuracy : Normal,
   file_name        : " "
+)
+ 
+angle  real_variable  
+(
+  value            : 64.0
+)
+ 
+taper  real_variable  
+(
+  value            : -10.0
 )
  
 //DO NOT MODIFY OBJECTS BELOW THIS LINE.
@@ -275,11 +281,7 @@ view_1  view
 (
   objects          : sequence(ref(view_1_tabulated_mesh_plot),ref(view_1_coor_sys_plot),ref(view_1_wires_plot)
 ,ref(view_1_mom_source_plot),ref(view_1_mom_plot),ref(view_1_output_points_plot),ref(view_1_reflector_plot),
-ref(view_1_plate_plot),ref(view_1_bor_plot),ref(view_1_feed_plot),ref(view_1_polygonal_struts_plot)),
-  show_hide        : struct(reflectors: show, coordinate_systems: show, feeds: show, output_points: hide, 
-struts: show, tabulated_meshes: show, boxes: show, plates: show, wires: show, mom_meshes: hide, 
-apertures_in_screen: show, lenses: show, tabulated_planar_sources: show, plane_waves: show, dgr_intercostals: 
-show, cad_files: show, rooftop_mirrors: show, loads: show, bors: show, mom_sources: show)
+ref(view_1_plate_plot),ref(view_1_bor_plot),ref(view_1_feed_plot),ref(view_1_polygonal_struts_plot))
 )
  
 view_1_tabulated_mesh_plot  tabulated_mesh_plot  
@@ -326,5 +328,5 @@ view_1_polygonal_struts_plot  polygonal_struts_plot
 (
 )
  
- //$$ Saved at 17:49:38 on 29.05.2018 by GRASP ver. 10.3.1 SN=006387
+ //$$ Saved at 23:54:18 on 10.06.2018 by GRASP ver. 10.3.1 SN=006387
   
