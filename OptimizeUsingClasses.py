@@ -13,7 +13,7 @@ def main():
 
 	## HELIOS
 	if platform.node() == "Helios":
-		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 0, grasp_version = 10.3)
+		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 5, alpha = 0, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(5)
 
 		print("Executing on Helios")
@@ -55,16 +55,20 @@ def main():
 	# remove parameters which are altered multiple times (e.g. z_dist)
 	# or parameters that are altered once per execution (e.g. n_f)
 	
-	x = [0.8756, 0.083, -0.6018, 1.0773, 1.1448, 0.6672, -.34] 
+	# x = [0.8756, 0.083, -0.6018, 1.0773, 1.1448, 0.6672, -.34] 
+	# x = [0.8965,0.3467,0,1.3987,1.6002,0.4222,0.4086]
 	# x = [0.8624, 0.0173, 0.4996, 1.0106, 1.2, 1.2] 
+	x = [0.9195,0.1155,-0.0403,1.1274,1.7092,0.7553,-0.8057]
 
-	random(a)
+	# random(a)
 	# nelder_mead(a, x)
+	# x=[0.8375,0.2346,-0.0315,1.3328,1.6594,0.5068,-0.6491]
+	nelder_mead(a, x)
 	# nelder_mead2(a)
-	random(a)
-	# nelder_mead(a)
+	# random(a)
 	# setup_configuration(a)
-	# simulate_single(a, override_frequency = True)
+	
+	# simulate_single(a, plot_feed = True, override_frequency = False)
 
 	# iterate_over_cut_files(a, cst_dir)
 
@@ -97,17 +101,17 @@ def setup_simulation_files(a, method_name):
 	a.gen_file_names()
 
 
-def simulate_single(a, override_frequency = False):
+def simulate_single(a, plot_feed = True, override_frequency = False):
 	setup_simulation_files(a, "sing")
-	a.parameters["x"] = 		0.7700
-	a.parameters["y"] = 		0.1600
-	a.parameters["z"] = 		-0.0100
-	a.parameters["sp"] =		1.2000
-	a.parameters["el"] =		1.2000
-	a.parameters["ew"] =		1.2000
-	a.parameters["ed"] =		-0.340
+	a.parameters["x"] = 		0.9195
+	a.parameters["y"] = 		0.1155
+	a.parameters["z"] = 		-0.0403
+	a.parameters["sp"] =		1.1274
+	a.parameters["el"] =		1.7092
+	a.parameters["ew"] =		0.7553
+	a.parameters["ed"] =		-0.8057
+	a.bounds.update({"z_dist":[16.5, 17]})
 	# a.parameters["dsep"] =		-1.2299
-
 	# a.parameters["rl"] = 1.06
 	# a.parameters["rw"] = .60
 	# a.parameters["rsep"] = -.3
@@ -125,7 +129,7 @@ def simulate_single(a, override_frequency = False):
 	except:
 		pass
 
-	a.simulate_single_configuration(x, names,plot_feed = False, override_frequency = override_frequency)	
+	a.simulate_single_configuration(x, names, plot_feed = plot_feed, override_frequency = override_frequency)	
 
 def setup_configuration(a):
 	setup_simulation_files(a, "setup")
@@ -172,6 +176,8 @@ def nelder_mead(a, x):
 	# # x = [0.6604, 0.356, -0.3087, 1.1227, 0.1509, 0.0748, -2.02]	#11 REF
 
 	# # x = [0.8161,0.0318,-0.3301,0.9399,0.7703,0.0045, 0.1227]  #11 DIR
+
+
 
 	for name, val in zip(names, x):
 		print (name,":=  ", val)
