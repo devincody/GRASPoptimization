@@ -319,7 +319,7 @@ class antenna(object):
 		mis = process_grasp.calc_mismatch(s11)
 		zin = process_grasp.calc_input_z(s11, s11_phase, 50)
 		yin = 1.0/zin
-		mis100 = process_grasp.calc_mismatch(10*np.log10(process_grasp.calc_refection_coefficient(zin, 100)**2))
+		mis100 = process_grasp.calc_mismatch(20*np.log10(np.abs(process_grasp.calc_refection_coefficient(zin, 100))))
 		# print(mis100)
 
 		aperture = process_grasp.calc_app_eff(freq, dmax)
