@@ -38,7 +38,7 @@ for it in items:
 
 				maxi= []
 				maxi.append(a.iloc[0].values)
-				for c in range(len(a['x'])):
+				for c in range(len(a[keys[0]])):
 					diff = np.abs(a.iloc[c].values - maxi[-1])
 					if (diff[i]+diff[j] < 1E-2):
 						if (a.iloc[c].values[-1] < maxi[-1][-1]):

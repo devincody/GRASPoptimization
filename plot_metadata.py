@@ -18,7 +18,7 @@ cwd = os.getcwd()
 items = os.listdir(cwd)
 for i in items:
 	if ".csv" in i[-5:]:
-		print("Processing file ", i)
+		print("Processing file {}".format(i))
 		a = pd.read_csv(i, skiprows = 2, header = 0, index_col=False)
 
 		keys = a.keys()
@@ -40,8 +40,9 @@ for i in items:
 			loss = 'Loss'
 			a[loss]
 
-		a["radius"] = np.sqrt(a['x']**2 + a['z']**2)
-		a["theta"] = np.arctan2(a['z'],a['x'])*180.0/np.pi
+		if 'x' in keys and 'y' in keys:
+			a["radius"] = np.sqrt(a['x']**2 + a['z']**2)
+			a["theta"] = np.arctan2(a['z'],a['x'])*180.0/np.pi
 
 		a[loss] *= -1
 
@@ -55,7 +56,10 @@ for i in items:
 			# print p
 			if not "Unnamed:" in p:
 				fig, ax = plt.subplots()
-				ax.scatter(a[p],a[loss], alpha = .8, c = a['alpha']/45, cmap = 'seismic')
+				if 'alpha' in keys:
+					ax.scatter(a[p],a[loss], alpha = .8, c = a['alpha']/45, cmap = 'seismic')
+				else:
+					ax.scatter(a[p],a[loss], alpha = .8, cmap = 'seismic')
 				ax.set_xlabel("%s [%s]" % (p, units[p.lower()]))
 				ax.set_ylabel('Loss')
 				ax.grid(linewidth = 1, linestyle = '--')
