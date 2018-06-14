@@ -24,8 +24,8 @@ def main():
 
 	## G1
 	elif platform.node() == 'DESKTOP-3UVMJQF' or platform.node() == 'ASTROS':
-		a = LWA_like(start_f =  60.0, end_f = 85.0, n_f = 5, alpha = 0, grasp_version = 10.3)
-		a.set_number_of_focal_lengths(5)
+		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 20, alpha = 0, grasp_version = 10.3)
+		a.set_number_of_focal_lengths(20)
 
 		print("Executing on G1 Office")
 		print("%s"%a)
@@ -65,12 +65,13 @@ def main():
 	# a.parameters["x"] = 		1.018
 	# a.parameters["y"] = 		0.792
 	# a.parameters["z"] = 		0.170
-	x = [.925,.771,.488]
+	# x = [.925,.771,.488]
+	x = [.781, .1816, .3982, 1.055]
 
 	# random(a)
 	# nelder_mead(a, x)
 	# x=[0.8375,0.2346,-0.0315,1.3328,1.6594,0.5068,-0.6491]
-	nelder_mead(a, x)
+	# nelder_mead(a, x)
 
 	# nelder_mead2(a)
 	# random(a)
@@ -82,7 +83,7 @@ def main():
 	# a.parameters["x"] = 		0.990
 	# a.parameters["y"] = 		0.737
 	# a.parameters["z"] = 		0.501
-	# simulate_single(a, plot_feed = True, override_frequency = False)
+	simulate_single(a, plot_feed = True, override_frequency = False)
 
 
 	# iterate_over_cut_files(a, cst_dir)
@@ -119,16 +120,19 @@ def setup_simulation_files(a, method_name):
 def simulate_single(a, plot_feed = True, override_frequency = False):
 	setup_simulation_files(a, "sing")
 
-	a.parameters["x"] = 		0.9195
-	a.parameters["y"] = 		0.1155
-	a.parameters["z"] = 		-0.0403
-	a.parameters["sp"] =		1.1274
-	a.parameters["el"] =		1.7092
-	a.parameters["ew"] =		0.7553
-	a.parameters["ed"] =		-0.8057
-	a.bounds.update({"z_dist":[16.5, 17]})
+	a.parameters["x"] = 		0.894
+	a.parameters["y"] = 		0.114
+	a.parameters["z"] = 		-0.043
+	a.parameters["sp"] =		1.100
+	a.parameters["el"] =		1.777
+	a.parameters["ew"] =		0.724
+	a.parameters["ed"] =		-0.836
+	a.bounds.update({"z_dist":[16, 17]})
 
-	# a.parameters["dsep"] =		-1.2299
+
+
+
+	# a.parameters["dsep"]=	-1.2299
 	# a.parameters["rl"] = 1.06
 	# a.parameters["rw"] = .60
 	# a.parameters["rsep"] = -.3
@@ -153,7 +157,7 @@ def simulate_single(a, plot_feed = True, override_frequency = False):
 		
 	for nam in names:
 		x.append(a.parameters[nam])
-		
+
 	a.simulate_single_configuration(x, names, plot_feed = plot_feed, override_frequency = override_frequency)	
 
 def grid(a):
