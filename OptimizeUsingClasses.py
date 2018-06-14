@@ -5,6 +5,7 @@ import os
 import shutil
 
 import scipy.optimize as op
+from simanneal import Annealer
 
 from AntennaClasses import *
 
@@ -13,8 +14,8 @@ def main():
 
 	## HELIOS
 	if platform.node() == "Helios":
-		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 5, alpha = 0, grasp_version = 10.3)
-		a.set_number_of_focal_lengths(5)
+		a = LWA_like(start_f =  60.0, end_f = 85.0, n_f = 20, alpha = 45, grasp_version = 10.3)
+		a.set_number_of_focal_lengths(20)
 
 		print("Executing on Helios")
 		print("%s"%a)
@@ -37,7 +38,7 @@ def main():
 	else:
 		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 5, alpha = 0, grasp_version = 10.3)
 		# a = QRFH(freq = 60, grasp_version = 10.3)
-		a.set_number_of_focal_lengths(5)
+		a.set_number_of_focal_lengths(1)
 
 		print("Executing on Moore")
 		print("%s"%a)
@@ -61,6 +62,9 @@ def main():
 	# x = [0.8756, 0.083, -0.6018, 1.0773, 1.1448, 0.6672, -.34] 
 
 	# x = [0.8624, 0.0173, 0.4996, 1.0106, 1.2, 1.2] 
+	# x=[1.0758,0.7498,0.4698]
+
+	# x=[0.7985,0.011,0.7233,0.9654,1.9486,0.5708, 0]
 
 	# a.parameters["x"] = 		1.018
 	# a.parameters["y"] = 		0.792
@@ -73,12 +77,16 @@ def main():
 	# x=[0.8375,0.2346,-0.0315,1.3328,1.6594,0.5068,-0.6491]
 	# nelder_mead(a, x)
 
+
 	# nelder_mead2(a)
 	# random(a)
 	# setup_configuration(a)
 
 
 	# grid(a)
+
+	# simulate_single(a, override_frequency = False, plot_feed = True)
+
 	# simulate_single(a, plot_feed = True, override_frequency = False)
 	# a.parameters["x"] = 		0.990
 	# a.parameters["y"] = 		0.737
@@ -86,7 +94,46 @@ def main():
 	simulate_single(a, plot_feed = True, override_frequency = False)
 
 
+
 	# iterate_over_cut_files(a, cst_dir)
+class AntennaProblem(Annealer):
+	def __init__(self, state, antenna):
+		self.a = antenna
+		self.names = self.a.get_optimizable_parameter_names()
+		self.names.remove("alpha")
+
+		new_parameters = {}
+		for ii, name in enumerate(self.names):
+			# print (ii, name, new_parameters, parameters, parameter_names)
+			new_parameters[name] = parameters[ii]
+		self.a.set_parameters(new_parameters)
+
+		super(AntennaProblem, self).__init__(state)
+
+	def move(self):
+		x_new = []
+		for idx, k in enumerate(self.names):
+			bnd = bounds[k][0] - bounds[k][1]
+			self.a.parameters[k] += np.random.uniform(-bnd/10, bnd/10)
+			self.state[idx] = self.a.parameters[k]
+		if (np.random.rand() > .5):
+			self.a.parameters["alpha"] = 45
+			self.state[-1] = 45
+		else:
+			self.a.parameters["alpha"] = 0
+			self.state[-1] = 0
+	
+	def energy(self):
+		return a.simulate_single_configuration(x_new, names, plot_feed = True)
+
+
+
+
+def anneal(a, x):
+	x.append(a.parameters["alpha"])
+	ap = AntennaProblem(x, a)
+	ap.steps = 200
+	ap.anneal()
 
 def iterate_over_cut_files(a, cst_dir):
 	setup_simulation_files(a, "po_tabs")
@@ -128,6 +175,7 @@ def simulate_single(a, plot_feed = True, override_frequency = False):
 	a.parameters["ew"] =		0.724
 	a.parameters["ed"] =		-0.836
 	a.bounds.update({"z_dist":[16, 17]})
+
 
 
 
@@ -253,6 +301,11 @@ def random(a):
 		for idx, k in enumerate(names):
 			# print(k)
 			x_new.append(np.random.uniform(bounds[k][0], bounds[k][1]))
+		if (np.random.uniform(0,1) > 0.5):
+			a.parameters["alpha"] = 0
+		else:
+			a.parameters["alpha"] = 45
+			
 		print ("loss = ", a.simulate_single_configuration(x_new, names, plot_feed = True))
 
 
