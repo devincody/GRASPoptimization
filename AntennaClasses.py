@@ -328,10 +328,10 @@ class antenna(object):
 
 		## CALCULATE EFFICIENCIES AND LOSSES
 		efficiency, mis_loss = self._loss(freq, aperture, mis) #efficiency is negative, miss is pos
-		loss_val = efficiency * mis_loss
+		loss_val = mis_loss
 
 		eff100, mis_loss100 = self._loss(freq, aperture, mis100)
-		loss_val100 = eff100 * mis_loss100
+		loss_val100 = mis_loss100
 
 		self.EF.append(efficiency)
 		self.LOSS.append(loss_val)
@@ -432,9 +432,9 @@ class antenna(object):
 			if (f >= 60 and f <= 85):
 				ans -= effic[i]
 				n+= 1
-				miss_loss += miss[i]
+				miss_loss -= miss[i]*effic[i]
 		if (n == 0):
-			return -np.mean(effic), np.mean(miss)
+			return -np.mean(effic), -np.dot(miss, effic)
 		return ans/n, miss_loss/n
 
 	def wrap_up_simulation(self, ef, minloss):

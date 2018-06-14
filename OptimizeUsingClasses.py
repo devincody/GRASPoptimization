@@ -37,7 +37,7 @@ def main():
 	else:
 		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 5, alpha = 0, grasp_version = 10.3)
 		# a = QRFH(freq = 60, grasp_version = 10.3)
-		a.set_number_of_focal_lengths(5)
+		a.set_number_of_focal_lengths(1)
 
 		print("Executing on Moore")
 		print("%s"%a)
@@ -67,12 +67,12 @@ def main():
 	# a.parameters["x"] = 		1.018
 	# a.parameters["y"] = 		0.792
 	# a.parameters["z"] = 		0.170
-	x = [.925,.771,.488]
-
-	# random(a)
+	# x = [0.781, 0.182, 0.398, 1.055]
+	a.bounds.update({"z_dist":[16.5,17.5]})
+	random(a)
 	# nelder_mead(a, x)
 	# x=[0.8375,0.2346,-0.0315,1.3328,1.6594,0.5068,-0.6491]
-	nelder_mead(a, x)
+	# nelder_mead(a, x)
 
 	# nelder_mead2(a)
 	# random(a)
@@ -121,14 +121,18 @@ def setup_simulation_files(a, method_name):
 def simulate_single(a, plot_feed = True, override_frequency = False):
 	setup_simulation_files(a, "sing")
 
-	a.parameters["x"] = 		0.9195
-	a.parameters["y"] = 		0.1155
-	a.parameters["z"] = 		-0.0403
-	a.parameters["sp"] =		1.1274
-	a.parameters["el"] =		1.7092
-	a.parameters["ew"] =		0.7553
-	a.parameters["ed"] =		-0.8057
-	a.bounds.update({"z_dist":[16.5, 17]})
+	a.parameters["x"] = 		0.984
+	a.parameters["y"] = 		0.738
+	a.parameters["z"] = 		0.436
+	# a.parameters["sp"] =		1.085
+	# a.parameters["el"] =		1.7092
+	# a.parameters["ew"] =		0.7553
+	# a.parameters["ed"] =		-0.8057
+	a.bounds.update({"z_dist":[16., 17]})
+
+
+
+
 
 	# a.parameters["dsep"] =		-1.2299
 	# a.parameters["rl"] = 1.06
@@ -251,6 +255,11 @@ def random(a):
 		for idx, k in enumerate(names):
 			# print(k)
 			x_new.append(np.random.uniform(bounds[k][0], bounds[k][1]))
+		if (np.random.uniform(0,1) > 0.5):
+			a.parameters["alpha"] = 0
+		else:
+			a.parameters["alpha"] = 45
+			
 		print ("loss = ", a.simulate_single_configuration(x_new, names, plot_feed = True))
 
 
