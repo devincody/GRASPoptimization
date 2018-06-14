@@ -49,6 +49,8 @@ mom  mom
 (
   frequency        : ref(freq_20_80_df_5_MHz_01),
   scatterer        : ref(Ant_dish_struts),
+  polynomial_precision : 1,
+  integration_precision : 1,
   coor_sys         : ref(base)
 )
  
@@ -332,7 +334,7 @@ minus_x_plus_y  coor_sys
  
 sp  real_variable  
 (
-  value            : 1.03
+  value            : 1.085
 )
  
 minus_x_minus_y  coor_sys  
@@ -473,12 +475,12 @@ minus_y_terminal2  piecewise_straight_wire
  
 start_f  real_variable  
 (
-  value            : 60.0
+  value            : 40.0
 )
  
 end_f  real_variable  
 (
-  value            : 80.0
+  value            : 100.0
 )
  
 n_f  real_variable  
@@ -488,7 +490,7 @@ n_f  real_variable
  
 z_dist  real_variable  
 (
-  value            : 16.625
+  value            : 16.55
 )
  
 dl  real_variable  
@@ -613,5 +615,5 @@ view_1_polygonal_struts_plot  polygonal_struts_plot
 (
 )
  
- //$$ Saved at 14:29:53 on 11.05.2018 by GRASP ver. 10.3.1 SN=006387
+ //$$ Saved at 23:18:57 on 12.06.2018 by GRASP ver. 10.3.1 SN=006387
   
