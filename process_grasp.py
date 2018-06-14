@@ -172,15 +172,20 @@ def plot_cut(frequency, cut, z, title, feed_pattern = False, max_pattern_dB = 30
 
 	for i, phi in enumerate([0, 45, 90]):
 		axi = ax[i]
+
 		series_name_co = "f%4.2f:p%4.2f:co" %(frequency, phi)
 		series_name_cx = "f%4.2f:p%4.2f:cx" %(frequency, phi)
 
+		half = int(len(cut[series_name_co])/2)
+		if ((cut[series_name_cx][half] > cut[series_name_co][half]) or
+			(feed_pattern and (cut[series_name_cx][0] > cut[series_name_co][0])) ):
+			#swap names if cx has larger boresight gain.
+			series_name_co, series_name_cx = series_name_cx, series_name_co
 
 		data = np.copy(cut[series_name_co])
 
 		if feed_pattern:
 			# For Feed Patterns
-			half = int(len(data)/2)
 			temp = np.copy(data[half:])
 			temp1 = np.copy(data[:half])
 			data[len(temp):] = temp1
@@ -193,7 +198,6 @@ def plot_cut(frequency, cut, z, title, feed_pattern = False, max_pattern_dB = 30
 			data = np.copy(cut[series_name_cx])
 			if feed_pattern:
 				# For Feed Patterns
-				half = int(len(data)/2)
 				temp = np.copy(data[half:])
 				temp1 = np.copy(data[:half])
 				data[len(temp):] = temp1
