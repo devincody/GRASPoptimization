@@ -25,7 +25,7 @@ def main():
 
 	## G1
 	elif platform.node() == 'DESKTOP-3UVMJQF' or platform.node() == 'ASTROS':
-		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 20, alpha = 0, grasp_version = 10.3)
+		a = ELfeed(start_f =  60.0, end_f = 85.0, n_f = 20, alpha = 45, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(20)
 
 		print("Executing on G1 Office")
@@ -167,16 +167,14 @@ def setup_simulation_files(a, method_name):
 def simulate_single(a, plot_feed = True, override_frequency = False):
 	setup_simulation_files(a, "sing")
 
-	a.parameters["x"] = 		0.894
-	a.parameters["y"] = 		0.114
-	a.parameters["z"] = 		-0.043
-	a.parameters["sp"] =		1.100
-	a.parameters["el"] =		1.777
-	a.parameters["ew"] =		0.724
-	a.parameters["ed"] =		-0.836
+	a.parameters["x"] = 		0.781
+	a.parameters["y"] = 		0.182
+	a.parameters["z"] = 		0.411
+	a.parameters["sp"] =		1.055
+	# a.parameters["el"] =		1.777
+	# a.parameters["ew"] =		0.724
+	# a.parameters["ed"] =		-0.836
 	a.bounds.update({"z_dist":[16, 17]})
-
-
 
 
 
@@ -192,21 +190,7 @@ def simulate_single(a, plot_feed = True, override_frequency = False):
 	# a.parameters["angle"] = 64
 	# a.parameters["z_dist"] = 16
 
-
-
-	x=[]
-
-	names = a.get_optimizable_parameter_names()
-
-	try:
-		names.remove("alpha")
-	except:
-		pass
-		
-	for nam in names:
-		x.append(a.parameters[nam])
-
-	a.simulate_single_configuration(x, names, plot_feed = plot_feed, override_frequency = override_frequency)	
+	a.simulate_single_configuration([],[], plot_feed = plot_feed, override_frequency = override_frequency)	
 
 def grid(a):
 	setup_simulation_files(a, "grid")
