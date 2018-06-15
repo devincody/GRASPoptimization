@@ -50,16 +50,16 @@ def main():
 
 
 
-
-	a.parameters["x"] = 	0.967
-	a.parameters["y"] = 	0.011
-	a.parameters["z"] = 	0.214
-	a.parameters["sp"] =	1.071
-	a.parameters["el"] =	1.915
-	a.parameters["ew"] =	0.732
-	a.parameters["ed"] =	0.001
-	a.bounds.update({"z_dist":[16.58,17.5]})
-	simulate_single(a, override_frequency = False, plot_feed = True)
+	if 1:
+		a.parameters["x"] = 	0.967
+		a.parameters["y"] = 	0.011
+		a.parameters["z"] = 	0.214
+		a.parameters["sp"] =	1.071
+		a.parameters["el"] =	1.915
+		a.parameters["ew"] =	0.732
+		a.parameters["ed"] =	0.001
+		a.bounds.update({"z_dist":[16.58,17.5]})
+		simulate_single(a, override_frequency = False, plot_feed = True)
 
 
 	if 0:
@@ -91,7 +91,7 @@ def main():
 	# a.parameters["x"] = 		0.990
 	# a.parameters["y"] = 		0.737
 	# a.parameters["z"] = 		0.501
-	simulate_single(a, plot_feed = True, override_frequency = False)
+	# simulate_single(a, plot_feed = True, override_frequency = False)
 
 
 
@@ -169,16 +169,7 @@ def setup_simulation_files(a, method_name):
 def simulate_single(a, plot_feed = True, override_frequency = False):
 	setup_simulation_files(a, "sing")
 
-<<<<<<< HEAD
-	# a.parameters["x"] = 		0.884
-	# a.parameters["y"] = 		0.164
-	# a.parameters["z"] = 		0.178
-	# # a.parameters["sp"] =		1.071
-	# # a.parameters["el"] =		1.915
-	# # a.parameters["ew"] =		0.732
-	# # a.parameters["ed"] =		0.001
-	# a.bounds.update({"z_dist":[16.0, 17]})
-=======
+
 	a.parameters["x"] = 		0.781
 	a.parameters["y"] = 		0.182
 	a.parameters["z"] = 		0.411
@@ -187,7 +178,7 @@ def simulate_single(a, plot_feed = True, override_frequency = False):
 	# a.parameters["ew"] =		0.724
 	# a.parameters["ed"] =		-0.836
 	a.bounds.update({"z_dist":[16, 17]})
->>>>>>> e5e33fb3aa4a0aeabf6426b7f4ab408dde1623a4
+
 
 
 
@@ -203,12 +194,8 @@ def simulate_single(a, plot_feed = True, override_frequency = False):
 	# a.parameters["angle"] = 64
 	# a.parameters["z_dist"] = 16
 
-<<<<<<< HEAD
-		
-	a.simulate_single_configuration([], [], plot_feed = plot_feed, override_frequency = override_frequency)	
-=======
+
 	a.simulate_single_configuration([],[], plot_feed = plot_feed, override_frequency = override_frequency)	
->>>>>>> e5e33fb3aa4a0aeabf6426b7f4ab408dde1623a4
 
 def grid(a):
 	setup_simulation_files(a, "grid")
