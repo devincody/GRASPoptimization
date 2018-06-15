@@ -17,7 +17,7 @@ units = defaultdict(lambda:'m', {'alpha':'deg', 'theta':'deg', 'efficiency':'%'}
 cwd = os.getcwd()
 items = os.listdir(cwd)
 for i in items:
-	if ".csv" in i[-5:]:
+	if len(i) > 4 and ".csv" in i[-5:]:
 		print("Processing file {}".format(i))
 		a = pd.read_csv(i, skiprows = 2, header = 0, index_col=False)
 
@@ -26,12 +26,13 @@ for i in items:
 
 
 		# watch out fo rLoss(100ohm)
-		try:
-			if "Unnamed" in keys[-1]:
-				a = a.drop(keys[-1], axis = 1)
-				print("dropping last column", keys[-1])
-		except:
-			pass
+		for jj in range(len(keys)):
+			try:
+				if "Unnamed" in keys[jj]:
+					a = a.drop(keys[jj], axis = 1)
+					print("dropping last column", keys[jj])
+			except:
+				pass
 
 		try:
 			loss = ' Loss'

@@ -13,7 +13,7 @@ items = os.listdir(cwd)
 
 partition = 20
 for it in items:
-	if ".csv" in it[-5:]:
+	if len(it) > 4 and ".csv" in it[-5:]:
 		print("Processing file ", it)
 		path = it[:-4]
 		if not os.path.exists(path):
@@ -23,7 +23,7 @@ for it in items:
 		keys = a.keys()
 		for i in range(len(keys)):
 			try:
-				if "Unnamed" in keys[i] or "alpha" in keys[i]:
+				if "Unnamed" in keys[i] or "alpha" in keys[i] or "100ohm" in keys[i]:
 					a = a.drop(keys[i], axis = 1)
 					print("dropping last column", keys[i])
 			except:

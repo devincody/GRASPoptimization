@@ -525,7 +525,7 @@ class QRFH(antenna):
 class LWA_like(antenna):
 	def __init__(self, x = .77, y = .16, z = -.01,
 				start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
-				bnd_x = [0.3, 1.5], bnd_y = [0, 1], bnd_z = [-1.0, 1], 
+				bnd_x = [0.3, 1.5], bnd_y = [0.0, 0.4], bnd_z = [-1.0, 1], 
 				bnd_start_f = [0,1000], bnd_end_f = [0,1000], bnd_n_f =[1,1000], bnd_alpha = [0, 360],
 				grasp_version = 10.3):
 		
@@ -602,7 +602,7 @@ class LWA_DIR(LWA_like):
 	def get_error_ant_intersection(self):
 		ans =  self.parameters["dsep"] - self.parameters["z"]
 		if ans < 0:
-			print("Director antenna Instersection: ", ans)
+			print("Director antenna Instersection: {}".format(ans))
 			return ans**2
 		else:
 			return 0
@@ -655,7 +655,7 @@ class ELfeed(LWA_like):
 	def get_error_ant_intersection(self):
 		ans =  self.parameters["sp"] - self.parameters["x"] - self.parameters["y"] - 0.08 - 0.012
 		if ans < 0:
-			print("antenna antenna Instersection: ", ans)
+			print("antenna antenna Instersection: {}".format(ans))
 			return ans**2
 		else:
 			return 0
@@ -689,7 +689,7 @@ class HIGH_F_ELfeed(ELfeed):
 class ELfeedExt(ELfeed):
 	def __init__(self, el = 1.2, ew = 1.2, ed = -.2,
 				start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
-				bnd_el = [0, 2.0], bnd_ew = [0, 1.5], bnd_ed = [-1, 0.5],  #  positive dir_sep vals are directors
+				bnd_el = [1.0, 2.0], bnd_ew = [.5, 1.0], bnd_ed = [-1, 0.5],  #  positive dir_sep vals are directors
 				grasp_version = 10.3): 						   #  Negative dir_sep vals are reflectors
 		
 		ELfeed.__init__(self,start_f = start_f, end_f = end_f, n_f = n_f, alpha = alpha, grasp_version = grasp_version)
@@ -731,7 +731,7 @@ class ELfeedDir(ELfeed):
 	def get_error_dir_intersection(self):
 		ans =  2*self.parameters["sp"] - self.parameters["dw"] - self.parameters["dl"]
 		if ans < 0:
-			print("director Instersection: ", ans)
+			print("director Instersection: {}".format(ans))
 			return ans**2
 		else:
 			return 0
