@@ -34,6 +34,17 @@ def main():
 		a.set_ticra_directory_name("/mnt/c/Program Files/TICRA/")
 		a.set_grasp_analysis_extension(".exe")
 
+	## AWS
+	elif platform.node() == 'ip-172-31-33-156':
+		a = ELfeed(start_f =  60.0, end_f = 85.0, n_f = 5, alpha = 0, grasp_version = 10.3)
+		a.set_number_of_focal_lengths(1)
+
+		print("Executing on AWS")
+		print("%s"%a)
+		a.set_global_directory_name("/home/ubuntu/GRASP/")
+		a.set_ticra_directory_name("/home/ubuntu/TICRA/")
+		a.set_grasp_analysis_extension()
+
 	## MOORE
 	else:
 		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 5, alpha = 0, grasp_version = 10.3)
@@ -50,7 +61,7 @@ def main():
 
 
 
-	if 1:
+	if 0:
 		a.parameters["x"] = 	0.967
 		a.parameters["y"] = 	0.011
 		a.parameters["z"] = 	0.214
@@ -62,7 +73,7 @@ def main():
 		simulate_single(a, override_frequency = False, plot_feed = True)
 
 
-	if 0:
+	if 1:
 		a.parameters["x"] = 	0.965
 		a.parameters["y"] = 	0.011
 		a.parameters["z"] = 	0.218
