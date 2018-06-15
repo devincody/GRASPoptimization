@@ -1,5 +1,6 @@
 import numpy as np 
-import matplotlib.pyplot as plt 
+
+
 import platform
 import os
 import shutil
@@ -14,6 +15,7 @@ def main():
 
 	## HELIOS
 	if platform.node() == "Helios":
+		import matplotlib.pyplot as plt 
 		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 5, alpha = 0, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(5)
 
@@ -25,6 +27,7 @@ def main():
 
 	## G1
 	elif platform.node() == 'DESKTOP-3UVMJQF' or platform.node() == 'ASTROS':
+		import matplotlib.pyplot as plt 
 		a = ELfeed(start_f =  60.0, end_f = 85.0, n_f = 20, alpha = 45, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(20)
 
@@ -36,6 +39,9 @@ def main():
 
 	## AWS
 	elif platform.node() == 'ip-172-31-33-156':
+		import matplotlib
+		matplotlib.use("Agg")
+		import matplotlib.pyplot as plt 
 		a = ELfeed(start_f =  60.0, end_f = 85.0, n_f = 5, alpha = 0, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(1)
 
@@ -47,6 +53,7 @@ def main():
 
 	## MOORE
 	else:
+		import matplotlib.pyplot as plt 
 		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 5, alpha = 0, grasp_version = 10.3)
 		# a = QRFH(freq = 60, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(1)
