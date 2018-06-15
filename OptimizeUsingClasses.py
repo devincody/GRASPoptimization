@@ -25,8 +25,8 @@ def main():
 
 	## G1
 	elif platform.node() == 'DESKTOP-3UVMJQF' or platform.node() == 'ASTROS':
-		a = LWA_like(start_f =  60.0, end_f = 85.0, n_f = 5, alpha = 0, grasp_version = 10.3)
-		a.set_number_of_focal_lengths(5)
+		a = ELfeed(start_f =  60.0, end_f = 85.0, n_f = 20, alpha = 45, grasp_version = 10.3)
+		a.set_number_of_focal_lengths(20)
 
 		print("Executing on G1 Office")
 		print("%s"%a)
@@ -47,6 +47,7 @@ def main():
 		a.set_grasp_analysis_extension()
 
 		cst_dir = "F:\\Devin\\CST\\QRFH\\qrfh_v0_aper_circ_HF_donutnewnew_DC_COPY_noscale\\Result"
+
 
 
 
@@ -71,6 +72,7 @@ def main():
 		a.parameters["ed"] =	0.000
 		a.bounds.update({"z_dist":[16.5,17.5]})
 		anneal(a)
+
 	# nelder_mead(a, x)
 	# x=[0.8375,0.2346,-0.0315,1.3328,1.6594,0.5068,-0.6491]
 	# nelder_mead(a, x)
@@ -89,7 +91,7 @@ def main():
 	# a.parameters["x"] = 		0.990
 	# a.parameters["y"] = 		0.737
 	# a.parameters["z"] = 		0.501
-	# simulate_single(a, plot_feed = True, override_frequency = False)
+	simulate_single(a, plot_feed = True, override_frequency = False)
 
 
 
@@ -167,6 +169,7 @@ def setup_simulation_files(a, method_name):
 def simulate_single(a, plot_feed = True, override_frequency = False):
 	setup_simulation_files(a, "sing")
 
+<<<<<<< HEAD
 	# a.parameters["x"] = 		0.884
 	# a.parameters["y"] = 		0.164
 	# a.parameters["z"] = 		0.178
@@ -175,8 +178,20 @@ def simulate_single(a, plot_feed = True, override_frequency = False):
 	# # a.parameters["ew"] =		0.732
 	# # a.parameters["ed"] =		0.001
 	# a.bounds.update({"z_dist":[16.0, 17]})
+=======
+	a.parameters["x"] = 		0.781
+	a.parameters["y"] = 		0.182
+	a.parameters["z"] = 		0.411
+	a.parameters["sp"] =		1.055
+	# a.parameters["el"] =		1.777
+	# a.parameters["ew"] =		0.724
+	# a.parameters["ed"] =		-0.836
+	a.bounds.update({"z_dist":[16, 17]})
+>>>>>>> e5e33fb3aa4a0aeabf6426b7f4ab408dde1623a4
 
-	# a.parameters["dsep"] =		-1.2299
+
+
+	# a.parameters["dsep"]=	-1.2299
 	# a.parameters["rl"] = 1.06
 	# a.parameters["rw"] = .60
 	# a.parameters["rsep"] = -.3
@@ -188,8 +203,12 @@ def simulate_single(a, plot_feed = True, override_frequency = False):
 	# a.parameters["angle"] = 64
 	# a.parameters["z_dist"] = 16
 
+<<<<<<< HEAD
 		
 	a.simulate_single_configuration([], [], plot_feed = plot_feed, override_frequency = override_frequency)	
+=======
+	a.simulate_single_configuration([],[], plot_feed = plot_feed, override_frequency = override_frequency)	
+>>>>>>> e5e33fb3aa4a0aeabf6426b7f4ab408dde1623a4
 
 def grid(a):
 	setup_simulation_files(a, "grid")
