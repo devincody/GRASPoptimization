@@ -1,4 +1,6 @@
 import numpy as np 
+import matplotlib
+matplotlib.use("agg")
 import matplotlib.pyplot as plt 
 import platform
 import os
@@ -17,8 +19,8 @@ def main():
 
 	## HELIOS
 	if platform.node() == "Helios":
-		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 5, alpha = 0, grasp_version = 10.3)
-		a.set_number_of_focal_lengths(5)
+		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 45, grasp_version = 10.3)
+		a.set_number_of_focal_lengths(1)
 
 		print("Executing on Helios")
 		print("%s"%a)
@@ -28,8 +30,8 @@ def main():
 
 	## G1
 	elif platform.node() == 'DESKTOP-3UVMJQF' or platform.node() == 'ASTROS':
-		a = ELfeed(start_f =  60.0, end_f = 85.0, n_f = 20, alpha = 45, grasp_version = 10.3)
-		a.set_number_of_focal_lengths(20)
+		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 0, grasp_version = 10.3)
+		a.set_number_of_focal_lengths(1)
 
 		print("Executing on G1 Office")
 		print("%s"%a)
@@ -37,9 +39,20 @@ def main():
 		a.set_ticra_directory_name("/mnt/c/Program Files/TICRA/")
 		a.set_grasp_analysis_extension(".exe")
 
+	## AWS
+	elif platform.node() == 'ip-172-31-33-156':
+		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 5, alpha = 0, grasp_version = 10.3)
+		a.set_number_of_focal_lengths(1)
+
+		print("Executing on AWS")
+		print("%s"%a)
+		a.set_global_directory_name("/home/ubuntu/GRASP/")
+		a.set_ticra_directory_name("/home/ubuntu/TICRA/")
+		a.set_grasp_analysis_extension()
+
 	## MOORE
 	else:
-		a = LWA_like(start_f =  60.0, end_f = 85.0, n_f = 20, alpha = 45, grasp_version = 10.3)
+		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 0, grasp_version = 10.3)
 		# a = QRFH(freq = 60, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(10)
 
@@ -52,18 +65,31 @@ def main():
 		cst_dir = "F:\\Devin\\CST\\QRFH\\qrfh_v0_aper_circ_HF_donutnewnew_DC_COPY_noscale\\Result"
 
 
-	if 1:
-		a.parameters["x"] = 	0.884
-		a.parameters["y"] = 	0.172
-		a.parameters["z"] = 	0.178
-		# a.parameters["sp"] =	1.027
-		# a.parameters["el"] =	1.987
-		# a.parameters["ew"] =	0.743
-		# a.parameters["ed"] =	0.000
-		a.bounds.update({"z_dist":[16.4, 16.7]})
+
+	if 0:
+		a.parameters["x"] = 	0.679
+		a.parameters["y"] = 	0.214
+		a.parameters["z"] = 	0.116
+		a.parameters["sp"] =	0.985
+		# a.parameters["el"] =	1.782
+		# a.parameters["ew"] =	0.713
+		# a.parameters["ed"] =	-0.84
+		a.bounds.update({"z_dist":[16.4,16.7]})
 		simulate_single(a, override_frequency = False, plot_feed = True)
 
 	if 0:
+		a.parameters["x"] = 	0.967
+		a.parameters["y"] = 	0.011
+		a.parameters["z"] = 	0.214
+		a.parameters["sp"] =	1.071
+		a.parameters["el"] =	1.915
+		a.parameters["ew"] =	0.732
+		a.parameters["ed"] =	0.001
+		a.bounds.update({"z_dist":[16.58,17.5]})
+		simulate_single(a, override_frequency = False, plot_feed = True)
+
+
+	if 1:
 		a.parameters["x"] = 	0.965
 		a.parameters["y"] = 	0.011
 		a.parameters["z"] = 	0.218
@@ -72,14 +98,14 @@ def main():
 		# a.parameters["ew"] =	0.708
 		# a.parameters["ed"] =	0.000
 		a.bounds.update({"z_dist":[16.5,17.5]})
-		anneal(a)
+		random(a)
 
 	# nelder_mead(a, x)
 	if 0:
 		x=[0.970, 0.801, 0.347]
 		a.bounds.update({"z_dist":[16.5,17.5]})
 		nelder_mead(a, x)
-	
+
 
 	# nelder_mead2(a)
 	if 0:
@@ -173,7 +199,6 @@ def setup_simulation_files(a, method_name):
 
 def simulate_single(a, plot_feed = True, override_frequency = False):
 	setup_simulation_files(a, "sing")
-
 	a.simulate_single_configuration([],[], plot_feed = plot_feed, override_frequency = override_frequency)	
 
 def grid(a):
@@ -269,7 +294,7 @@ def random(a):
 		for idx, k in enumerate(names):
 			# print(k)
 			x_new.append(np.random.uniform(bounds[k][0], bounds[k][1]))
-		if (np.random.uniform(0,1) > 0.5):
+		if (np.random.uniform(0,1) > 0.7):
 			a.parameters["alpha"] = 0
 		else:
 			a.parameters["alpha"] = 45
