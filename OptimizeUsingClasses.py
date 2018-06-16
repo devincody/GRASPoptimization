@@ -5,7 +5,10 @@ import os
 import shutil
 
 import scipy.optimize as op
-from simanneal import Annealer
+try:
+	from simanneal import Annealer
+except:
+	pass
 
 from AntennaClasses import *
 
@@ -36,9 +39,9 @@ def main():
 
 	## MOORE
 	else:
-		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 5, alpha = 0, grasp_version = 10.3)
+		a = LWA_like(start_f =  60.0, end_f = 85.0, n_f = 20, alpha = 45, grasp_version = 10.3)
 		# a = QRFH(freq = 60, grasp_version = 10.3)
-		a.set_number_of_focal_lengths(1)
+		a.set_number_of_focal_lengths(10)
 
 		print("Executing on Moore")
 		print("%s"%a)
@@ -49,37 +52,39 @@ def main():
 		cst_dir = "F:\\Devin\\CST\\QRFH\\qrfh_v0_aper_circ_HF_donutnewnew_DC_COPY_noscale\\Result"
 
 
-
 	if 1:
-		a.parameters["x"] = 	0.967
-		a.parameters["y"] = 	0.011
-		a.parameters["z"] = 	0.214
-		a.parameters["sp"] =	1.071
-		a.parameters["el"] =	1.915
-		a.parameters["ew"] =	0.732
-		a.parameters["ed"] =	0.001
-		a.bounds.update({"z_dist":[16.58,17.5]})
+		a.parameters["x"] = 	0.884
+		a.parameters["y"] = 	0.172
+		a.parameters["z"] = 	0.178
+		# a.parameters["sp"] =	1.027
+		# a.parameters["el"] =	1.987
+		# a.parameters["ew"] =	0.743
+		# a.parameters["ed"] =	0.000
+		a.bounds.update({"z_dist":[16.4, 16.7]})
 		simulate_single(a, override_frequency = False, plot_feed = True)
-
 
 	if 0:
 		a.parameters["x"] = 	0.965
 		a.parameters["y"] = 	0.011
 		a.parameters["z"] = 	0.218
-		a.parameters["sp"] =	1.068
-		a.parameters["el"] =	1.967
-		a.parameters["ew"] =	0.708
-		a.parameters["ed"] =	0.000
+		# a.parameters["sp"] =	1.068
+		# a.parameters["el"] =	1.967
+		# a.parameters["ew"] =	0.708
+		# a.parameters["ed"] =	0.000
 		a.bounds.update({"z_dist":[16.5,17.5]})
 		anneal(a)
 
 	# nelder_mead(a, x)
-	# x=[0.8375,0.2346,-0.0315,1.3328,1.6594,0.5068,-0.6491]
-	# nelder_mead(a, x)
-
+	if 0:
+		x=[0.970, 0.801, 0.347]
+		a.bounds.update({"z_dist":[16.5,17.5]})
+		nelder_mead(a, x)
+	
 
 	# nelder_mead2(a)
-	# random(a)
+	if 0:
+		a.bounds.update({"z_dist":[16.5,17.5]})
+		random(a)
 	# setup_configuration(a)
 
 
@@ -168,32 +173,6 @@ def setup_simulation_files(a, method_name):
 
 def simulate_single(a, plot_feed = True, override_frequency = False):
 	setup_simulation_files(a, "sing")
-
-
-	a.parameters["x"] = 		0.781
-	a.parameters["y"] = 		0.182
-	a.parameters["z"] = 		0.411
-	a.parameters["sp"] =		1.055
-	# a.parameters["el"] =		1.777
-	# a.parameters["ew"] =		0.724
-	# a.parameters["ed"] =		-0.836
-	a.bounds.update({"z_dist":[16, 17]})
-
-
-
-
-	# a.parameters["dsep"]=	-1.2299
-	# a.parameters["rl"] = 1.06
-	# a.parameters["rw"] = .60
-	# a.parameters["rsep"] = -.3
-	
-
-	# a.bounds.update({"z_dist":[16.55,17.5]})
-
-	# a.parameters["taper"] = -10
-	# a.parameters["angle"] = 64
-	# a.parameters["z_dist"] = 16
-
 
 	a.simulate_single_configuration([],[], plot_feed = plot_feed, override_frequency = override_frequency)	
 
