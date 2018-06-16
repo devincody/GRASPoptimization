@@ -16,8 +16,8 @@ def main():
 
 	## HELIOS
 	if platform.node() == "Helios":
-		a = ELfeed(start_f =  60.0, end_f = 85.0, n_f = 20, alpha = 45, grasp_version = 10.3)
-		a.set_number_of_focal_lengths(10)
+		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 45, grasp_version = 10.3)
+		a.set_number_of_focal_lengths(1)
 
 		print("Executing on Helios")
 		print("%s"%a)
@@ -27,8 +27,8 @@ def main():
 
 	## G1
 	elif platform.node() == 'DESKTOP-3UVMJQF' or platform.node() == 'ASTROS':
-		a = ELfeed(start_f =  60.0, end_f = 85.0, n_f = 20, alpha = 0, grasp_version = 10.3)
-		a.set_number_of_focal_lengths(20)
+		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 0, grasp_version = 10.3)
+		a.set_number_of_focal_lengths(1)
 
 		print("Executing on G1 Office")
 		print("%s"%a)
@@ -38,7 +38,7 @@ def main():
 
 	## AWS
 	elif platform.node() == 'ip-172-31-33-156':
-		a = ELfeed(start_f =  60.0, end_f = 85.0, n_f = 5, alpha = 0, grasp_version = 10.3)
+		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 5, alpha = 0, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(1)
 
 		print("Executing on AWS")
@@ -49,7 +49,7 @@ def main():
 
 	## MOORE
 	else:
-		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 5, alpha = 0, grasp_version = 10.3)
+		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 0, grasp_version = 10.3)
 		# a = QRFH(freq = 60, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(1)
 
