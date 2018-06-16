@@ -1,5 +1,6 @@
 import numpy as np 
-
+import matplotlib
+matplotlib.use("agg")
 import matplotlib.pyplot as plt 
 import platform
 import os
@@ -83,7 +84,7 @@ def main():
 		a.parameters["ew"] =	0.708
 		a.parameters["ed"] =	0.000
 		a.bounds.update({"z_dist":[16.5,17.5]})
-		anneal(a)
+		random(a)
 
 	# nelder_mead(a, x)
 	# x=[0.8375,0.2346,-0.0315,1.3328,1.6594,0.5068,-0.6491]
@@ -302,7 +303,7 @@ def random(a):
 		for idx, k in enumerate(names):
 			# print(k)
 			x_new.append(np.random.uniform(bounds[k][0], bounds[k][1]))
-		if (np.random.uniform(0,1) > 0.5):
+		if (np.random.uniform(0,1) > 0.7):
 			a.parameters["alpha"] = 0
 		else:
 			a.parameters["alpha"] = 45
