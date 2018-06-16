@@ -25,8 +25,8 @@ def main():
 
 	## G1
 	elif platform.node() == 'DESKTOP-3UVMJQF' or platform.node() == 'ASTROS':
-		a = ELfeed(start_f =  60.0, end_f = 85.0, n_f = 20, alpha = 45, grasp_version = 10.3)
-		a.set_number_of_focal_lengths(20)
+		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 20, alpha = 0, grasp_version = 10.3)
+		a.set_number_of_focal_lengths(10)
 
 		print("Executing on G1 Office")
 		print("%s"%a)
@@ -51,16 +51,15 @@ def main():
 
 
 	if 1:
-		a.parameters["x"] = 	0.967
-		a.parameters["y"] = 	0.011
-		a.parameters["z"] = 	0.214
-		a.parameters["sp"] =	1.071
-		a.parameters["el"] =	1.915
-		a.parameters["ew"] =	0.732
-		a.parameters["ed"] =	0.001
-		a.bounds.update({"z_dist":[16.58,17.5]})
+		a.parameters["x"] = 	0.758
+		a.parameters["y"] = 	0.116
+		a.parameters["z"] = 	-0.051
+		a.parameters["sp"] =	0.966
+		a.parameters["el"] =	1.998
+		a.parameters["ew"] =	0.600
+		a.parameters["ed"] =	-0.828
+		a.bounds.update({"z_dist":[16.4,16.7]})
 		simulate_single(a, override_frequency = False, plot_feed = True)
-
 
 	if 0:
 		a.parameters["x"] = 	0.965
@@ -74,7 +73,8 @@ def main():
 		anneal(a)
 
 	# nelder_mead(a, x)
-	# x=[0.8375,0.2346,-0.0315,1.3328,1.6594,0.5068,-0.6491]
+	# a.bounds.update({"z_dist":[16.5,17.5]})
+	# x=[0.884, 0.164, 0.178]
 	# nelder_mead(a, x)
 
 
@@ -168,33 +168,6 @@ def setup_simulation_files(a, method_name):
 
 def simulate_single(a, plot_feed = True, override_frequency = False):
 	setup_simulation_files(a, "sing")
-
-
-	a.parameters["x"] = 		0.781
-	a.parameters["y"] = 		0.182
-	a.parameters["z"] = 		0.411
-	a.parameters["sp"] =		1.055
-	# a.parameters["el"] =		1.777
-	# a.parameters["ew"] =		0.724
-	# a.parameters["ed"] =		-0.836
-	a.bounds.update({"z_dist":[16, 17]})
-
-
-
-
-	# a.parameters["dsep"]=	-1.2299
-	# a.parameters["rl"] = 1.06
-	# a.parameters["rw"] = .60
-	# a.parameters["rsep"] = -.3
-	
-
-	# a.bounds.update({"z_dist":[16.55,17.5]})
-
-	# a.parameters["taper"] = -10
-	# a.parameters["angle"] = 64
-	# a.parameters["z_dist"] = 16
-
-
 	a.simulate_single_configuration([],[], plot_feed = plot_feed, override_frequency = override_frequency)	
 
 def grid(a):
