@@ -703,7 +703,7 @@ class ELfeedExt(ELfeed):
 		# self.tor_line_numbers = {"z_dist":489, "sp":333, "dl":502, "dw":507, "dsep":512, "start_f":457, "end_f":480, "n_f":485,"alpha":547} #checked
 		#checked
 	def __str__(self):
-		return "High Frequency Eleven Feed with Mounting Plate Extensions"
+		return "Eleven Feed with Mounting Plate Extensions"
 
 	def get_error_intersection(self):
 		return ELfeed.get_error_intersection(self)
