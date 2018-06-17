@@ -41,7 +41,7 @@ def main():
 
 	## AWS
 	elif platform.node() == 'ip-172-31-33-156':
-		a = ELfeed(start_f =  40.0, end_f = 100.0, n_f = 50, alpha = 0, grasp_version = 10.3)
+		a = ELfeedExt(start_f =  65.0, end_f = 80.0, n_f = 10, alpha = 0, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(1)
 
 		print("Executing on AWS")
@@ -72,8 +72,10 @@ def main():
 		a.parameters["el"] =	1.998
 		a.parameters["ew"] =	0.600
 		a.parameters["ed"] =	-0.828
-		a.bounds.update({"z_dist":[16.53,17.5]})
-		simulate_single(a, override_frequency = False, plot_feed = True)
+
+		a.parameters["z_dist"] = 16.5
+		a.bounds.update({"z_dist":[16.5,17.5]})
+		random(a, override_frequency = False, plot_feed = True)
 
 
 
