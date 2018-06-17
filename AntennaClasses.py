@@ -23,7 +23,7 @@ class antenna(object):
 	def __init__(self,
 				 model_name = "",			 
 				 parameter_names = ["z_dist"],
-				 parameters = {"z_dist":16.6},
+				 parameters = {"z_dist":16.7},
 				 bounds = {"z_dist":[15.5,17.5]},
 				 grasp_version = 10.3
 				 ):
@@ -141,8 +141,10 @@ class antenna(object):
 		for name in self.bounds:
 			if self.parameters[name] < self.bounds[name][0]:
 				error += (self.parameters[name] - self.bounds[name][0])**2
+				print("{} Out of bounds: {} < {}".format(name, self.parameters[name], self.bounds[name][0]))
 			elif self.parameters[name] > self.bounds[name][1]:
 				error += (self.parameters[name] - self.bounds[name][1])**2
+				print("{} Out of bounds: {} > {}".format(name, self.parameters[name], self.bounds[name][0]))
 		# print("error bounds: ", error)
 		return error
 
@@ -525,7 +527,7 @@ class QRFH(antenna):
 class LWA_like(antenna):
 	def __init__(self, x = .77, y = .16, z = -.01,
 				start_f = 60.0, end_f = 80.0, n_f = 5, alpha = 0,
-				bnd_x = [0.3, 1.5], bnd_y = [0.0, 0.4], bnd_z = [-1.0, 1], 
+				bnd_x = [0.3, 1.5], bnd_y = [0.0, 1.0], bnd_z = [-1.0, 1], 
 				bnd_start_f = [0,1000], bnd_end_f = [0,1000], bnd_n_f =[1,1000], bnd_alpha = [0, 360],
 				grasp_version = 10.3):
 		

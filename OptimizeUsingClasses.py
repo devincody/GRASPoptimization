@@ -19,7 +19,7 @@ def main():
 
 	## HELIOS
 	if platform.node() == "Helios":
-		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 45, grasp_version = 10.3)
+		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 0, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(1)
 
 		print("Executing on Helios")
@@ -65,17 +65,22 @@ def main():
 		cst_dir = "F:\\Devin\\CST\\QRFH\\qrfh_v0_aper_circ_HF_donutnewnew_DC_COPY_noscale\\Result"
 
 
-
-	if 0:
+	if 1:
 		a.parameters["x"] = 	0.679
 		a.parameters["y"] = 	0.214
 		a.parameters["z"] = 	0.116
+		a.parameters["alpha"] = 45.00
 		a.parameters["sp"] =	0.985
-		# a.parameters["el"] =	1.782
-		# a.parameters["ew"] =	0.713
-		# a.parameters["ed"] =	-0.84
-		a.bounds.update({"z_dist":[16.4,16.7]})
-		simulate_single(a, override_frequency = False, plot_feed = True)
+		a.parameters["el"] =	1.782
+		a.parameters["ew"] =	0.713
+		a.parameters["ed"] =	0.000
+		
+		a.parameters["z_dist"] = 16.5
+		a.bounds.update({"z_dist":[16.5,16.9]})
+		for _ in range(3):
+			anneal(a)
+		# simulate_single(a, override_frequency = False, plot_feed = True)
+
 
 	if 0:
 		a.parameters["x"] = 	0.967
@@ -89,14 +94,14 @@ def main():
 		simulate_single(a, override_frequency = False, plot_feed = True)
 
 
-	if 1:
+	if 0:
 		a.parameters["x"] = 	0.965
 		a.parameters["y"] = 	0.011
 		a.parameters["z"] = 	0.218
-		# a.parameters["sp"] =	1.068
-		# a.parameters["el"] =	1.967
-		# a.parameters["ew"] =	0.708
-		# a.parameters["ed"] =	0.000
+		a.parameters["sp"] =	1.068
+		a.parameters["el"] =	1.967
+		a.parameters["ew"] =	0.708
+		a.parameters["ed"] =	0.000
 		a.bounds.update({"z_dist":[16.5,17.5]})
 		random(a)
 
