@@ -64,7 +64,6 @@ def main():
 
 		cst_dir = "F:\\Devin\\CST\\QRFH\\qrfh_v0_aper_circ_HF_donutnewnew_DC_COPY_noscale\\Result"
 
-
 	if 1:
 		a.parameters["x"] = 	0.758
 		a.parameters["y"] = 	0.116
@@ -74,6 +73,9 @@ def main():
 		a.parameters["ew"] =	0.600
 		a.parameters["ed"] =	-0.828
 		a.bounds.update({"z_dist":[16.53,17.5]})
+		simulate_single(a, override_frequency = False, plot_feed = True)
+
+
 
 	if 0:
 		a.parameters["x"] = 	0.965
