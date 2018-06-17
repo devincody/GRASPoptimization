@@ -19,7 +19,7 @@ def main():
 
 	## HELIOS
 	if platform.node() == "Helios":
-		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 45, grasp_version = 10.3)
+		a = ELfeedExt(start_f =  40.0, end_f = 100.0, n_f = 50, alpha = 45, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(1)
 
 		print("Executing on Helios")
@@ -30,8 +30,8 @@ def main():
 
 	## G1
 	elif platform.node() == 'DESKTOP-3UVMJQF' or platform.node() == 'ASTROS':
-		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 0, grasp_version = 10.3)
-		a.set_number_of_focal_lengths(1)
+		a = LWA_like(start_f =  60.0, end_f = 85.0, n_f = 20, alpha = 0, grasp_version = 10.3)
+		a.set_number_of_focal_lengths(10)
 
 		print("Executing on G1 Office")
 		print("%s"%a)
@@ -41,7 +41,7 @@ def main():
 
 	## AWS
 	elif platform.node() == 'ip-172-31-33-156':
-		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 5, alpha = 0, grasp_version = 10.3)
+		a = ELfeedExt(start_f =  40.0, end_f = 100.0, n_f = 50, alpha = 0, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(1)
 
 		print("Executing on AWS")
@@ -52,7 +52,7 @@ def main():
 
 	## MOORE
 	else:
-		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 0, grasp_version = 10.3)
+		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 20, alpha = 0, grasp_version = 10.3)
 		# a = QRFH(freq = 60, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(10)
 
@@ -65,12 +65,11 @@ def main():
 		cst_dir = "F:\\Devin\\CST\\QRFH\\qrfh_v0_aper_circ_HF_donutnewnew_DC_COPY_noscale\\Result"
 
 
-
-	if 0:
-		a.parameters["x"] = 	0.679
-		a.parameters["y"] = 	0.214
-		a.parameters["z"] = 	0.116
-		a.parameters["sp"] =	0.985
+	if 1:
+		a.parameters["x"] = 	0.861
+		a.parameters["y"] = 	0.173
+		a.parameters["z"] = 	0.162
+		# a.parameters["sp"] =	0.985
 		# a.parameters["el"] =	1.782
 		# a.parameters["ew"] =	0.713
 		# a.parameters["ed"] =	-0.84
@@ -89,7 +88,7 @@ def main():
 		simulate_single(a, override_frequency = False, plot_feed = True)
 
 
-	if 1:
+	if 0:
 		a.parameters["x"] = 	0.965
 		a.parameters["y"] = 	0.011
 		a.parameters["z"] = 	0.218
