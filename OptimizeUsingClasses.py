@@ -19,7 +19,7 @@ def main():
 
 	## HELIOS
 	if platform.node() == "Helios":
-		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 0, grasp_version = 10.3)
+		a = ELfeedExt(start_f =  40.0, end_f = 100.0, n_f = 50, alpha = 0, grasp_version = 10.3)
 		a.set_number_of_focal_lengths(1)
 
 		print("Executing on Helios")
@@ -30,8 +30,8 @@ def main():
 
 	## G1
 	elif platform.node() == 'DESKTOP-3UVMJQF' or platform.node() == 'ASTROS':
-		a = LWA_like(start_f =  60.0, end_f = 85.0, n_f = 20, alpha = 0, grasp_version = 10.3)
-		a.set_number_of_focal_lengths(10)
+		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 0, grasp_version = 10.3)
+		a.set_number_of_focal_lengths(1)
 
 		print("Executing on G1 Office")
 		print("%s"%a)
@@ -66,31 +66,35 @@ def main():
 
 
 	if 1:
-		a.parameters["x"] = 	0.679
-		a.parameters["y"] = 	0.214
-		a.parameters["z"] = 	0.116
-		a.parameters["alpha"] = 45.00
-		a.parameters["sp"] =	0.985
-		a.parameters["el"] =	1.782
-		a.parameters["ew"] =	0.713
+		a.parameters["x"] = 	0.758
+		a.parameters["y"] = 	0.116
+		a.parameters["z"] = 	0.000
+		a.parameters["alpha"] = 0.000
+		a.parameters["sp"] =	0.966
+		a.parameters["el"] =	1.998
+		a.parameters["ew"] =	0.600
 		a.parameters["ed"] =	0.000
 		
 		a.parameters["z_dist"] = 16.5
 		a.bounds.update({"z_dist":[16.5,16.9]})
-		for _ in range(3):
-			anneal(a)
+		random(a)
+		# for _ in range(3):
+		# 	anneal(a)
 		# simulate_single(a, override_frequency = False, plot_feed = True)
 
 
 	if 0:
-		a.parameters["x"] = 	0.967
-		a.parameters["y"] = 	0.011
-		a.parameters["z"] = 	0.214
-		a.parameters["sp"] =	1.071
-		a.parameters["el"] =	1.915
-		a.parameters["ew"] =	0.732
-		a.parameters["ed"] =	0.001
-		a.bounds.update({"z_dist":[16.58,17.5]})
+		a.parameters["x"] = 	0.709
+		a.parameters["y"] = 	0.273
+		a.parameters["z"] = 	0.071
+		a.parameters["alpha"] = 0.000
+		# a.parameters["sp"] =	1.071
+		# a.parameters["el"] =	1.915
+		# a.parameters["ew"] =	0.732
+		# a.parameters["ed"] =	0.001
+
+		a.parameters["z_dist"] = 16.53
+		a.bounds.update({"z_dist":[16.53,17.5]})
 		simulate_single(a, override_frequency = False, plot_feed = True)
 
 	# nelder_mead(a, x)
@@ -287,7 +291,7 @@ def random(a):
 		for idx, k in enumerate(names):
 			# print(k)
 			x_new.append(np.random.uniform(bounds[k][0], bounds[k][1]))
-		if (np.random.uniform(0,1) > 0.7):
+		if (np.random.uniform(0,1) < 0.7):
 			a.parameters["alpha"] = 0
 		else:
 			a.parameters["alpha"] = 45
