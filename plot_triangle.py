@@ -19,7 +19,7 @@ def gkern(kernlen=5, nsig=3):
     return kernel
 
 sz_kernel = 7
-kernel_sharpness = .3
+kernel_sharpness = .8
 mid = int((sz_kernel-1)/2)
 
 # kernel = np.ones((sz_kernel,sz_kernel))*.8
@@ -38,6 +38,10 @@ os.chdir(metadata_path)
 cwd = os.getcwd()      
 items = os.listdir(cwd)
 
+lwa_opt = {"x":0.74, "y":0.172, "z":0.169}
+eleven_opt = {"x":0.671, "y":0.211, "z":0.109, "sp":1.95}
+ext_opt = {"x":0.739, "y":0.115, "z":0.0, "sp":2.00, "el":2.0, "ew":0.6, "ed":0.0}
+
 partition = 40
 for it in items:
 	if len(it) > 4 and ".csv" in it[-5:]:
@@ -53,6 +57,8 @@ for it in items:
 				if "Unnamed" in keys[i] or "alpha" in keys[i] or "100ohm" in keys[i]:
 					a = a.drop(keys[i], axis = 1)
 					print("dropping column", keys[i])
+				if "sp" in keys[i]:
+					a[keys[i]] *= 2
 			except:
 				pass
 		keys = a.keys()
@@ -114,10 +120,32 @@ for it in items:
 				array[array == 0] = 'nan'
 
 				plt.subplot(plots,plots,i+plots*(j-1))
+
+
+				if "LWA" in path: # figure out what type of antenna we are plotting for
+					opt_pos_x = lwa_opt[keys[i]]
+					opt_pos_y = lwa_opt[keys[j]]
+				elif "Eleven" in path:
+					opt_pos_x = eleven_opt[keys[i]]
+					opt_pos_y = eleven_opt[keys[j]]
+				elif "11EXT" in path:
+					opt_pos_x = ext_opt[keys[i]]
+					opt_pos_y = ext_opt[keys[j]]
+				else:
+					print("ERROR COULD NOT DETERIMINE ANTENNA TYPE")
+
+
+
 				if (i == j):
 					# Plot scatter plot if on diagonal
 					# print("lens {} and {}".format(len(a[keys[i]]), len(a[loss])))
 					plt.scatter(a[keys[i]], -a[loss], marker='.', alpha=.7)
+
+
+
+					plt.plot([opt_pos_x, opt_pos_y],[0,.5], c='r')
+					plt.xlim(minx-.05, maxx+.05)
+					plt.ylim(0, .45)
 
 				else:
 					# Else plot interpolated phase space
@@ -129,20 +157,31 @@ for it in items:
 					# 	method = 'nearest'
 					# 	grid_z0 = griddata(locations, values, (grid_x, grid_y), method=method)
 
-					plt.imshow(-array.T, extent=(minx,maxx, miny,maxy),
+					im = plt.imshow(-array.T, extent=(minx,maxx, miny,maxy),
 								 origin='lower', cmap = 'plasma', 
-								 interpolation = 'quadric', aspect='auto')
+								 interpolation = 'quadric', aspect='auto', vmin = 0)
+
+					plt.scatter([opt_pos_x], [opt_pos_y], c='r')
 
 				# plot label if on the edge
 				if (i == 1):
-					plt.ylabel(keys[j])
+					if (j == 1):
+						plt.ylabel("$\eta_{tot}$", fontsize = 20)
+					else:
+						plt.ylabel(keys[j], fontsize = 20)
 				
 				if (j == plots):
-					plt.xlabel(keys[i])
+					plt.xlabel(keys[i], fontsize = 20)
 				
 
+		# fig.subplots_adjust(right=0.8)
+		
 
-		plt.subplots_adjust(left=0.1, bottom=0.05, right=.95, top=.95, wspace=0.35, hspace=0.35)
+
+		plt.subplots_adjust(left=0.1, bottom=0.1, right=.9, top=.90, wspace=0.35, hspace=0.35) #bottom = 0.05, right = .95, top = .95
+		cbar_ax = fig.add_axes([0.91, 0.25, 0.025, 0.5]) #left, bottom, width, height
+		cbar = fig.colorbar(im, cax=cbar_ax)
+		cbar.ax.tick_params(labelsize=20)
 		plt.savefig(path + '/' + "triangle({},{})".format(sz_kernel, kernel_sharpness) + '.png')
 		plt.close()
 		plt.show()
