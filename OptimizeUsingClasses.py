@@ -52,9 +52,9 @@ def main():
 
 	## MOORE
 	else:
-		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 0, grasp_version = 10.3)
-		# a = QRFH(freq = 60, grasp_version = 10.3)
-		a.set_number_of_focal_lengths(1)
+		#a = ELfeed(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 0, grasp_version = 10.3)
+		a = QRFH(freq = 60, grasp_version = 10.3)
+		a.set_number_of_focal_lengths(5)
 
 		print("Executing on Moore")
 		print("%s"%a)
@@ -65,31 +65,27 @@ def main():
 		cst_dir = "F:\\Devin\\CST\\QRFH\\qrfh_v0_aper_circ_HF_donutnewnew_DC_COPY_noscale\\Result"
 
 
-
 	if 0:
-		a.parameters["x"] = 	0.679
-		a.parameters["y"] = 	0.214
-		a.parameters["z"] = 	0.116
-		a.parameters["sp"] =	0.985
-		# a.parameters["el"] =	1.782
-		# a.parameters["ew"] =	0.713
-		# a.parameters["ed"] =	-0.84
-		a.bounds.update({"z_dist":[16.4,16.7]})
-		simulate_single(a, override_frequency = False, plot_feed = True)
-
-	if 0:
-		a.parameters["x"] = 	0.967
-		a.parameters["y"] = 	0.011
-		a.parameters["z"] = 	0.214
-		a.parameters["sp"] =	1.071
-		a.parameters["el"] =	1.915
-		a.parameters["ew"] =	0.732
-		a.parameters["ed"] =	0.001
-		a.bounds.update({"z_dist":[16.58,17.5]})
-		simulate_single(a, override_frequency = False, plot_feed = True)
-
+		a.parameters["x"] = 		0.739
+		a.parameters["y"] = 		0.115
+		a.parameters["z"] = 		-0.051
+		a.parameters["alpha"] = 	0.000
+		a.parameters["sp"] =		0.946
+		a.parameters["el"] =		1.966
+		a.parameters["ew"] =		0.590
+		a.parameters["ed"] =		0.000
+		
+		a.parameters["z_dist"] = 16.50
+		a.bounds.update({"z_dist":[16.50, 17.5]})
+		random(a)
+		# setup_configuration(a)
+		# simulate_single(a, override_frequency = False, plot_feed = True)
 
 	if 1:
+		iterate_over_cut_files(a, cst_dir)
+
+
+	if 0:
 		a.parameters["x"] = 	0.965
 		a.parameters["y"] = 	0.011
 		a.parameters["z"] = 	0.218
@@ -232,24 +228,6 @@ def setup_configuration(a):
 	else:
 		scale = 1
 
-
-	a.parameters["x"] = 		0.6332
-	a.parameters["y"] = 		0.1347
-	a.parameters["z"] = 		0.6752
-	a.parameters["sp"] =		0.9175
-	# a.parameters["dl"] =		1.7321
-	# a.parameters["dw"] =		0.3172
-	# a.parameters["dsep"] =		-1.2299
-
-	# a.parameters["rl"] = 1.06
-	# a.parameters["rw"] = .60
-	# a.parameters["rsep"] = -.3
-
-
-	a.parameters["z_dist"] = 16.625
-
-	print(a.parameters["x"])
-
 	a.edit_msh()
 	a.edit_tor()
 
@@ -294,7 +272,7 @@ def random(a):
 		for idx, k in enumerate(names):
 			# print(k)
 			x_new.append(np.random.uniform(bounds[k][0], bounds[k][1]))
-		if (np.random.uniform(0,1) > 0.7):
+		if (np.random.uniform(0,1) < 0.7):
 			a.parameters["alpha"] = 0
 		else:
 			a.parameters["alpha"] = 45
