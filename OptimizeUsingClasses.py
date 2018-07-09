@@ -54,7 +54,7 @@ def main():
 	else:
 
 		#a = ELfeed(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 0, grasp_version = 10.3)
-		a = QRFH(freq = 60, grasp_version = 10.3)
+		a = QRFH(freq = 60, grasp_version = 10.6)
 		a.set_number_of_focal_lengths(5)
 
 		print("Executing on Moore")
@@ -63,7 +63,8 @@ def main():
 		a.set_ticra_directory_name()#"/cygdrive/c/Program Files/TICRA/")
 		a.set_grasp_analysis_extension()
 
-		cst_dir = "F:\\Devin\\CST\\QRFH\\qrfh_v0_aper_circ_HF_donutnewnew_DC_COPY_noscale\\Result"
+		# cst_dir = "F:\\Devin\\CST\\QRFH\\qrfh_v0_aper_circ_HF_donutnewnew_DC_COPY_noscale\\Result"
+		cst_dir = "F:\\Devin\\CST\\DSAfeed\\Antenna DSA\\Result"
 
 
 	if 0:
