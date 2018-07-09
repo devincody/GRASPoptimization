@@ -57,7 +57,7 @@ single_rim  elliptical_rim
 single_reflector  reflector  
 (
   coor_sys         : ref(single_global_coor),
-  surface          : ref(single_surface),
+  surfaces         : sequence(ref(single_surface)),
   rim              : ref(single_rim)
 )
  
@@ -211,12 +211,12 @@ alpha  real_variable
  
 strut_dz  real_variable  
 (
-  value            : 0.15
+  value            : 1.0
 )
  
 strut_length  real_variable  
 (
-  value            : 19.35
+  value            : 18.0
 )
  
 Feed_cut  spherical_cut  
@@ -246,7 +246,8 @@ tabulated_pattern  tabulated_pattern
   file_name        : pat.cut,
   number_of_cuts   : "ref(n_cuts)",
   phase_reference  : struct(x: 0.0 mm, y: 0.0 m, z: "ref(z_phase)" mm),
-  near_far         : far
+  near_far         : far,
+  far_forced       : on
 )
  
 n_cuts  real_variable  
@@ -280,7 +281,7 @@ z_phase  real_variable
  
 freq  real_variable  
 (
-  value            : 382.6087
+  value            : "5800/5.75"
 )
  
 off_axis  real_variable  
@@ -343,5 +344,5 @@ view_1_polygonal_struts_plot  polygonal_struts_plot
 (
 )
  
- //$$ Saved at 14:11:42 on 05.07.2018 by GRASP ver. 10.3.1 SN=006387
+ //$$ Saved at 23:29:04 on 07.07.2018 by GRASP ver. 10.6.0 SN=006387
   
