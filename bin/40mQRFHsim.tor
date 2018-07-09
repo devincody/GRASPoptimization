@@ -186,7 +186,7 @@ mounting_plate_sz  real_variable
  
 z_dist  real_variable  
 (
-  value            : 16.35789
+  value            : 16.3
 )
  
 start_f  real_variable  
@@ -285,7 +285,7 @@ freq  real_variable
  
 off_axis  real_variable  
 (
-  value            : 1.2
+  value            : 0.0
 )
  
 //DO NOT MODIFY OBJECTS BELOW THIS LINE.
@@ -343,5 +343,5 @@ view_1_polygonal_struts_plot  polygonal_struts_plot
 (
 )
  
- //$$ Saved at 18:30:41 on 29.05.2018 by GRASP ver. 10.3.1 SN=006387
+ //$$ Saved at 14:11:42 on 05.07.2018 by GRASP ver. 10.3.1 SN=006387
   

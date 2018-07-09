@@ -30,7 +30,9 @@ def main():
 
 	## G1
 	elif platform.node() == 'DESKTOP-3UVMJQF' or platform.node() == 'ASTROS':
-		a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 0, grasp_version = 10.3)
+		# a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 0, grasp_version = 10.3)
+		# a.set_number_of_focal_lengths(1)
+		a = QRFH(freq = 60, grasp_version = 10.6)
 		a.set_number_of_focal_lengths(1)
 
 		print("Executing on G1 Office")
@@ -38,6 +40,8 @@ def main():
 		a.set_global_directory_name("/mnt/c/Users/dcody/Documents/GRASP/")
 		a.set_ticra_directory_name("/mnt/c/Program Files/TICRA/")
 		a.set_grasp_analysis_extension(".exe")
+
+		cst_dir = "/mnt/c/Users/dcody/Documents/GRASP/40mQRFHsim106/DSAfeedPats/"
 
 	## AWS
 	elif platform.node() == 'ip-172-31-33-156':
@@ -63,8 +67,9 @@ def main():
 		a.set_ticra_directory_name()#"/cygdrive/c/Program Files/TICRA/")
 		a.set_grasp_analysis_extension()
 
-		# cst_dir = "F:\\Devin\\CST\\QRFH\\qrfh_v0_aper_circ_HF_donutnewnew_DC_COPY_noscale\\Result"
-		cst_dir = "F:\\Devin\\CST\\DSAfeed\\Antenna DSA\\Result"
+		# cst_dir = "F:\\Devin\\CST\\QRFH\\qrfh_v0_aper_circ_HF_donutnewnew_DC_COPY_noscale\\Result\\"
+		cst_dir = "F:\\Devin\\CST\\DSAfeed\\Antenna DSA\\Result\\"
+
 
 
 	if 0:
@@ -84,7 +89,7 @@ def main():
 		# simulate_single(a, override_frequency = False, plot_feed = True)
 
 	if 1:
-		iterate_over_cut_files(a, cst_dir)
+		iterate_over_cut_files(a, cst_dir, frequency_scale = 1)
 
 
 	if 0:
@@ -166,10 +171,9 @@ def anneal(a):
 	ap.tmax = 2000
 	ap.anneal()
 
-def iterate_over_cut_files(a, cst_dir):
+def iterate_over_cut_files(a, cst_dir, frequency_scale = 5.75):
 	setup_simulation_files(a, "po_tabs")
 	a.include_freq_in_title = False
-	frequency_scale = 5.75
 	#move new file to working directory overwriting last
 	#a.GRASP_working_file
 	files = os.listdir(cst_dir)
@@ -179,7 +183,7 @@ def iterate_over_cut_files(a, cst_dir):
 			freq = float(file.split()[1][3:-1]) #find the freq
 			print  (freq*1000)
 			a.parameters["freq"] = 1000.0*freq/frequency_scale
-			shutil.copy2(cst_dir+"\\"+file, a.GRASP_working_file + "pat.cut")
+			shutil.copy2(cst_dir + file, a.GRASP_working_file + "pat.cut")
 
 			a.simulate_single_configuration([],[], plot_feed = False, override_frequency = True, off_axis = True)
 
