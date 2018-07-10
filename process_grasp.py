@@ -64,6 +64,7 @@ def process_cut(f_name, freq, off_axis = False):
 		dbi_co = []
 		dbi_cx = []
 
+		# record all values from radiation pattern
 		for ii in range(int(line[2])):
 			angle= -180. + ii*line[1] ####- 180. #180 used because antenna is technically upside down
 			angles.append(angle)
@@ -77,11 +78,13 @@ def process_cut(f_name, freq, off_axis = False):
 			if (not off_axis):
 				if ii == 100:
 					dmax.append(np.max([co, cx]))
+		
+		#if off axis just take the maximum value here
 		if (off_axis):
 			dbi_co_max = np.max(dbi_co)
 			dbi_cx_max = np.max(dbi_cx)
 			dmax.append(np.max([dbi_co_max, dbi_cx_max]))
-			print("off axis, appending: {}".format(dmax[-1]))
+			# print("off axis, appending: {}".format(dmax[-1]))
 
 		cut[series_name_co] = dbi_co
 		cut[series_name_cx] = dbi_cx

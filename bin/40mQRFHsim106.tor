@@ -252,7 +252,7 @@ tabulated_pattern  tabulated_pattern
  
 n_cuts  real_variable  
 (
-  value            : 24.0
+  value            : 0.0
 )
  
 FEED_cluster  scatterer_cluster  
@@ -281,12 +281,12 @@ z_phase  real_variable
  
 freq  real_variable  
 (
-  value            : "5800/5.75"
+  value            : 1050.0
 )
  
 off_axis  real_variable  
 (
-  value            : 0.0
+  value            : 0.39
 )
  
 //DO NOT MODIFY OBJECTS BELOW THIS LINE.
@@ -344,5 +344,5 @@ view_1_polygonal_struts_plot  polygonal_struts_plot
 (
 )
  
- //$$ Saved at 23:29:04 on 07.07.2018 by GRASP ver. 10.6.0 SN=006387
+ //$$ Saved at 22:48:00 on 09.07.2018 by GRASP ver. 10.6.0 SN=006387
   
