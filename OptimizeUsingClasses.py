@@ -58,7 +58,7 @@ def main():
 	else:
 
 		#a = ELfeed(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 0, grasp_version = 10.3)
-		a = QRFH(freq = 60, grasp_version = 10.6)
+		a = QRFH(freq = 60, grasp_version = 10.6, phase = 340)
 		a.set_number_of_focal_lengths(5)
 
 		print("Executing on Moore")
@@ -186,11 +186,6 @@ def iterate_over_cut_files(a, cst_dir, frequency_scale = 5.75):
 			shutil.copy2(cst_dir + file, a.GRASP_working_file + "pat.cut")
 
 			a.simulate_single_configuration([],[], plot_feed = False, override_frequency = True, off_axis = True)
-
-
-	#simulate_single_configuration????
-	#figure out how to collect frequencies for each z_dist
-	#new script to read datalogs.csv
 
 
 def setup_simulation_files(a, method_name):
