@@ -516,9 +516,9 @@ class QRFH(antenna):
 		self.model_name = "40mQRFHsim106"
 		self.model_abbreviation = "QRFH"
 
-		self.parameter_names += ["phase", "freq"]
-		self.parameters.update({"phase":phase, "freq":freq })
-		self.bounds.update({"phase":bnd_phase, "freq":bnd_freq})
+		self.parameter_names += ["z_phase", "freq"]
+		self.parameters.update({"z_phase":phase, "freq":freq })
+		self.bounds.update({"z_phase":bnd_phase, "freq":bnd_freq})
 		self.max_pattern_dB = 50
 		
 	def __str__(self):
