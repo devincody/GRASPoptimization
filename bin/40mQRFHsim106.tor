@@ -16,7 +16,7 @@ minus_X  coor_sys
 spherical_cut  spherical_cut  
 (
   coor_sys         : ref(base),
-  theta_range      : struct(start: 0.0, end: 360.0, np: 2001),
+  theta_range      : struct(start: 90.0, end: 270.0, np: 20001),
   phi_range        : struct(start: 0.0, end: 90.0, np: 3),
   file_name        : Field_Data.cut,
   comment          : "Field data in cuts",
@@ -186,7 +186,7 @@ mounting_plate_sz  real_variable
  
 z_dist  real_variable  
 (
-  value            : 16.3
+  value            : 16.0
 )
  
 start_f  real_variable  
@@ -276,12 +276,12 @@ strut_analysis_arbitrary_cross  strut_analysis_arbitrary_cross
  
 z_phase  real_variable  
 (
-  value            : 120.0
+  value            : 360.0
 )
  
 freq  real_variable  
 (
-  value            : 1050.0
+  value            : 1200.0
 )
  
 off_axis  real_variable  
@@ -297,7 +297,11 @@ view_1  view
 (
   objects          : sequence(ref(view_1_tabulated_mesh_plot),ref(view_1_coor_sys_plot),ref(view_1_wires_plot)
 ,ref(view_1_mom_source_plot),ref(view_1_mom_plot),ref(view_1_output_points_plot),ref(view_1_reflector_plot),
-ref(view_1_plate_plot),ref(view_1_bor_plot),ref(view_1_feed_plot),ref(view_1_polygonal_struts_plot))
+ref(view_1_plate_plot),ref(view_1_bor_plot),ref(view_1_feed_plot),ref(view_1_polygonal_struts_plot)),
+  show_hide        : struct(reflectors: show, coordinate_systems: show, feeds: show, output_points: hide, 
+struts: show, tabulated_meshes: show, boxes: show, plates: show, wires: show, mom_meshes: hide, 
+apertures_in_screen: show, lenses: show, tabulated_planar_sources: show, plane_waves: show, dgr_intercostals: 
+show, cad_files: show, rooftop_mirrors: show, loads: show, bors: show, mom_sources: show, reflectarray: hide)
 )
  
 view_1_tabulated_mesh_plot  tabulated_mesh_plot  
@@ -344,5 +348,5 @@ view_1_polygonal_struts_plot  polygonal_struts_plot
 (
 )
  
- //$$ Saved at 22:48:00 on 09.07.2018 by GRASP ver. 10.6.0 SN=006387
+ //$$ Saved at 19:24:59 on 10.07.2018 by GRASP ver. 10.6.0 SN=006387
   

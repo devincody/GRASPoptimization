@@ -58,7 +58,7 @@ def main():
 	else:
 
 		#a = ELfeed(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 0, grasp_version = 10.3)
-		a = QRFH(freq = 60, grasp_version = 10.6, phase = 340)
+		a = QRFH(freq = 60, grasp_version = 10.6, z_phase = 340)
 		a.set_number_of_focal_lengths(5)
 
 		print("Executing on Moore")
