@@ -508,17 +508,18 @@ class gaussian_ideal(antenna):
 		return "Ideal Gaussian Pattern without struts"
 
 class QRFH(antenna):
-	def __init__(self, freq = 600, phase = 120, 
-				bnd_freq = [0,3000], bnd_phase = [0, 1200],
+	def __init__(self, freq = 600, z_phase = 120, off_axis = 0,
+				bnd_freq = [0,3000], bnd_phase = [0, 1200], bnd_off_axis = [0,3],
 				grasp_version = 10.3):
 		
-		antenna.__init__(self, parameters = {"z_dist":16.3}, bounds = {"z_dist":[16.2,16.4]}, grasp_version = grasp_version)
+		antenna.__init__(self, parameters = {"z_dist":15.9}, bounds = {"z_dist":[15.7,15.95]}, grasp_version = grasp_version)
 		self.model_name = "40mQRFHsim106"
 		self.model_abbreviation = "QRFH"
 
-		self.parameter_names += ["z_phase", "freq"]
-		self.parameters.update({"z_phase":phase, "freq":freq })
-		self.bounds.update({"z_phase":bnd_phase, "freq":bnd_freq})
+		self.parameter_names += ["z_phase", "freq", "off_axis"]
+
+		self.parameters.update({"z_phase":z_phase, "freq":freq, "off_axis":off_axis })
+		self.bounds.update({"z_phase":bnd_phase, "freq":bnd_freq, "off_axis":bnd_off_axis})
 		self.max_pattern_dB = 50
 		
 	def __str__(self):

@@ -28,12 +28,12 @@ def main():
 		a.set_ticra_directory_name("/mnt/f/Program Files/TICRA/")
 		a.set_grasp_analysis_extension(".exe")
 
-	## G1
+	## G1 (ASTROS)
 	elif platform.node() == 'DESKTOP-3UVMJQF' or platform.node() == 'ASTROS':
 		# a = ELfeedExt(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 0, grasp_version = 10.3)
 		# a.set_number_of_focal_lengths(1)
-		a = QRFH(freq = 60, grasp_version = 10.6, phase = 340)
-		a.set_number_of_focal_lengths(5)
+		a = QRFH(freq = 60, grasp_version = 10.6, z_phase = 340, off_axis = 0.67)
+		a.set_number_of_focal_lengths(1)
 
 		print("Executing on G1 Office")
 		print("%s"%a)
@@ -42,6 +42,7 @@ def main():
 		a.set_grasp_analysis_extension(".exe")
 
 		cst_dir = "/mnt/c/Users/dcody/Documents/GRASP/40mQRFHsim106/DSAfeedPats/"
+		# cst_dir = "/mnt/c/Users/dcody/Documents/GRASP/40mQRFHsim106/QRFHfarfields/"
 
 	## AWS
 	elif platform.node() == 'ip-172-31-33-156':
@@ -58,7 +59,7 @@ def main():
 	else:
 
 		#a = ELfeed(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 0, grasp_version = 10.3)
-		a = QRFH(freq = 60, grasp_version = 10.6, phase = 340)
+		a = QRFH(freq = 60, grasp_version = 10.6, z_phase = 340)
 		a.set_number_of_focal_lengths(5)
 
 		print("Executing on Moore")
@@ -89,7 +90,9 @@ def main():
 		# simulate_single(a, override_frequency = False, plot_feed = True)
 
 	if 1:
-		iterate_over_cut_files(a, cst_dir, frequency_scale = 1)
+		a.parameters["z_dist"] = 15.86
+		a.bounds.update({"z_dist":[15.86, 17.5]})
+		iterate_over_cut_files(a, cst_dir, frequency_scale = 1)#5.75)
 
 
 	if 0:

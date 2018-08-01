@@ -16,7 +16,7 @@ minus_X  coor_sys
 spherical_cut  spherical_cut  
 (
   coor_sys         : ref(base),
-  theta_range      : struct(start: 0.0, end: 360.0, np: 2001),
+  theta_range      : struct(start: 90.0, end: 270.0, np: 30001),
   phi_range        : struct(start: 0.0, end: 90.0, np: 3),
   file_name        : Field_Data.cut,
   comment          : "Field data in cuts",
@@ -186,7 +186,7 @@ mounting_plate_sz  real_variable
  
 z_dist  real_variable  
 (
-  value            : 16.3
+  value            : 15.92
 )
  
 start_f  real_variable  
@@ -276,12 +276,12 @@ strut_analysis_arbitrary_cross  strut_analysis_arbitrary_cross
  
 z_phase  real_variable  
 (
-  value            : 120.0
+  value            : 340.0
 )
  
 freq  real_variable  
 (
-  value            : 1050.0
+  value            : 1600.0
 )
  
 off_axis  real_variable  
@@ -344,5 +344,5 @@ view_1_polygonal_struts_plot  polygonal_struts_plot
 (
 )
  
- //$$ Saved at 22:48:00 on 09.07.2018 by GRASP ver. 10.6.0 SN=006387
+ //$$ Saved at 11:29:35 on 16.07.2018 by GRASP ver. 10.6.0 SN=006387
   
