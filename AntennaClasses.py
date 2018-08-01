@@ -512,7 +512,7 @@ class QRFH(antenna):
 				bnd_freq = [0,3000], bnd_phase = [0, 1200],
 				grasp_version = 10.3):
 		
-		antenna.__init__(self, parameters = {"z_dist":16.3}, bounds = {"z_dist":[16.2,16.4]}, grasp_version = grasp_version)
+		antenna.__init__(self, parameters = {"z_dist":15.98}, bounds = {"z_dist":[15.91,16.03]}, grasp_version = grasp_version)
 		self.model_name = "40mQRFHsim106"
 		self.model_abbreviation = "QRFH"
 

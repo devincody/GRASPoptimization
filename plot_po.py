@@ -22,6 +22,15 @@ items = os.listdir(cwd)
 for it in items:
 	if ".csv" in it[-5:]:
 		print("Processing file ", it)
+		if "QRFH" in it:
+			start_f = 0.38261
+			end_f = 2.6087
+			n_f = 66
+		elif "DSA" in it:
+			start_f = 1.05
+			end_f = 2.0
+			n_f = 20
+
 		plt.figure()
 		ax = plt.axes()
 

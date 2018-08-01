@@ -58,7 +58,7 @@ def main():
 	else:
 
 		#a = ELfeed(start_f =  60.0, end_f = 85.0, n_f = 10, alpha = 0, grasp_version = 10.3)
-		a = QRFH(freq = 60, grasp_version = 10.6, z_phase = 340)
+		a = QRFH(freq = 60, grasp_version = 10.6, z_phase = -160)#340)
 		a.set_number_of_focal_lengths(5)
 
 		print("Executing on Moore")
@@ -67,8 +67,9 @@ def main():
 		a.set_ticra_directory_name()#"/cygdrive/c/Program Files/TICRA/")
 		a.set_grasp_analysis_extension()
 
-		# cst_dir = "F:\\Devin\\CST\\QRFH\\qrfh_v0_aper_circ_HF_donutnewnew_DC_COPY_noscale\\Result\\"
-		cst_dir = "F:\\Devin\\CST\\DSAfeed\\Antenna DSA\\Result\\"
+		cst_dir = "F:\\Devin\\CST\\QRFH\\qrfh_v0_aper_circ_HF_donutnewnew_DC_COPY_noscale\\Result\\"
+		cst_dir = "F:\\Devin\\CST\\Midband Antenna\\spdipole_midband\\Result\\"
+		#cst_dir = "F:\\Devin\\CST\\DSAfeed\\Antenna DSA\\Result\\"
 
 
 
@@ -89,7 +90,9 @@ def main():
 		# simulate_single(a, override_frequency = False, plot_feed = True)
 
 	if 1:
-		iterate_over_cut_files(a, cst_dir, frequency_scale = 1)
+		iterate_over_cut_files(a, cst_dir, frequency_scale = 1, freq_scale_to_MHz=1)
+		#if frquencies in file are in MHz, then freq_scale_to_MHz = 1
+		#if frquencies in file are in GHz, then freq_scale_to_MHz = 1000
 
 
 	if 0:
@@ -171,21 +174,27 @@ def anneal(a):
 	ap.tmax = 2000
 	ap.anneal()
 
-def iterate_over_cut_files(a, cst_dir, frequency_scale = 5.75):
+def iterate_over_cut_files(a, cst_dir, frequency_scale = 5.75, freq_scale_to_MHz=1):
+		#if frquencies in file are in MHz, then freq_scale_to_MHz = 1
+		#if frquencies in file are in GHz, then freq_scale_to_MHz = 1000
+
 	setup_simulation_files(a, "po_tabs")
 	a.include_freq_in_title = False
 	#move new file to working directory overwriting last
 	#a.GRASP_working_file
 	files = os.listdir(cst_dir)
+	c = 0
 	for file in files:
 		if ("[1]_theta-phi).cut" in file[-20:]):
-			print (file)
-			freq = float(file.split()[1][3:-1]) #find the freq
-			print  (freq*1000)
-			a.parameters["freq"] = 1000.0*freq/frequency_scale
-			shutil.copy2(cst_dir + file, a.GRASP_working_file + "pat.cut")
+			if (c%3 == 0):
+				print (file)
+				freq = float(file.split()[1][3:-1]) #find the freq
+				print  (freq*freq_scale_to_MHz)
+				a.parameters["freq"] = freq_scale_to_MHz*freq/frequency_scale
+				shutil.copy2(cst_dir + file, a.GRASP_working_file + "pat.cut")
 
-			a.simulate_single_configuration([],[], plot_feed = False, override_frequency = True, off_axis = True)
+				a.simulate_single_configuration([],[], plot_feed = False, override_frequency = True, off_axis = True)
+			c += 1
 
 
 def setup_simulation_files(a, method_name):
