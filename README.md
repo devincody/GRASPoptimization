@@ -1,12 +1,33 @@
 # GRASPoptimization
 
 ## Purpose
-GRASPoptimization is a collection of code written in python that is designed to automate the design->simulate->analyze->re-design circular process when working with TICRA GRASP. The code is primarily designed to use the GRASP Method of Moments (MoM) solver but has also been extended to work well with the physical optics solver. 
+GRASPoptimization is a collection of code written in python that is designed to automate optimization of antennas. Specifically, the code is targeted at automating the design->simulate->analyze->re-design circular process when working with TICRA GRASP. The code is primarily designed to use the GRASP Method of Moments (MoM) solver but has also been extended to work well with the physical optics solver.
 
 ## File synopses
 
 ### AntennaClasses.py
 The AntennaClasses.py file is a document which outlines the design of each antenna and how they inherit from eachother. This defines abstract base class (aptly named "antenna") from which all other classes are derived. The antenna class defines several methods which do things like edit GRASP .tor files, make folders for results, and execute GRASP.
+
+``` python
+class antenna(object):
+	def __init__(self,
+				 model_name = "",			 
+				 parameter_names = ["z_dist"],
+				 parameters = {"z_dist":16.7},
+				 bounds = {"z_dist":[15.5,17.5]},
+				 grasp_version = 10.3
+				 ):
+		self.model_name = model_name
+		self.model_abbreviation = "abstract"
+		
+		self.parameter_names = parameter_names
+		self.parameters = parameters
+		self.bounds = bounds
+		self.grasp_version = grasp_version
+
+    .....
+
+```
 
 ### OptimizeUsingClasses.py
 This file defines several platform specific variables, such as location of GRASP executable and various directories. This file is also used to instantiate a given antenna and then simulate that antenna using one (or more) optimization/simulation functions. These functions include simulated annealing, grid searches, Nelder-Mead solvers, as well as a few other functions.
@@ -28,4 +49,4 @@ plot_triangle.py is very similar to plot_metadata.py except instead of generate 
 Because far-field patterns are exported by CST at each frequency, and each pattern must be analyzed at several focal distances, there are often many files produced during optimization of physical optics simulations. This script takes those results and combines them into one set of files.
 
 ### update_tor.py
-... is deprecated and should be remove if it hasn't been already...
+... is deprecated and should be remove if it hasn't been already.
