@@ -24,8 +24,24 @@ class antenna(object):
 		self.parameters = parameters
 		self.bounds = bounds
 		self.grasp_version = grasp_version
+		.....
 
-    .....
+
+class gaussian_ideal(antenna):
+	def __init__(self, start_f = 60.0, end_f = 80.0, n_f = 5, taper = -10, angle = 64,
+				bnd_start_f = [0,1000], bnd_end_f = [0,1000], bnd_n_f =[1,1000], bnd_taper = [-14,-8], bnd_angle = [50, 80],
+				grasp_version = 10.3):
+		
+		antenna.__init__(self, parameters = {"z_dist":16.1}, bounds = {"z_dist":[16,17.0]}, grasp_version = grasp_version)
+		self.model_name = "40mIDEALPO"
+		self.model_abbreviation = "gaussPO"
+
+		self.parameter_names += ["start_f", "end_f", "n_f", "taper", "angle"]
+		self.parameters.update({"start_f":start_f, "end_f":end_f, "n_f":n_f, "taper":taper, "angle":angle})
+		self.bounds.update({"start_f":bnd_start_f, "end_f":bnd_end_f,"n_f":bnd_n_f, "taper":bnd_taper, "angle":bnd_angle})
+		
+	def __str__(self):
+		return "Ideal Gaussian Pattern without struts"
 
 ```
 
